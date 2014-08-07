@@ -1,5 +1,6 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -14,19 +15,21 @@ public class Player extends GameObject {
 	private float dy;
 	private float dx;
 	private int jumpTimer;
+	private int throwTimer;
 	private boolean grounded;
 	private boolean facingRight;
 
 	public Player() {
 		super();
-		setSize(64, 64);
+		setSize(32, 32);
 		setSprite(Sprites.atlas.createSprite("player"), 32, 32);
-		walkSpeed = 2;
+		walkSpeed = 5;
 		x = 100;
-		y = 100;
+		y = 300;
 		dy = 0;
 		dx = 0;
 		jumpTimer = 0;
+		throwTimer = 0;
 		facingRight = true;
 	}
 
@@ -39,18 +42,12 @@ public class Player extends GameObject {
 	}
 
 	public void act(float delta) {
-		if (y + dy > 0) {
-			dy -= 0.3f;
-			grounded = false;
-		} else {
-			dy = 0;
-			y = 0;
-			grounded = true;
-		}
+		dy -= 0.3f;
+		grounded = false;
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
-				dy = 6;
+				dy = 8;
 			}
 			if (Input.KeyReleased(Input.Z)) {
 				jumpTimer = 0;
@@ -67,6 +64,9 @@ public class Player extends GameObject {
 		setPosition(x, y);
 
 		if (held != null) {
+			if (throwTimer > 0) {
+				throwTimer--;
+			}
 			if (facingRight) {
 				held.x = x + 16;
 				held.y = y;
@@ -74,8 +74,14 @@ public class Player extends GameObject {
 				held.x = x - 16;
 				held.y = y;
 			}
-			if (!Input.KeyDown(Input.CTRL)) {
-				held.toss(dx * 1.5f, 6);
+			if (throwTimer == 0 && !Input.KeyDown(Input.CTRL)) {
+				float dxt = dx * 1.5f;
+				float dyt = dy * 1.5f;
+				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -9;
+				if (Input.KeyDown(Input.ARROW_UP)) dyt = 9;
+				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -9;
+				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 9;
+				held.toss(dxt, dyt);
 				held = null;
 			}
 		}
@@ -119,16 +125,6 @@ public class Player extends GameObject {
 		for (Actor block : solids.getChildren()) {
 			Rectangle ro = new Rectangle(block.getX(), block.getY(),
 					block.getWidth(), block.getHeight());
-			if (rx.overlaps(ro)) {
-				if (getRight() < block.getRight()) {
-					x = block.getX() - getWidth();
-					dx = 0;
-				}
-				if (getX() > block.getX()) {
-					x = block.getRight();
-					dx = 0;
-				}
-			}
 			if (ry.overlaps(ro)) {
 				if (getTop() < block.getTop()) {
 					y = block.getY() - getHeight();
@@ -139,6 +135,16 @@ public class Player extends GameObject {
 					y = block.getTop();
 					dy = 0;
 					grounded = true;
+				}
+			}
+			if (rx.overlaps(ro)) {
+				if (getRight() < block.getRight()) {
+					x = block.getX() - getWidth();
+					dx = 0;
+				}
+				if (getX() > block.getX()) {
+					x = block.getRight();
+					dx = 0;
 				}
 			}
 		}
@@ -152,21 +158,22 @@ public class Player extends GameObject {
 						&& Input.KeyDown(Input.CTRL)) {
 					enemy.setState(AbstractEnemy.State.GRABBED);
 					held = enemy;
+					throwTimer = 20;
 				}
 				if (getX() > enemy.getX()
 						&& enemy.getState() == AbstractEnemy.State.STUNNED
 						&& Input.KeyDown(Input.CTRL)) {
 					enemy.setState(AbstractEnemy.State.GRABBED);
 					held = enemy;
+					throwTimer = 20;
 				}
 			}
-			if (ry.overlaps(ro)) {
-				if (getY() > enemy.getY()) {
-					y = enemy.getTop();
-					dy = 6;
-					jumpTimer = 6;
-					enemy.setState(AbstractEnemy.State.STUNNED);
-				}
+			if (ry.overlaps(ro) && getY() > enemy.getY()
+					&& enemy.state == AbstractEnemy.State.ACTIVE) {
+				y = enemy.getTop();
+				dy = 6;
+				jumpTimer = 6;
+				enemy.setState(AbstractEnemy.State.STUNNED);
 			}
 		}
 	}

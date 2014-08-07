@@ -25,9 +25,11 @@ public abstract class GameObject extends Actor {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		int xSpr = (int) (getX() + 0.5f);
-		int ySpr = (int) (getY() + 0.5f);
-		batch.draw(sprite.getFrame(), xSpr, ySpr, getWidth(), getHeight());
+		if (sprite != null) {
+			int xSpr = (int) (getX() + 0.5f);
+			int ySpr = (int) (getY() + 0.5f);
+			batch.draw(sprite.getFrame(), xSpr, ySpr, getWidth(), getHeight());
+		}
 	}
 
 	public void setSprite(Sprite sprite, int width, int height) {

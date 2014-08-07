@@ -8,7 +8,6 @@ public class Solid extends GameObject {
 		super();
 		this.x = x;
 		this.y = y;
-		setSize(32, 100);
 		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
 	}
 	

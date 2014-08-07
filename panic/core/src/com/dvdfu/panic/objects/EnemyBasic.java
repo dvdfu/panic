@@ -1,34 +1,74 @@
 package com.dvdfu.panic.objects;
 
-import com.dvdfu.panic.visuals.Sprites;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class EnemyBasic extends AbstractEnemy {
-
+	private boolean grounded;
 	public EnemyBasic() {
 		super();
 		x = 60;
-		setSize(64, 64);
-		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
+		y = 300;
+		setSize(32, 32);
+		// setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
 	}
 
 	public void act(float delta) {
-		if (state == State.ACTIVE)
-		x += 1;
-		if (state == State.THROWN) {
-			if (y + dy > 0) {
-				dy -= 0.3f;
-			} else {
-				dy = 0;
-				y = 0;
-				if (dx > 0.1f) {
-					dx -= 0.1f;
-				} else if (dx < -0.1f) {
-					dx += 0.1f;
-				} else {
-					dx = 0;
+		collide();
+		if (grounded && state == State.THROWN) {
+			state = State.STUNNED;
+		}
+		if (dx > 0.2f) dx -= 0.2f;
+		else if (dx < -0.2f) dx += 0.2f;
+		else dx = 0;
+		super.act(delta);
+	}
+	
+	private void collide() {
+		dy -= 0.3f;
+		grounded = false;
+		Rectangle ry = new Rectangle(x, y + dy, getWidth(), getHeight());
+		for (Actor block : solids.getChildren()) {
+			Rectangle ro = new Rectangle(block.getX(), block.getY(),
+					block.getWidth(), block.getHeight());
+			if (ry.overlaps(ro)) {
+				if (getTop() < block.getTop()) {
+					y = block.getY() - getHeight();
+					dy = 0;
+				}
+				if (getY() > block.getY()) {
+					y = block.getTop();
+					dy = 0;
+					grounded = true;
 				}
 			}
 		}
-		super.act(delta);
+	}
+	
+	public void draw(Batch batch, float alpha) {
+		batch.end();
+		ShapeRenderer shapes = new ShapeRenderer();
+		switch (state) {
+		case ACTIVE:
+			shapes.setColor(new Color(0, 1, 0, 1));
+			break;
+		case STUNNED:
+			shapes.setColor(new Color(1, 1, 0, 1));
+			break;
+		case GRABBED:
+			shapes.setColor(new Color(0, 0, 1, 1));
+			break;
+		case THROWN:
+			shapes.setColor(new Color(1, 0, 0, 1));
+			break;
+		}
+		shapes.begin(ShapeType.Filled);
+		shapes.rect(x, y, getWidth(), getHeight());
+		shapes.end();
+		batch.begin();
 	}
 }

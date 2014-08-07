@@ -20,9 +20,13 @@ public class TestScreen extends AbstractScreen {
 	public TestScreen(MainGame game) {
 		super(game);
 		stage = new Stage();
-		
 		solids = new Group();
-		solids.addActor(new Solid(60, 0));
+		Solid s1 = new Solid(64, 0);
+		s1.setSize(Gdx.graphics.getWidth() - 128, 64);
+		solids.addActor(s1);
+		Solid s2 = new Solid(160, 196);
+		s2.setSize(Gdx.graphics.getWidth() - 320, 16);
+		solids.addActor(s2);
 		stage.addActor(solids);
 		
 		enemies = new Group();

@@ -3,17 +3,19 @@ package com.dvdfu.panic.objects;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 public abstract class AbstractEnemy extends GameObject {
-	protected Group solids;
-	protected Player player;
-	protected enum State {
+	public enum State {
 		ACTIVE, STUNNED, GRABBED, THROWN
 	}
+	protected Group solids;
+	protected Player player;
 	protected State state;
 	protected float dx;
 	protected float dy;
+	protected boolean collides;
 
 	public AbstractEnemy() {
 		state = State.ACTIVE;
+		collides = true;
 	}
 	
 	public void act(float delta) {
