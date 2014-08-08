@@ -120,16 +120,14 @@ public class Player extends GameObject {
 
 	public void collideEnemy(AbstractEnemy enemy) {
 		if (!disturbed) return;
-		Rectangle myRect = bounds.setPosition(x, y + dy);
-		if (myRect.overlaps(enemy.bounds)) {
+		if (bounds.overlaps(enemy.bounds)) {
 			if (enemy.getState() == AbstractEnemy.State.ACTIVE) {
-				if (getTop() + dy > enemy.getTop() && myRect.y < enemy.getTop()) {
+				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
 					enemy.setState(AbstractEnemy.State.STUNNED);
-					y = enemy.getTop();
 					dy = 8;
 				}
 			} else if (enemy.getState() == AbstractEnemy.State.STUNNED) {
-				if (Input.KeyDown(Input.CTRL)) {
+				if (Input.KeyDown(Input.CTRL) && held == null) {
 					held = enemy;
 					enemy.setState(AbstractEnemy.State.GRABBED);
 				}

@@ -63,15 +63,8 @@ public class TestScreen extends AbstractScreen {
 		collisions();
 		stage.act(delta);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
-
-		ShapeRenderer shapes = new ShapeRenderer();
-		shapes.setColor(Color.BLUE);
-		shapes.begin(ShapeType.Line);
-		shapes.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
-		shapes.end();
-		shapes.dispose();
 	}
 
 	private void collisions() {

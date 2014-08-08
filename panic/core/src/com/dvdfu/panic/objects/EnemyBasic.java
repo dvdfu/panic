@@ -1,5 +1,7 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.visuals.Sprites;
@@ -57,6 +59,25 @@ public class EnemyBasic extends AbstractEnemy {
 				dy = 0;
 			}
 		}
+	}
+
+	public void draw(Batch batch, float alpha) {
+		switch (state) {
+		case ACTIVE:
+			batch.setColor(new Color(0, 1, 0, 1));
+			break;
+		case STUNNED:
+			batch.setColor(new Color(1, 1, 0, 1));
+			break;
+		case GRABBED:
+			batch.setColor(new Color(0, 0, 1, 1));
+			break;
+		case THROWN:
+			batch.setColor(new Color(1, 0, 0, 1));
+			break;
+		}
+		super.draw(batch, alpha);
+		batch.setColor(1, 1, 1, 1);
 	}
 
 	public void reset() {
