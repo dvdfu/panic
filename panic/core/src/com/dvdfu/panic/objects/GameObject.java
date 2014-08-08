@@ -4,27 +4,33 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Pool.Poolable;
 import com.dvdfu.panic.visuals.Animation;
 
-public abstract class GameObject extends Actor {
-	private Animation sprite;
+public abstract class GameObject extends Actor implements Poolable {
+	protected Animation sprite;
+	protected Rectangle bounds;
 	protected boolean stretched;
 	protected int xSprOffset;
 	protected int ySprOffset;
 	protected float x;
 	protected float y;
+	protected float dx;
+	protected float dy;
 
 	public GameObject() {
 		super();
-		x = 0;
-		y = 0;
+		bounds = new Rectangle();
 	}
 
 	public void act(float delta) {
 		if (sprite != null) {
 			sprite.update(delta);
 		}
+		x += dx;
+		y += dy;
 		setPosition(x, y);
+		bounds.set(getX(), getY(), getWidth(), getHeight());
 		super.act(delta);
 	}
 

@@ -7,12 +7,11 @@ import com.dvdfu.panic.visuals.Sprites;
 public class Player extends GameObject {
 	private AbstractEnemy held;
 	private float walkSpeed;
-	private float dy;
-	private float dx;
 	private int jumpTimer;
 	private int throwTimer;
 	private boolean grounded;
 	private boolean facingRight;
+	private boolean disturbed;
 
 	public Player() {
 		super();
@@ -20,13 +19,7 @@ public class Player extends GameObject {
 		xSprOffset = -2;
 		setSprite(Sprites.atlas.createSprite("player"), 32, 32);
 		walkSpeed = 5;
-		x = 100;
-		y = 300;
-		dy = 0;
-		dx = 0;
-		jumpTimer = 0;
-		throwTimer = 0;
-		facingRight = true;
+		reset();
 	}
 
 	public void move() {
@@ -93,15 +86,14 @@ public class Player extends GameObject {
 	}
 
 	public void act(float delta) {
-		y += dy;
-		x += dx;
+		disturbed = dx != 0 || dy != 0;
 		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
-		Rectangle blockRect = block.getBounds();
-		Rectangle myRect = new Rectangle(x, y + dy, getWidth(), getHeight());
-		if (myRect.overlaps(blockRect)) {
+		if (!disturbed) return;
+		Rectangle myRect = bounds.setPosition(x, y + dy);
+		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
 				y = block.getY() - getHeight();
 				dy = 0;
@@ -114,7 +106,7 @@ public class Player extends GameObject {
 			}
 		}
 		myRect.setPosition(x + dx, y);
-		if (myRect.overlaps(blockRect)) {
+		if (myRect.overlaps(block.bounds)) {
 			if (getRight() + dx > block.getX() && myRect.x < block.getX()) {
 				x = block.getX() - getWidth();
 				dx = 0;
@@ -127,9 +119,9 @@ public class Player extends GameObject {
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
-		Rectangle enemyRect = enemy.getBounds();
-		Rectangle myRect = new Rectangle(x, y + dy, getWidth(), getHeight());
-		if (myRect.overlaps(enemyRect)) {
+		if (!disturbed) return;
+		Rectangle myRect = bounds.setPosition(x, y + dy);
+		if (myRect.overlaps(enemy.bounds)) {
 			if (enemy.getState() == AbstractEnemy.State.ACTIVE) {
 				if (getTop() + dy > enemy.getTop() && myRect.y < enemy.getTop()) {
 					enemy.setState(AbstractEnemy.State.STUNNED);
@@ -143,5 +135,11 @@ public class Player extends GameObject {
 				}
 			}
 		}
+	}
+
+	public void reset() {
+		x = 100;
+		y = 300;
+		facingRight = true;
 	}
 }

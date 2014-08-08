@@ -8,12 +8,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.objects.EnemyBasic;
+import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Player;
 import com.dvdfu.panic.objects.Solid;
 
 public class TestScreen extends AbstractScreen {
+	private Pool<GameObject> objects;
 	private Stage stage;
 	private Group enemies;
 	private Group solids;
@@ -22,6 +25,11 @@ public class TestScreen extends AbstractScreen {
 
 	public TestScreen(MainGame game) {
 		super(game);
+		objects = new Pool<GameObject>() {
+			protected GameObject newObject() {
+				return new EnemyBasic();
+			}
+		};
 		stage = new Stage();
 		solids = new Group();
 		Solid s1 = new Solid(64, 0);
@@ -42,9 +50,9 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
-		// timer ++;
-		if (timer == 100) {
-			enemies.addActor(new EnemyBasic());
+		timer ++;
+		if (timer == 10) {
+			enemies.addActor((EnemyBasic) objects.obtain());
 			timer = 0;
 		}
 		player.move();
@@ -74,6 +82,10 @@ public class TestScreen extends AbstractScreen {
 				EnemyBasic enemy = (EnemyBasic) actor2;
 				enemy.collideSolid(solid);
 				player.collideEnemy(enemy);
+				if (enemy.getX() > Gdx.graphics.getWidth() || enemy.getRight() < 0 || enemy.getTop() < 0) {
+					enemies.removeActor(actor2);
+					objects.free((GameObject) actor2);
+				}
 			}
 		}
 	}

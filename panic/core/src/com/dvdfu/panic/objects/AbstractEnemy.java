@@ -5,8 +5,6 @@ public abstract class AbstractEnemy extends GameObject {
 		ACTIVE, STUNNED, GRABBED, THROWN
 	}
 	protected State state;
-	protected float dx;
-	protected float dy;
 	protected boolean collides;
 
 	public AbstractEnemy() {
@@ -15,8 +13,6 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 	
 	public void act(float delta) {
-		x += dx;
-		y += dy;
 		super.act(delta);
 	}
 

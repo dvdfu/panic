@@ -1,21 +1,19 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.dvdfu.panic.visuals.Sprites;
 
 public class EnemyBasic extends AbstractEnemy {
+	private boolean disturbed;
 
 	public EnemyBasic() {
 		super();
-		x = MathUtils.random(100, 500);
-		y = 300;
+		reset();
 		setSize(32, 32);
+		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
 	}
-	
+
 	public void move() {
 		if (state != State.GRABBED) {
 			dy -= 0.3f;
@@ -26,16 +24,14 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void act(float delta) {
+		disturbed = dx != 0 || dy != 0;
 		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
-		if (state == State.GRABBED) {
-			return;
-		}
-		Rectangle blockRect = block.getBounds();
-		Rectangle myRect = new Rectangle(x, y + dy, getWidth(), getHeight());
-		if (myRect.overlaps(blockRect)) {
+		if (state == State.GRABBED || !disturbed) { return; }
+		Rectangle myRect = bounds.setPosition(x, y + dy);
+		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
 				y = block.getY() - getHeight();
 				dy = 0;
@@ -49,7 +45,7 @@ public class EnemyBasic extends AbstractEnemy {
 			}
 		}
 		myRect.setPosition(x + dx, y);
-		if (myRect.overlaps(blockRect)) {
+		if (myRect.overlaps(block.bounds)) {
 			if (getRight() + dx > block.getX() && myRect.x < block.getX()) {
 				x = block.getX() - getWidth();
 				dx = 0;
@@ -63,26 +59,8 @@ public class EnemyBasic extends AbstractEnemy {
 		}
 	}
 
-	public void draw(Batch batch, float alpha) {
-		batch.end();
-		ShapeRenderer shapes = new ShapeRenderer();
-		switch (state) {
-		case ACTIVE:
-			shapes.setColor(new Color(0, 1, 0, 1));
-			break;
-		case STUNNED:
-			shapes.setColor(new Color(1, 1, 0, 1));
-			break;
-		case GRABBED:
-			shapes.setColor(new Color(0, 0, 1, 1));
-			break;
-		case THROWN:
-			shapes.setColor(new Color(1, 0, 0, 1));
-			break;
-		}
-		shapes.begin(ShapeType.Filled);
-		shapes.rect(x, y, getWidth(), getHeight());
-		shapes.end();
-		batch.begin();
+	public void reset() {
+		x = MathUtils.random(100, 500);
+		y = 300;
 	}
 }
