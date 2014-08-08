@@ -81,7 +81,10 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void reset() {
+		state = State.ACTIVE;
 		x = MathUtils.random(100, 500);
 		y = 300;
+		dx = 0;
+		dy = 0;
 	}
 }

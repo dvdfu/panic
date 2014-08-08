@@ -10,6 +10,7 @@ public class Player extends GameObject {
 	private int jumpTimer;
 	private int throwTimer;
 	private boolean grounded;
+	private boolean groundedCheck;
 	private boolean facingRight;
 	private boolean disturbed;
 
@@ -23,6 +24,7 @@ public class Player extends GameObject {
 	}
 
 	public void move() {
+		groundedCheck = false;
 		dy -= 0.3f;
 		if (jumpTimer > 0) {
 			jumpTimer--;
@@ -32,8 +34,6 @@ public class Player extends GameObject {
 			if (Input.KeyReleased(Input.Z)) {
 				jumpTimer = 0;
 			}
-		} else {
-			jumpTimer = 0;
 		}
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
@@ -56,7 +56,6 @@ public class Player extends GameObject {
 			dx = 0;
 		}
 		if (grounded && Input.KeyPressed(Input.Z)) {
-			grounded = false;
 			jumpTimer = 12;
 			dy = 8;
 		}
@@ -102,8 +101,12 @@ public class Player extends GameObject {
 			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
 				y = block.getTop();
 				dy = 0;
+				jumpTimer = 0;
 				grounded = true;
+				groundedCheck = true;
 			}
+		} else if (!groundedCheck) {
+			grounded = false;
 		}
 		myRect.setPosition(x + dx, y);
 		if (myRect.overlaps(block.bounds)) {

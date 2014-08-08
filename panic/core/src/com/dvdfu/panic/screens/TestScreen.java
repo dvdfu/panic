@@ -1,10 +1,7 @@
 package com.dvdfu.panic.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,7 +23,7 @@ public class TestScreen extends AbstractScreen {
 	public TestScreen(MainGame game) {
 		super(game);
 		objects = new Pool<GameObject>() {
-			protected GameObject newObject() {
+			protected EnemyBasic newObject() {
 				return new EnemyBasic();
 			}
 		};
@@ -50,9 +47,9 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
-		timer ++;
+		timer++;
 		if (timer == 10) {
-			enemies.addActor((EnemyBasic) objects.obtain());
+			enemies.addActor(objects.obtain());
 			timer = 0;
 		}
 		player.move();
@@ -77,7 +74,7 @@ public class TestScreen extends AbstractScreen {
 				player.collideEnemy(enemy);
 				if (enemy.getX() > Gdx.graphics.getWidth() || enemy.getRight() < 0 || enemy.getTop() < 0) {
 					enemies.removeActor(actor2);
-					objects.free((GameObject) actor2);
+					objects.free(enemy);
 				}
 			}
 		}
