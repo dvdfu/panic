@@ -1,6 +1,5 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -8,7 +7,6 @@ import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
-	private Group solids;
 	private Group enemies;
 	private AbstractEnemy held;
 	private float walkSpeed;
@@ -21,7 +19,8 @@ public class Player extends GameObject {
 
 	public Player() {
 		super();
-		setSize(32, 32);
+		setSize(2, 18);
+		xSprOffset = -2;
 		setSprite(Sprites.atlas.createSprite("player"), 32, 32);
 		walkSpeed = 5;
 		x = 100;
@@ -33,17 +32,14 @@ public class Player extends GameObject {
 		facingRight = true;
 	}
 
-	public void setBlocks(Group solids) {
-		this.solids = solids;
-	}
-
 	public void setEnemies(Group enemies) {
 		this.enemies = enemies;
 	}
 
 	public void act(float delta) {
-		dy -= 0.3f;
-		grounded = false;
+		if (!grounded) {
+			dy -= 0.3f;
+		}
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
@@ -94,8 +90,7 @@ public class Player extends GameObject {
 			if (dx < walkSpeed) {
 				dx += 0.5f;
 				facingRight = true;
-			} else
-				dx = walkSpeed;
+			} else dx = walkSpeed;
 		} else if (dx > 0) {
 			dx -= 0.5f;
 		}
@@ -103,8 +98,7 @@ public class Player extends GameObject {
 			if (dx > -walkSpeed) {
 				dx -= 0.5f;
 				facingRight = false;
-			} else
-				dx = -walkSpeed;
+			} else dx = -walkSpeed;
 		} else if (dx < 0) {
 			dx += 0.5f;
 		}
@@ -115,61 +109,56 @@ public class Player extends GameObject {
 
 	private void jump() {
 		if (grounded && Input.KeyPressed(Input.Z)) {
+			grounded = false;
 			jumpTimer = 12;
 		}
+	}
+
+	public void collideSolid(Solid block, Rectangle overlap) {
+		if (overlap.width > overlap.height) {
+			if (getTop() > block.getY() && getTop() < block.getTop()) {
+				y = block.getY() - getHeight();
+				dy = 0;
+				jumpTimer = 0;
+			}
+			if (getY() > block.getY() && getY() < block.getTop()) {
+				y = block.getTop();
+				dy = 0;
+				grounded = true;
+			}
+		} else {
+			if (getRight() < block.getRight()) {
+				x = block.getX() - getWidth();
+				dx = 0;
+			}
+			if (getX() > block.getX()) {
+				x = block.getRight();
+				dx = 0;
+			}
+		}
+		setPosition(x, y);
 	}
 
 	private void collide() {
 		Rectangle rx = new Rectangle(x + dx, y, getWidth(), getHeight());
 		Rectangle ry = new Rectangle(x, y + dy, getWidth(), getHeight());
-		for (Actor block : solids.getChildren()) {
-			Rectangle ro = new Rectangle(block.getX(), block.getY(),
-					block.getWidth(), block.getHeight());
-			if (ry.overlaps(ro)) {
-				if (getTop() < block.getTop()) {
-					y = block.getY() - getHeight();
-					dy = 0;
-					jumpTimer = 0;
-				}
-				if (getY() > block.getY()) {
-					y = block.getTop();
-					dy = 0;
-					grounded = true;
-				}
-			}
-			if (rx.overlaps(ro)) {
-				if (getRight() < block.getRight()) {
-					x = block.getX() - getWidth();
-					dx = 0;
-				}
-				if (getX() > block.getX()) {
-					x = block.getRight();
-					dx = 0;
-				}
-			}
-		}
 		for (Actor actor : enemies.getChildren()) {
 			AbstractEnemy enemy = (AbstractEnemy) actor;
-			Rectangle ro = new Rectangle(enemy.getX(), enemy.getY(),
-					enemy.getWidth(), enemy.getHeight());
+			Rectangle ro = new Rectangle(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
 			if (rx.overlaps(ro)) {
-				if (getRight() < enemy.getRight()
-						&& enemy.getState() == AbstractEnemy.State.STUNNED
-						&& Input.KeyDown(Input.CTRL)) {
+				if (getRight() < enemy.getRight() && enemy.getState() == AbstractEnemy.State.STUNNED
+					&& Input.KeyDown(Input.CTRL)) {
 					enemy.setState(AbstractEnemy.State.GRABBED);
 					held = enemy;
 					throwTimer = 20;
 				}
-				if (getX() > enemy.getX()
-						&& enemy.getState() == AbstractEnemy.State.STUNNED
-						&& Input.KeyDown(Input.CTRL)) {
+				if (getX() > enemy.getX() && enemy.getState() == AbstractEnemy.State.STUNNED && Input.KeyDown(Input.CTRL)) {
 					enemy.setState(AbstractEnemy.State.GRABBED);
 					held = enemy;
 					throwTimer = 20;
 				}
 			}
-			if (ry.overlaps(ro) && getY() > enemy.getY()
-					&& enemy.state == AbstractEnemy.State.ACTIVE) {
+			if (ry.overlaps(ro) && getY() > enemy.getY() && enemy.state == AbstractEnemy.State.ACTIVE) {
 				y = enemy.getTop();
 				dy = 6;
 				jumpTimer = 6;

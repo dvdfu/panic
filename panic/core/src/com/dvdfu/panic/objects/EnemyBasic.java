@@ -31,22 +31,6 @@ public class EnemyBasic extends AbstractEnemy {
 	private void collide() {
 		dy -= 0.3f;
 		grounded = false;
-		Rectangle ry = new Rectangle(x, y + dy, getWidth(), getHeight());
-		for (Actor block : solids.getChildren()) {
-			Rectangle ro = new Rectangle(block.getX(), block.getY(),
-					block.getWidth(), block.getHeight());
-			if (ry.overlaps(ro)) {
-				if (getTop() < block.getTop()) {
-					y = block.getY() - getHeight();
-					dy = 0;
-				}
-				if (getY() > block.getY()) {
-					y = block.getTop();
-					dy = 0;
-					grounded = true;
-				}
-			}
-		}
 	}
 	
 	public void draw(Batch batch, float alpha) {
