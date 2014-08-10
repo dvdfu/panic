@@ -1,5 +1,6 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
@@ -20,9 +21,6 @@ public class EnemyBasic extends AbstractEnemy {
 		if (state != State.GRABBED) {
 			dy -= 0.3f;
 		}
-		if (dx > 0.2f) dx -= 0.2f;
-		else if (dx < -0.2f) dx += 0.2f;
-		else dx = 0;
 	}
 
 	public void act(float delta) {
@@ -61,6 +59,47 @@ public class EnemyBasic extends AbstractEnemy {
 		}
 	}
 
+	public void collideEnemy(AbstractEnemy enemy) {
+		if (state == State.GRABBED || !disturbed) { return; }
+		Rectangle myRect = bounds.setPosition(x, y + dy);
+		if (myRect.overlaps(enemy.bounds)) {
+			System.out.println(3);
+			if (getTop() + dy > enemy.getY() && myRect.y < enemy.getY()) {
+				y = enemy.getY() - getHeight();
+				dy = 0;
+			}
+			if (getTop() + dy > enemy.getTop() && myRect.y < enemy.getTop()) {
+				y = enemy.getTop();
+				dy = 0;
+				if (state == State.THROWN) {
+					state = State.STUNNED;
+				}
+			}
+		}
+		myRect.setPosition(x + dx, y);
+		if (myRect.overlaps(enemy.bounds)) {
+			if (getRight() + dx > enemy.getX() && myRect.x < enemy.getX()) {
+				x = enemy.getX() - getWidth();
+				dx = -dx;
+				dy = 0;
+			}
+			if (getRight() + dx > enemy.getRight() && myRect.x < enemy.getRight()) {
+				x = enemy.getRight();
+				dx = -dx;
+				dy = 0;
+			}
+		}
+	}
+	
+	public void setState(State state) {
+		switch (state) {
+		case STUNNED:
+			dx = 0;
+		break;
+		}
+		super.setState(state);
+	}
+
 	public void draw(Batch batch, float alpha) {
 		switch (state) {
 		case ACTIVE:
@@ -82,9 +121,14 @@ public class EnemyBasic extends AbstractEnemy {
 
 	public void reset() {
 		state = State.ACTIVE;
-		x = MathUtils.random(100, 500);
-		y = 300;
-		dx = 0;
+		if (MathUtils.randomBoolean()) {
+			x = -getWidth();
+			dx = 1;
+		} else {
+			x = Gdx.graphics.getWidth();
+			dx = -1;
+		}
+		y = 480 + MathUtils.random(160);
 		dy = 0;
 	}
 }

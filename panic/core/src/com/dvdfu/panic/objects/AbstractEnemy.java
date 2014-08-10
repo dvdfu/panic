@@ -2,14 +2,12 @@ package com.dvdfu.panic.objects;
 
 public abstract class AbstractEnemy extends GameObject {
 	public enum State {
-		ACTIVE, STUNNED, GRABBED, THROWN
+		ACTIVE, STUNNED, GRABBED, THROWN, DEAD
 	}
 	protected State state;
-	protected boolean collides;
 
 	public AbstractEnemy() {
 		state = State.ACTIVE;
-		collides = true;
 	}
 	
 	public void act(float delta) {
@@ -24,7 +22,7 @@ public abstract class AbstractEnemy extends GameObject {
 		this.state = state;
 	}
 
-	public void toss(float dx, float dy) {
+	public void launch(float dx, float dy) {
 		state = State.THROWN;
 		this.dx = dx;
 		this.dy = dy;

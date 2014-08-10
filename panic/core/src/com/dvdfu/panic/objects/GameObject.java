@@ -2,6 +2,7 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -46,10 +47,14 @@ public abstract class GameObject extends Actor implements Poolable {
 		}
 	}
 
+	public void drawDebug(ShapeRenderer shapes, float parentAlpha) {
+		shapes.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+	}
+
 	public void setSprite(Sprite sprite, int width, int height) {
 		this.sprite = new Animation(sprite, width, height);
 	}
-	
+
 	public Rectangle getBounds() {
 		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}

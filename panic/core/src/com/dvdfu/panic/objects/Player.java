@@ -10,7 +10,6 @@ public class Player extends GameObject {
 	private int jumpTimer;
 	private int throwTimer;
 	private boolean grounded;
-	private boolean groundedCheck;
 	private boolean facingRight;
 	private boolean disturbed;
 
@@ -22,9 +21,20 @@ public class Player extends GameObject {
 		walkSpeed = 5;
 		reset();
 	}
+	
+	/*
+	 * must have functions called in this order:
+	 * -move
+	 *     -must change dx/dy
+	 *     -must change grounded to false
+	 * -collide
+	 *     -must correct x/y, dx/dy
+	 *     -must correct grounded
+	 * -act
+	 *     -must add dx/dy to x/y, must finalize position
+	 */
 
 	public void move() {
-		groundedCheck = false;
 		dy -= 0.3f;
 		if (jumpTimer > 0) {
 			jumpTimer--;
@@ -57,7 +67,7 @@ public class Player extends GameObject {
 		}
 		if (grounded && Input.KeyPressed(Input.Z)) {
 			jumpTimer = 12;
-			dy = 8;
+			dy = 9;
 		}
 
 		if (held != null) {
@@ -72,16 +82,17 @@ public class Player extends GameObject {
 				held.y = y;
 			}
 			if (throwTimer == 0 && !Input.KeyDown(Input.CTRL)) {
-				float dxt = dx * 1.5f;
-				float dyt = dy * 1.5f;
+				float dxt = 0;
+				float dyt = 0;
 				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -9;
-				if (Input.KeyDown(Input.ARROW_UP)) dyt = 9;
+				if (Input.KeyDown(Input.ARROW_UP)) dyt = 12;
 				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -9;
 				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 9;
-				held.toss(dxt, dyt);
+				held.launch(dxt, dyt);
 				held = null;
 			}
 		}
+		grounded = false;
 	}
 
 	public void act(float delta) {
@@ -90,7 +101,6 @@ public class Player extends GameObject {
 	}
 
 	public void collideSolid(Solid block) {
-		if (!disturbed) return;
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
@@ -103,10 +113,7 @@ public class Player extends GameObject {
 				dy = 0;
 				jumpTimer = 0;
 				grounded = true;
-				groundedCheck = true;
 			}
-		} else if (!groundedCheck) {
-			grounded = false;
 		}
 		myRect.setPosition(x + dx, y);
 		if (myRect.overlaps(block.bounds)) {
