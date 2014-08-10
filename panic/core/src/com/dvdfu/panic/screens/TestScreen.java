@@ -15,7 +15,6 @@ import com.dvdfu.panic.objects.Solid;
 
 public class TestScreen extends AbstractScreen {
 	private Pool<GameObject> objects;
-	private ShapeRenderer shapes;
 	private Stage stage;
 	private Group enemies;
 	private Group solids;
@@ -29,7 +28,6 @@ public class TestScreen extends AbstractScreen {
 				return new EnemyBasic();
 			}
 		};
-		shapes = new ShapeRenderer();
 		stage = new Stage();
 		solids = new Group();
 		Solid s1 = new Solid(64, 0);
@@ -65,7 +63,7 @@ public class TestScreen extends AbstractScreen {
 		}
 		collisions();
 		stage.act(delta);
-		stage.getCamera().position.set(Gdx.graphics.getWidth() / 2, player.getY() + 80, 0);
+		// stage.getCamera().position.set(Gdx.graphics.getWidth() / 2, player.getY() + 80, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();

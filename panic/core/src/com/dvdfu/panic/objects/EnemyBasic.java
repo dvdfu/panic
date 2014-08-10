@@ -60,10 +60,9 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
-		if (state == State.GRABBED || !disturbed) { return; }
+		if (state == State.GRABBED || state == State.STUNNED || !disturbed) { return; }
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(enemy.bounds)) {
-			System.out.println(3);
 			if (getTop() + dy > enemy.getY() && myRect.y < enemy.getY()) {
 				y = enemy.getY() - getHeight();
 				dy = 0;
