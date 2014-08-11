@@ -1,7 +1,9 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Input;
+import com.dvdfu.panic.objects.AbstractEnemy.State;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
@@ -99,6 +101,9 @@ public class Player extends GameObject {
 			}
 		}
 		super.act(delta);
+		if (getTop() < 0) {
+			reset();
+		}
 	}
 
 	public void collideSolid(Solid block) {

@@ -159,13 +159,13 @@ public class EnemyBasic extends AbstractEnemy {
 	public void reset() {
 		state = State.ACTIVE;
 		if (MathUtils.randomBoolean()) {
-			x = -getWidth();
+			x = -getWidth() + MathUtils.random(160);
 			dx = 1;
 		} else {
-			x = Gdx.graphics.getWidth();
+			x = Gdx.graphics.getWidth() - MathUtils.random(160);
 			dx = -1;
 		}
-		y = 480 + MathUtils.random(160);
+		y = 480;
 		dy = 0;
 	}
 }
