@@ -2,12 +2,12 @@ package com.dvdfu.panic.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.MainGame;
+import com.dvdfu.panic.objects.AbstractEnemy;
 import com.dvdfu.panic.objects.EnemyBasic;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Player;
@@ -63,7 +63,6 @@ public class TestScreen extends AbstractScreen {
 		}
 		collisions();
 		stage.act(delta);
-		// stage.getCamera().position.set(Gdx.graphics.getWidth() / 2, player.getY() + 80, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
@@ -86,9 +85,9 @@ public class TestScreen extends AbstractScreen {
 				enemy.collideEnemy(enemy2);
 				enemy2.collideEnemy(enemy);
 			}
-			if (enemy.getX() > Gdx.graphics.getWidth() || enemy.getRight() < 0 || enemy.getTop() < 0) {
+			if (enemy.getState() == AbstractEnemy.State.REMOVE) {
 				enemies.removeActor(enemy);
-				// objects.free(enemy);
+				objects.free(enemy);
 			}
 		}
 	}

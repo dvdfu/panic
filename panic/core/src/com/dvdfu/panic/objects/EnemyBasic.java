@@ -20,10 +20,22 @@ public class EnemyBasic extends AbstractEnemy {
 		if (state != State.GRABBED) {
 			dy -= 0.3f;
 		}
+		if (state == State.STUNNED) {
+			if (dx > 0.2f) {
+				dx -= 0.2f;
+			} else if (dx < -0.2f) {
+				dx += 0.2f;
+			} else {
+				dx = 0;
+			}
+		}
 	}
 
 	public void act(float delta) {
 		super.act(delta);
+		if (state != State.GRABBED && (getX() > Gdx.graphics.getWidth() || getRight() < 0 || getTop() < 0)) {
+			setState(State.REMOVE);
+		}
 	}
 
 	public void collideSolid(Solid block) {
@@ -34,10 +46,9 @@ public class EnemyBasic extends AbstractEnemy {
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
 				y = block.getY() - getHeight();
+				dy = -0.1f;
 				if (state == State.THROWN && dx == 0) {
 					setState(State.DEAD);
-				} else {
-					dy = 0;
 				}
 			}
 			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
@@ -72,25 +83,37 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
-		if (state != State.ACTIVE && state != State.GRABBED) {
-			return;
-		}
 		if (bounds.overlaps(enemy.bounds)) {
-			if (enemy.state == State.THROWN || enemy.state == State.GRABBED) {
-				setState(State.DEAD);
-			}
-			if (enemy.state == State.ACTIVE && state == State.GRABBED) {
-				enemy.setState(State.DEAD);
-				setState(State.DEAD);
-			}
-			if (enemy.state == State.STUNNED && state == State.ACTIVE) {
-				if (dx > 0) {
-					x = enemy.getX() - getWidth();
+			switch (state) {
+			case ACTIVE:
+				if (enemy.state == State.STUNNED) {
+					if (dx > 0) {
+						x = enemy.getX() - getWidth();
+						enemy.launch(5, 0);
+					}
+					if (dx < 0) {
+						x = enemy.getRight();
+						enemy.launch(-5, 0);
+					}
+					dx = -dx;
 				}
-				if (dx < 0) {
-					x = enemy.getRight();
+				break;
+			case GRABBED:
+				if (enemy.state == State.ACTIVE) {
+					enemy.setState(State.DEAD);
+					setState(State.DEAD);
+				} else if (enemy.state == State.STUNNED) {
+					enemy.setState(State.DEAD);
 				}
-				dx = -dx;
+				break;
+			case THROWN:
+				if (enemy.state != State.DEAD) {
+					enemy.setState(State.DEAD);
+				}
+				break;
+			default:
+				break;
+
 			}
 		}
 	}
@@ -104,6 +127,8 @@ public class EnemyBasic extends AbstractEnemy {
 			if (dy == 0) dy = 6;
 			else dy = -dy;
 			dx = -dx;
+			break;
+		default:
 			break;
 		}
 		super.setState(state);
