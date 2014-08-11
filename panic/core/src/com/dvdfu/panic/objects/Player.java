@@ -21,17 +21,11 @@ public class Player extends GameObject {
 		walkSpeed = 5;
 		reset();
 	}
-	
+
 	/*
-	 * must have functions called in this order:
-	 * -move
-	 *     -must change dx/dy
-	 *     -must change grounded to false
-	 * -collide
-	 *     -must correct x/y, dx/dy
-	 *     -must correct grounded
-	 * -act
-	 *     -must add dx/dy to x/y, must finalize position
+	 * must have functions called in this order: -move -must change dx/dy -must
+	 * change grounded to false -collide -must correct x/y, dx/dy -must correct
+	 * grounded -act -must add dx/dy to x/y, must finalize position
 	 */
 
 	public void move() {
@@ -71,25 +65,33 @@ public class Player extends GameObject {
 		}
 
 		if (held != null) {
-			if (throwTimer > 0) {
-				throwTimer--;
-			}
-			if (facingRight) {
-				held.x = x + 16;
-				held.y = y;
-			} else {
-				held.x = x - 16;
-				held.y = y;
-			}
-			if (throwTimer == 0 && !Input.KeyDown(Input.CTRL)) {
-				float dxt = 0;
-				float dyt = 0;
-				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -9;
-				if (Input.KeyDown(Input.ARROW_UP)) dyt = 12;
-				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -9;
-				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 9;
-				held.launch(dxt, dyt);
+			if (held.getState() != AbstractEnemy.State.GRABBED) {
 				held = null;
+			} else {
+				if (throwTimer > 0) {
+					throwTimer--;
+				}
+				if (facingRight) {
+					held.x = x + 16;
+					held.y = y;
+				} else {
+					held.x = x - 16;
+					held.y = y;
+				}
+				if (throwTimer == 0 && !Input.KeyDown(Input.CTRL)) {
+					float dyt = 3;
+					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -9;
+					if (Input.KeyDown(Input.ARROW_UP)) dyt = 12;
+					float dxt = 0;
+					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -9;
+					else if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 9;
+					else {
+						if (dyt == 3) dxt = facingRight ? 9 : -9;
+						else dxt = 0;
+					}
+					held.launch(dxt, dyt);
+					held = null;
+				}
 			}
 		}
 		grounded = false;

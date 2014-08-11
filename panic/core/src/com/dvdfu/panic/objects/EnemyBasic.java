@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class EnemyBasic extends AbstractEnemy {
-	private boolean disturbed;
 
 	public EnemyBasic() {
 		super();
@@ -24,23 +23,28 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void act(float delta) {
-		disturbed = dx != 0 || dy != 0;
 		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
-		if (state == State.GRABBED || !disturbed) { return; }
+		if (state == State.GRABBED || state == State.DEAD) {
+			return;
+		}
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
 				y = block.getY() - getHeight();
-				dy = 0;
+				if (state == State.THROWN && dx == 0) {
+					setState(State.DEAD);
+				} else {
+					dy = 0;
+				}
 			}
 			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
 				y = block.getTop();
 				dy = 0;
-				if (state == State.THROWN) {
-					state = State.STUNNED;
+				if (state == State.THROWN && dx == 0) {
+					setState(State.DEAD);
 				}
 			}
 		}
@@ -48,53 +52,59 @@ public class EnemyBasic extends AbstractEnemy {
 		if (myRect.overlaps(block.bounds)) {
 			if (getRight() + dx > block.getX() && myRect.x < block.getX()) {
 				x = block.getX() - getWidth();
-				dx = 0;
-				dy = 0;
+				if (state == State.THROWN) {
+					dx = -dx;
+				} else {
+					dx = 0;
+					dy = 0;
+				}
 			}
 			if (getRight() + dx > block.getRight() && myRect.x < block.getRight()) {
 				x = block.getRight();
-				dx = 0;
-				dy = 0;
+				if (state == State.THROWN) {
+					dx = -dx;
+				} else {
+					dx = 0;
+					dy = 0;
+				}
 			}
 		}
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
-		if (state == State.GRABBED || state == State.STUNNED || !disturbed) { return; }
-		Rectangle myRect = bounds.setPosition(x, y + dy);
-		if (myRect.overlaps(enemy.bounds)) {
-			if (getTop() + dy > enemy.getY() && myRect.y < enemy.getY()) {
-				y = enemy.getY() - getHeight();
-				dy = 0;
-			}
-			if (getTop() + dy > enemy.getTop() && myRect.y < enemy.getTop()) {
-				y = enemy.getTop();
-				dy = 0;
-				if (state == State.THROWN) {
-					state = State.STUNNED;
-				}
-			}
+		if (state != State.ACTIVE && state != State.GRABBED) {
+			return;
 		}
-		myRect.setPosition(x + dx, y);
-		if (myRect.overlaps(enemy.bounds)) {
-			if (getRight() + dx > enemy.getX() && myRect.x < enemy.getX()) {
-				x = enemy.getX() - getWidth();
-				dx = -dx;
-				dy = 0;
+		if (bounds.overlaps(enemy.bounds)) {
+			if (enemy.state == State.THROWN || enemy.state == State.GRABBED) {
+				setState(State.DEAD);
 			}
-			if (getRight() + dx > enemy.getRight() && myRect.x < enemy.getRight()) {
-				x = enemy.getRight();
+			if (enemy.state == State.ACTIVE && state == State.GRABBED) {
+				enemy.setState(State.DEAD);
+				setState(State.DEAD);
+			}
+			if (enemy.state == State.STUNNED && state == State.ACTIVE) {
+				if (dx > 0) {
+					x = enemy.getX() - getWidth();
+				}
+				if (dx < 0) {
+					x = enemy.getRight();
+				}
 				dx = -dx;
-				dy = 0;
 			}
 		}
 	}
-	
+
 	public void setState(State state) {
 		switch (state) {
 		case STUNNED:
 			dx = 0;
-		break;
+			break;
+		case DEAD:
+			if (dy == 0) dy = 6;
+			else dy = -dy;
+			dx = -dx;
+			break;
 		}
 		super.setState(state);
 	}
@@ -112,6 +122,9 @@ public class EnemyBasic extends AbstractEnemy {
 			break;
 		case THROWN:
 			batch.setColor(new Color(1, 0, 0, 1));
+			break;
+		case DEAD:
+			batch.setColor(new Color(1, 0, 1, 1));
 			break;
 		}
 		super.draw(batch, alpha);
