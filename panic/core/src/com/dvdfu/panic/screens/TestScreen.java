@@ -52,7 +52,7 @@ public class TestScreen extends AbstractScreen {
 
 	public void render(float delta) {
 		timer++;
-		if (timer == 200) {
+		if (timer == 120) {
 			enemies.addActor(objects.obtain());
 			timer = 0;
 		}

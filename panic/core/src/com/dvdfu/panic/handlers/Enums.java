@@ -2,7 +2,7 @@ package com.dvdfu.panic.handlers;
 
 public class Enums {
 	public enum EnemyState {
-		ACTIVE, STUNNED, GRABBED, THROWN, DAMAGED, DEAD, REMOVE
+		ACTIVE, STUNNED, GRABBED, THROWN, DEAD, REMOVE
 	}
 
 	public enum ItemType {

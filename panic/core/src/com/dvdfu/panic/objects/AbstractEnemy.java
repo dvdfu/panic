@@ -8,7 +8,6 @@ public abstract class AbstractEnemy extends GameObject {
 	protected boolean grounded;
 	protected int stunnedTimer;
 	protected int damagedTimer;
-	protected int health;
 
 	public AbstractEnemy() {
 		state = EnemyState.ACTIVE;

@@ -8,7 +8,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.resizable = false;
-		config.vSyncEnabled = true;
+		config.vSyncEnabled = false;
 		config.width = 800;
 		new LwjglApplication(new MainGame(), config);
 	}

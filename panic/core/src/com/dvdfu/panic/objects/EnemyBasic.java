@@ -23,7 +23,7 @@ public class EnemyBasic extends AbstractEnemy {
 		if (state != EnemyState.GRABBED) {
 			dy -= 0.3f;
 		}
-		if (state == EnemyState.STUNNED || state == EnemyState.DAMAGED || state == EnemyState.THROWN) {
+		if (state == EnemyState.STUNNED || state == EnemyState.THROWN) {
 			float dxt = grounded ? 0.3f : 0.1f;
 			if (dx > dxt) {
 				dx -= dxt;
@@ -44,22 +44,7 @@ public class EnemyBasic extends AbstractEnemy {
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
 			} else {
-				if (health <= 0) {
-					setState(EnemyState.DEAD);
-				} else {
-					setState(EnemyState.ACTIVE);
-				}
-			}
-		}
-		if (state == EnemyState.DAMAGED) {
-			if (damagedTimer > 0) {
-				damagedTimer--;
-			} else {
 				setState(EnemyState.ACTIVE);
-			}
-			if (health <= 0) {
-				dy = 0;
-				setState(EnemyState.DEAD);
 			}
 		}
 		super.act(delta);
@@ -69,7 +54,9 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void collideSolid(Solid block) {
-		if (state == EnemyState.GRABBED || state == EnemyState.DEAD) { return; }
+		if (state == EnemyState.GRABBED || state == EnemyState.DEAD) {
+			return;
+		}
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
@@ -115,7 +102,7 @@ public class EnemyBasic extends AbstractEnemy {
 		switch (state) {
 		case ACTIVE:
 			if (bounds.overlaps(enemy.bounds)) {
-				if (enemy.state == EnemyState.STUNNED) {
+				if (enemy.state == EnemyState.STUNNED && grounded) {
 					if (dx > 0) {
 						x = enemy.getX() - getWidth();
 						enemy.launch(3, 0);
@@ -132,18 +119,18 @@ public class EnemyBasic extends AbstractEnemy {
 		case GRABBED:
 			if (bounds.overlaps(enemy.bounds)) {
 				if (enemy.state == EnemyState.ACTIVE) {
-					enemy.setState(EnemyState.DAMAGED);
-					enemy.launch(-enemy.dx * 2, 5);
-				} else if (enemy.state == EnemyState.STUNNED) {
 					enemy.setState(EnemyState.DEAD);
+					enemy.launch(dx == 0? enemy.dx * 2: dx / 2, 5);
+					setState(EnemyState.DEAD);
+					launch(dx, 5);
 				}
 			}
 			break;
 		case THROWN:
 			if (bounds.overlaps(enemy.bounds)) {
 				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
-					enemy.setState(EnemyState.DAMAGED);
-					enemy.launch(dx / 2, 5);
+					enemy.setState(EnemyState.DEAD);
+					enemy.launch(dx == 0? enemy.dx * 2: dx / 2, 5);
 				}
 			}
 			break;
@@ -160,10 +147,6 @@ public class EnemyBasic extends AbstractEnemy {
 		case STUNNED:
 			stunnedTimer = 180;
 			dx = 0;
-			break;
-		case DAMAGED:
-			loseHealth();
-			damagedTimer = 30;
 			break;
 		case DEAD:
 			dy = 6;
@@ -188,9 +171,6 @@ public class EnemyBasic extends AbstractEnemy {
 		case THROWN:
 			batch.setColor(new Color(1, 0, 0, 1));
 			break;
-		case DAMAGED:
-			batch.setColor(new Color(1, 0.5f, 0, 1));
-			break;
 		case DEAD:
 			batch.setColor(new Color(1, 0, 1, 1));
 			break;
@@ -204,8 +184,6 @@ public class EnemyBasic extends AbstractEnemy {
 	public void reset() {
 		setSize(32, 32);
 		state = EnemyState.ACTIVE;
-		health = 2;
-		if (MathUtils.randomBoolean()) loseHealth();
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
 			x = -getWidth() + MathUtils.random(160);
@@ -216,16 +194,5 @@ public class EnemyBasic extends AbstractEnemy {
 		}
 		y = 480;
 		dy = 0;
-	}
-
-	public void loseHealth() {
-		health--;
-		switch (health) {
-		case 1:
-			setHeight(16);
-			break;
-		default:
-			break;
-		}
 	}
 }

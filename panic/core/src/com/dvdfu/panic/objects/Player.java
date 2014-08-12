@@ -41,7 +41,9 @@ public class Player extends GameObject {
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
-				dy = 8;
+				if (Input.KeyDown(Input.ARROW_UP)) dy = 8;
+				else if (Input.KeyDown(Input.ARROW_DOWN)) dy = 3;
+				else dy = 6;
 			}
 			if (Input.KeyReleased(Input.Z)) {
 				jumpTimer = 0;
@@ -69,7 +71,9 @@ public class Player extends GameObject {
 		}
 		if (grounded && Input.KeyPressed(Input.Z)) {
 			jumpTimer = 12;
-			dy = 9;
+			if (Input.KeyDown(Input.ARROW_UP)) dy = 8;
+			else if (Input.KeyDown(Input.ARROW_DOWN)) dy = 3;
+			else dy = 6;
 		}
 		grounded = false;
 	}
@@ -136,7 +140,7 @@ public class Player extends GameObject {
 	public void collideEnemy(AbstractEnemy enemy) {
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(enemy.bounds)) {
-			if (enemy.getState() == EnemyState.ACTIVE || enemy.getState() == EnemyState.DAMAGED) {
+			if (enemy.getState() == EnemyState.ACTIVE) {
 				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
 					enemy.setState(EnemyState.STUNNED);
 					dy = 6;
