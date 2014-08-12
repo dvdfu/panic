@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.MainGame;
-import com.dvdfu.panic.objects.AbstractEnemy;
+import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.objects.EnemyBasic;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Player;
@@ -34,10 +34,10 @@ public class TestScreen extends AbstractScreen {
 		s1.setSize(Gdx.graphics.getWidth() - 128, 160);
 		solids.addActor(s1);
 		Solid s2 = new Solid(0, 360);
-		s2.setSize(160, 32);
+		s2.setSize(256, 32);
 		solids.addActor(s2);
-		Solid s3 = new Solid(Gdx.graphics.getWidth() - 160, 360);
-		s3.setSize(160, 32);
+		Solid s3 = new Solid(Gdx.graphics.getWidth() - 256, 360);
+		s3.setSize(256, 32);
 		solids.addActor(s3);
 		stage.addActor(solids);
 
@@ -52,7 +52,7 @@ public class TestScreen extends AbstractScreen {
 
 	public void render(float delta) {
 		timer++;
-		if (timer == 120) {
+		if (timer == 200) {
 			enemies.addActor(objects.obtain());
 			timer = 0;
 		}
@@ -85,7 +85,7 @@ public class TestScreen extends AbstractScreen {
 				enemy.collideEnemy(enemy2);
 				enemy2.collideEnemy(enemy);
 			}
-			if (enemy.getState() == AbstractEnemy.State.REMOVE) {
+			if (enemy.getState() == EnemyState.REMOVE) {
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}

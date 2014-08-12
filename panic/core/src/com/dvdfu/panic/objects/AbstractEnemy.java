@@ -1,25 +1,30 @@
 package com.dvdfu.panic.objects;
 
-public abstract class AbstractEnemy extends GameObject {
-	public enum State {
-		ACTIVE, STUNNED, GRABBED, THROWN, DEAD, REMOVE
-	}
+import com.dvdfu.panic.handlers.Enums.EnemyState;
 
-	protected State state;
+public abstract class AbstractEnemy extends GameObject {
+
+	protected EnemyState state;
+	protected boolean grounded;
+	protected int stunnedTimer;
+	protected int damagedTimer;
+	protected int health;
 
 	public AbstractEnemy() {
-		state = State.ACTIVE;
+		state = EnemyState.ACTIVE;
+		stunnedTimer = 0;
+		damagedTimer = 0;
 	}
 
 	public void act(float delta) {
 		super.act(delta);
 	}
 
-	public State getState() {
+	public EnemyState getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public void setState(EnemyState state) {
 		this.state = state;
 	}
 

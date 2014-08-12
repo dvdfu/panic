@@ -1,9 +1,8 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Input;
-import com.dvdfu.panic.objects.AbstractEnemy.State;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
@@ -77,7 +76,7 @@ public class Player extends GameObject {
 
 	public void act(float delta) {
 		if (held != null) {
-			if (held.getState() != AbstractEnemy.State.GRABBED) {
+			if (held.getState() != EnemyState.GRABBED) {
 				held = null;
 			} else {
 				if (throwTimer > 0) {
@@ -88,12 +87,12 @@ public class Player extends GameObject {
 					float dxt = 0;
 					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -12;
 					if (Input.KeyDown(Input.ARROW_UP)) dyt = 12;
-					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -9;
-					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 9;
+					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -12;
+					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 12;
 					if (dyt == dy + 3 && dxt == 0) {
-						held.setState(AbstractEnemy.State.STUNNED);
+						held.setState(EnemyState.STUNNED);
 					} else {
-						held.setState(AbstractEnemy.State.THROWN);
+						held.setState(EnemyState.THROWN);
 					}
 					held.launch(dxt, dyt);
 					held = null;
@@ -137,19 +136,19 @@ public class Player extends GameObject {
 	public void collideEnemy(AbstractEnemy enemy) {
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(enemy.bounds)) {
-			if (enemy.getState() == AbstractEnemy.State.ACTIVE) {
+			if (enemy.getState() == EnemyState.ACTIVE || enemy.getState() == EnemyState.DAMAGED) {
 				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
-					enemy.setState(AbstractEnemy.State.STUNNED);
-					dy = 8;
+					enemy.setState(EnemyState.STUNNED);
+					dy = 6;
 				}
 			}
 		}
 		myRect = bounds.setPosition(x + dx, y);
 		if (myRect.overlaps(enemy.bounds)) {
-			if (enemy.getState() == AbstractEnemy.State.STUNNED && Input.KeyDown(Input.CTRL) && held == null) {
+			if (enemy.getState() == EnemyState.STUNNED && Input.KeyDown(Input.CTRL) && held == null) {
 				held = enemy;
-				enemy.setState(AbstractEnemy.State.GRABBED);
-			} else if (enemy.getState() == AbstractEnemy.State.ACTIVE) {
+				enemy.setState(EnemyState.GRABBED);
+			} else if (enemy.getState() == EnemyState.ACTIVE) {
 				reset();
 			}
 		}
