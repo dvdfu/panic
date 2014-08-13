@@ -1,7 +1,7 @@
 package com.dvdfu.panic.visuals;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Label {
 	private String text;
@@ -20,11 +20,11 @@ public class Label {
 		return (int) font.getBounds(text).height;
 	}
 	
-	public void draw(SpriteBatch batch, int x, int y) {
+	public void draw(Batch batch, float x, float y) {
 		font.draw(batch, text, x, y);
 	}
 	
-	public void drawC(SpriteBatch batch, int x, int y) {
+	public void drawC(Batch batch, float x, float y) {
 		font.draw(batch, text, x - width() / 2, y + height() / 2);
 	}
 	

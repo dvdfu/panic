@@ -6,16 +6,21 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.screens.TestScreen;
+import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class EnemyBasic extends AbstractEnemy {
+	private Label healthBar;
 	private boolean movingRight;
 	private final int moveSpeed = 1;
 
 	public EnemyBasic() {
 		super();
+		healthBar = new Label("" + stunnedTimer);
 		stretched = true;
 		reset();
+		setSize(32, 32);
 		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
 	}
 
@@ -40,39 +45,38 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void act(float delta) {
-		if (state == EnemyState.STUNNED) {
+		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED) {
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
 			} else {
 				setState(EnemyState.ACTIVE);
 			}
 		}
-		super.act(delta);
 		if (state != EnemyState.GRABBED && (getX() > Gdx.graphics.getWidth() || getRight() < 0 || getTop() < 0)) {
 			setState(EnemyState.REMOVE);
 		}
+		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
-		if (state == EnemyState.GRABBED || state == EnemyState.DEAD) {
+		if (state == EnemyState.GRABBED) {
 			return;
 		}
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
 				y = block.getY() - getHeight();
-				dy = 0;
-				if (state == EnemyState.THROWN && dx == 0) {
-					setState(EnemyState.STUNNED);
-				}
 			}
 			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
 				y = block.getTop();
-				dy = 0;
 				grounded = true;
-				if (state == EnemyState.THROWN && dx == 0) {
-					setState(EnemyState.STUNNED);
-				}
+			}
+			dy = 0;
+			if (state == EnemyState.THROWN && dx == 0) {
+				setState(EnemyState.STUNNED);
+			}
+			if (state == EnemyState.DEAD) {
+				setState(EnemyState.REMOVE);
 			}
 		}
 		myRect.setPosition(x + dx, y);
@@ -120,9 +124,7 @@ public class EnemyBasic extends AbstractEnemy {
 			if (bounds.overlaps(enemy.bounds)) {
 				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.DEAD);
-					enemy.launch(dx == 0? enemy.dx * 2: dx / 2, 5);
-					setState(EnemyState.DEAD);
-					launch(dx, 5);
+					enemy.launch(dx == 0 ? enemy.dx * 2 : dx / 2, 5);
 				}
 			}
 			break;
@@ -130,7 +132,7 @@ public class EnemyBasic extends AbstractEnemy {
 			if (bounds.overlaps(enemy.bounds)) {
 				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
 					enemy.setState(EnemyState.DEAD);
-					enemy.launch(dx == 0? enemy.dx * 2: dx / 2, 5);
+					enemy.launch(dx == 0 ? enemy.dx * 2 : dx / 2, 5);
 				}
 			}
 			break;
@@ -145,7 +147,6 @@ public class EnemyBasic extends AbstractEnemy {
 			dx = movingRight ? moveSpeed : -moveSpeed;
 			break;
 		case STUNNED:
-			stunnedTimer = 180;
 			dx = 0;
 			break;
 		case DEAD:
@@ -178,21 +179,24 @@ public class EnemyBasic extends AbstractEnemy {
 			break;
 		}
 		super.draw(batch, alpha);
+		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
+			healthBar.setText("" + stunnedTimer / 10);
+			healthBar.drawC(batch, x + 16, y + 40);
+		}
 		batch.setColor(1, 1, 1, 1);
 	}
 
 	public void reset() {
-		setSize(32, 32);
 		state = EnemyState.ACTIVE;
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
-			x = -getWidth() + MathUtils.random(160);
+			x = 1 - getWidth() + MathUtils.random(160);
 			dx = moveSpeed;
 		} else {
-			x = Gdx.graphics.getWidth() - MathUtils.random(160);
+			x = Gdx.graphics.getWidth() - MathUtils.random(160) - 1;
 			dx = -moveSpeed;
 		}
-		y = 480;
+		y = Gdx.graphics.getHeight();
 		dy = 0;
 	}
 }

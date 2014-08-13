@@ -31,4 +31,8 @@ public abstract class AbstractEnemy extends GameObject {
 		this.dx = dx;
 		this.dy = dy;
 	}
+	
+	public void jumpOn() {
+		stunnedTimer = 500;
+	}
 }

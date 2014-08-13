@@ -2,11 +2,13 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
 	private AbstractEnemy held;
+	private ItemType[] items = { null, null, null };
 	private float walkSpeed;
 	private int jumpTimer;
 	private int throwTimer;
@@ -142,6 +144,7 @@ public class Player extends GameObject {
 		if (myRect.overlaps(enemy.bounds)) {
 			if (enemy.getState() == EnemyState.ACTIVE) {
 				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
+					enemy.jumpOn();
 					enemy.setState(EnemyState.STUNNED);
 					dy = 6;
 				}
@@ -156,6 +159,22 @@ public class Player extends GameObject {
 				reset();
 			}
 		}
+	}
+	
+	private void getItem(ItemType item) {
+		if (hasItem(item) == -1) {
+			items[2] = items[1];
+			items[1] = items[0];
+			items[0] = item;
+		} else {
+		}
+	}
+	
+	private int hasItem(ItemType item) {
+		for (int i = 0; i < 3; i++) {
+			if (items[i] == item) return i;
+		}
+		return -1;
 	}
 
 	public void reset() {

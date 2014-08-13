@@ -8,30 +8,38 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.objects.EnemyBasic;
-import com.dvdfu.panic.objects.GameObject;
+import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Player;
 import com.dvdfu.panic.objects.Solid;
 
 public class TestScreen extends AbstractScreen {
-	private Pool<GameObject> objects;
+	private Pool<EnemyBasic> enemyPool;
 	private Stage stage;
 	private Group enemies;
 	private Group solids;
+	private Group items;
 	private Player player;
 	private int timer;
 
 	public TestScreen(MainGame game) {
 		super(game);
-		objects = new Pool<GameObject>() {
+		enemyPool = new Pool<EnemyBasic>() {
 			protected EnemyBasic newObject() {
 				return new EnemyBasic();
 			}
 		};
+		
 		stage = new Stage();
+		
+		items = new Group();
+		stage.addActor(items);
+		
 		solids = new Group();
-		Solid s1 = new Solid(64, 0);
-		s1.setSize(Gdx.graphics.getWidth() - 128, 160);
+		solids.setZIndex(0);
+		Solid s1 = new Solid(96, 0);
+		s1.setSize(Gdx.graphics.getWidth() - 192, 176);
 		solids.addActor(s1);
 		Solid s2 = new Solid(0, 360);
 		s2.setSize(256, 32);
@@ -47,25 +55,34 @@ public class TestScreen extends AbstractScreen {
 
 		player = new Player();
 		stage.addActor(player);
+		
 		timer = 0;
 	}
 
 	public void render(float delta) {
 		timer++;
 		if (timer == 120) {
-			enemies.addActor(objects.obtain());
+			enemies.addActor(enemyPool.obtain());
 			timer = 0;
 		}
-		player.move();
-		for (Actor actor2 : enemies.getChildren()) {
-			EnemyBasic enemy = (EnemyBasic) actor2;
-			enemy.move();
-		}
+		movement();
 		collisions();
 		stage.act(delta);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
+	}
+	
+	private void movement() {
+		player.move();
+		for (Actor actor : enemies.getChildren()) {
+			EnemyBasic enemy = (EnemyBasic) actor;
+			enemy.move();
+		}
+		for (Actor actor : items.getChildren()) {
+			Item item = (Item) actor;
+			item.move();
+		}
 	}
 
 	private void collisions() {
@@ -75,6 +92,10 @@ public class TestScreen extends AbstractScreen {
 			for (Actor actor2 : enemies.getChildren()) {
 				EnemyBasic enemy = (EnemyBasic) actor2;
 				enemy.collideSolid(solid);
+			}
+			for (Actor actor2 : items.getChildren()) {
+				Item item = (Item) actor2;
+				item.collideSolid(solid);
 			}
 		}
 		for (int i = 0; i < enemies.getChildren().size; i++) {
@@ -86,10 +107,22 @@ public class TestScreen extends AbstractScreen {
 				enemy2.collideEnemy(enemy);
 			}
 			if (enemy.getState() == EnemyState.REMOVE) {
+				spawnItem(enemy.getX(), enemy.getY());
 				enemies.removeActor(enemy);
-				objects.free(enemy);
+				enemyPool.free(enemy);
 			}
 		}
+		for (Actor actor : items.getChildren()) {
+			Item item = (Item) actor;
+			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.CTRL)) {
+				items.removeActor(item);
+			}
+		}
+	}
+	
+	public void spawnItem(float x, float y) {
+		Item item = new Item(x, y);
+		items.addActor(item);
 	}
 
 	public void resize(int width, int height) {}
