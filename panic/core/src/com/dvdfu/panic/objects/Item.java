@@ -10,11 +10,10 @@ public class Item extends GameObject {
 	private ItemType type;
 	private boolean grounded;
 
-	public Item(float x, float y) {
+	public Item() {
 		reset();
-		this.x = x;
-		this.y = y;
-		setSize(16, 16);
+		setSize(32, 32);
+		stretched = true;
 		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
 	}
 

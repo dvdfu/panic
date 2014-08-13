@@ -161,7 +161,7 @@ public class Player extends GameObject {
 		}
 	}
 	
-	private void getItem(ItemType item) {
+	public void getItem(ItemType item) {
 		if (hasItem(item) == -1) {
 			items[2] = items[1];
 			items[1] = items[0];
@@ -169,7 +169,7 @@ public class Player extends GameObject {
 		} else {
 		}
 	}
-	
+
 	private int hasItem(ItemType item) {
 		for (int i = 0; i < 3; i++) {
 			if (items[i] == item) return i;

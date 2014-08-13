@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
-import com.dvdfu.panic.screens.TestScreen;
 import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
 
@@ -198,5 +197,6 @@ public class EnemyBasic extends AbstractEnemy {
 		}
 		y = Gdx.graphics.getHeight();
 		dy = 0;
+		setPosition(x, y);
 	}
 }

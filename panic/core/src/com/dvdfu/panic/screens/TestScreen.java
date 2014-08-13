@@ -5,17 +5,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Input;
+import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Player;
 import com.dvdfu.panic.objects.Solid;
 
 public class TestScreen extends AbstractScreen {
-	private Pool<EnemyBasic> enemyPool;
+	private ObjectPool objects;
 	private Stage stage;
 	private Group enemies;
 	private Group solids;
@@ -25,12 +25,7 @@ public class TestScreen extends AbstractScreen {
 
 	public TestScreen(MainGame game) {
 		super(game);
-		enemyPool = new Pool<EnemyBasic>() {
-			protected EnemyBasic newObject() {
-				return new EnemyBasic();
-			}
-		};
-		
+		objects = new ObjectPool();
 		stage = new Stage();
 		
 		items = new Group();
@@ -62,7 +57,7 @@ public class TestScreen extends AbstractScreen {
 	public void render(float delta) {
 		timer++;
 		if (timer == 120) {
-			enemies.addActor(enemyPool.obtain());
+			enemies.addActor(objects.getEnemyBasic());
 			timer = 0;
 		}
 		movement();
@@ -109,19 +104,21 @@ public class TestScreen extends AbstractScreen {
 			if (enemy.getState() == EnemyState.REMOVE) {
 				spawnItem(enemy.getX(), enemy.getY());
 				enemies.removeActor(enemy);
-				enemyPool.free(enemy);
+				objects.free(enemy);
 			}
 		}
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
 			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.CTRL)) {
 				items.removeActor(item);
+				objects.free(item);
 			}
 		}
 	}
 	
 	public void spawnItem(float x, float y) {
-		Item item = new Item(x, y);
+		Item item = objects.getItem();
+		item.setPosition(x, y);
 		items.addActor(item);
 	}
 

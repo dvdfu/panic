@@ -30,7 +30,7 @@ public abstract class GameObject extends Actor implements Poolable {
 		}
 		x += dx;
 		y += dy;
-		setPosition(x, y);
+		super.setPosition(x, y);
 		bounds.set(getX(), getY(), getWidth(), getHeight());
 		super.act(delta);
 	}
@@ -65,5 +65,11 @@ public abstract class GameObject extends Actor implements Poolable {
 	
 	public float getY() {
 		return y;
+	}
+	
+	public void setPosition(float x, float y) {
+		this.x = x;
+		this.y = y;
+		super.setPosition(x, y);
 	}
 }
