@@ -9,12 +9,15 @@ public class Solid extends GameObject {
 		this.x = x;
 		this.y = y;
 		stretched = true;
-		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
+		setSprite(Sprites.plain);
 	}
 
 	public void act(float delta) {
 		super.act(delta);
 	}
 
+	public void move() {}
+
 	public void reset() {}
+
 }

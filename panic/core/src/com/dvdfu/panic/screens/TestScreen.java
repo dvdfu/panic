@@ -12,6 +12,7 @@ import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
 import com.dvdfu.panic.objects.Item;
+import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
 import com.dvdfu.panic.objects.Solid;
 
@@ -21,6 +22,7 @@ public class TestScreen extends AbstractScreen {
 	private Group enemies;
 	private Group solids;
 	private Group items;
+	private Group particles;
 	private Player player;
 	private int timer;
 
@@ -28,6 +30,9 @@ public class TestScreen extends AbstractScreen {
 		super(game);
 		objects = new ObjectPool();
 		stage = new Stage();
+		
+		particles = new Group();
+		stage.addActor(particles);
 		
 		items = new Group();
 		stage.addActor(items);
@@ -61,24 +66,11 @@ public class TestScreen extends AbstractScreen {
 			enemies.addActor(objects.getEnemyBasic());
 			timer = 0;
 		}
-		movement();
 		collisions();
 		stage.act(delta);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
-	}
-	
-	private void movement() {
-		player.move();
-		for (Actor actor : enemies.getChildren()) {
-			EnemyBasic enemy = (EnemyBasic) actor;
-			enemy.move();
-		}
-		for (Actor actor : items.getChildren()) {
-			Item item = (Item) actor;
-			item.move();
-		}
 	}
 
 	private void collisions() {
@@ -107,6 +99,11 @@ public class TestScreen extends AbstractScreen {
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}
+			if (enemy.getState() == EnemyState.THROWN) {
+				Particle p = objects.getParticle();
+				p.setPosition(enemy.getX() + enemy.getWidth() / 2 - p.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2 - p.getHeight() / 2);
+				particles.addActor(p);
+			}
 		}
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
@@ -114,6 +111,13 @@ public class TestScreen extends AbstractScreen {
 				player.getItem(item.getType());
 				items.removeActor(item);
 				objects.free(item);
+			}
+		}
+		for (Actor actor : particles.getChildren()) {
+			Particle p = (Particle) actor;
+			if (p.dead()) {
+				particles.removeActor(p);
+				objects.free(p);
 			}
 		}
 	}

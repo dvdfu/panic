@@ -4,10 +4,12 @@ import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.objects.EnemyBasic;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Item;
+import com.dvdfu.panic.objects.Particle;
 
 public class ObjectPool {
 	private Pool<EnemyBasic> enemyBasic;
 	private Pool<Item> item;
+	private Pool<Particle> particle;
 
 	public ObjectPool() {
 		enemyBasic = new Pool<EnemyBasic>() {
@@ -20,6 +22,11 @@ public class ObjectPool {
 				return new Item();
 			}
 		};
+		particle = new Pool<Particle>() {
+			protected Particle newObject() {
+				return new Particle();
+			}
+		};
 	}
 
 	public EnemyBasic getEnemyBasic() {
@@ -30,11 +37,17 @@ public class ObjectPool {
 		return item.obtain();
 	}
 
+	public Particle getParticle() {
+		return particle.obtain();
+	}
+
 	public void free(GameObject object) {
 		if (object instanceof EnemyBasic) {
 			enemyBasic.free((EnemyBasic) object);
 		} else if (object instanceof Item) {
 			item.free((Item) object);
+		} else if (object instanceof Particle) {
+			particle.free((Particle) object);
 		}
 	}
 }

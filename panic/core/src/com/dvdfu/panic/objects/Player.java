@@ -21,7 +21,7 @@ public class Player extends GameObject {
 		super();
 		setSize(28, 18);
 		xSprOffset = -2;
-		setSprite(Sprites.atlas.createSprite("player"), 32, 32);
+		setSprite(Sprites.player);
 		throwSpeed = 12;
 		walkSpeed = 6;
 		reset();
@@ -51,10 +51,6 @@ public class Player extends GameObject {
 				jumpTimer = 0;
 			}
 		}
-		/*
-		 * if (Input.KeyDown(Input.C)) { walkSpeed = 6; throwSpeed = 12; } else
-		 * { walkSpeed = 3; throwSpeed = 8; }
-		 */
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
 			if (dx < walkSpeed) {
@@ -83,28 +79,28 @@ public class Player extends GameObject {
 	}
 
 	public void act(float delta) {
+		move();
+		if (throwTimer > 0) {
+			throwTimer--;
+		}
 		if (held != null) {
 			if (held.getState() != EnemyState.GRABBED) {
 				held = null;
-			} else {
-				if (throwTimer > 0) {
-					throwTimer--;
+			} else if (!Input.KeyDown(Input.C)) {
+				float dyt = dy + 3;
+				float dxt = 0;
+				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
+				if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
+				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
+				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
+				if (dyt == dy + 3 && dxt == 0) {
+					held.setState(EnemyState.STUNNED);
+				} else {
+					held.setState(EnemyState.THROWN);
 				}
-				if (throwTimer == 0 && !Input.KeyDown(Input.C)) {
-					float dyt = dy + 3;
-					float dxt = 0;
-					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
-					if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
-					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
-					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
-					if (dyt == dy + 3 && dxt == 0) {
-						held.setState(EnemyState.STUNNED);
-					} else {
-						held.setState(EnemyState.THROWN);
-					}
-					held.launch(dxt, dyt);
-					held = null;
-				}
+				held.launch(dxt, dyt);
+				held = null;
+				throwTimer = 10;
 			}
 		}
 		if (getTop() < 0) {
@@ -152,19 +148,17 @@ public class Player extends GameObject {
 		if (myRect.overlaps(enemy.bounds)) {
 			if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
 				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
-					if (enemy.state != EnemyState.STUNNED) {
-						enemy.setState(EnemyState.STUNNED);
-						enemy.jumpOn();
-						if (!Input.KeyDown(Input.C)) {
-							dy = 7;
-							jumpTimer = 16;
-						}
+					enemy.setState(EnemyState.STUNNED);
+					enemy.jumpOn();
+					if (!Input.KeyDown(Input.C)) {
+						dy = 7;
+						jumpTimer = 16;
 					}
 				}
 			}
 		}
 		if (bounds.overlaps(enemy.bounds)) {
-			if (enemy.state == EnemyState.STUNNED && Input.KeyDown(Input.C) && held == null) {
+			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0)) && Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 			} else if (enemy.state == EnemyState.ACTIVE) {

@@ -1,6 +1,5 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,22 +19,22 @@ public class EnemyBasic extends AbstractEnemy {
 		reset();
 		stretched = true;
 		setSize(32, 32);
-		setSprite(Sprites.atlas.createSprite("enemy_walk"), 24, 32);
+		setSprite(Sprites.enemyWalk);
 	}
 
 	public void move() {
 		if (state != EnemyState.GRABBED) {
 			dy -= 0.3f;
 		}
-		if (state == EnemyState.STUNNED || state == EnemyState.THROWN) {
-			float dxt = grounded ? 0.3f : 0.1f;
+		if (grounded && (state == EnemyState.STUNNED || state == EnemyState.THROWN)) {
+			float dxt = 0.25f;
 			if (dx > dxt) {
 				dx -= dxt;
 			} else if (dx < -dxt) {
 				dx += dxt;
 			} else {
 				dx = 0;
-				if (state == EnemyState.THROWN && grounded) {
+				if (state == EnemyState.THROWN) {
 					setState(EnemyState.STUNNED);
 				}
 			}
@@ -44,6 +43,7 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void act(float delta) {
+		move();
 		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
@@ -150,22 +150,22 @@ public class EnemyBasic extends AbstractEnemy {
 		switch (state) {
 		case ACTIVE:
 			dx = movingRight ? moveSpeed : -moveSpeed;
-			setSprite(Sprites.atlas.createSprite("enemy_walk"), 24, 32);
+			setSprite(Sprites.enemyWalk);
 			break;
 		case STUNNED:
 			dx = 0;
-			setSprite(Sprites.atlas.createSprite("enemy_throw"), 22, 16);
+			setSprite(Sprites.enemyThrow);
 			break;
 		case THROWN:
 		case GRABBED:
-			setSprite(Sprites.atlas.createSprite("enemy_throw"), 22, 16);
+			setSprite(Sprites.enemyThrow);
 			break;
 		case DEAD:
-			setSprite(Sprites.atlas.createSprite("enemy_throw"), 22, 16);
+			setSprite(Sprites.enemyThrow);
 			dy = 6;
 			break;
 		default:
-			setSprite(Sprites.atlas.createSprite("enemy_walk"), 24, 32);
+			setSprite(Sprites.enemyWalk);
 			break;
 		}
 		super.setState(state);

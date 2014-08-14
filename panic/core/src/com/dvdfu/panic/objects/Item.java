@@ -15,7 +15,7 @@ public class Item extends GameObject {
 		reset();
 		setSize(32, 32);
 		stretched = true;
-		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
+		setSprite(Sprites.plain);
 	}
 
 	public void setType(ItemType type) {
@@ -32,6 +32,7 @@ public class Item extends GameObject {
 	}
 
 	public void act(float delta) {
+		move();
 		super.act(delta);
 	}
 

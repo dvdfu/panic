@@ -2,7 +2,6 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -10,6 +9,8 @@ import com.dvdfu.panic.visuals.Animation;
 
 public abstract class GameObject extends Actor implements Poolable {
 	protected Animation sprite;
+	private int spriteLength;
+	private float spriteTimer;
 	protected Rectangle bounds;
 	protected boolean stretched;
 	protected int xSprOffset;
@@ -23,16 +24,19 @@ public abstract class GameObject extends Actor implements Poolable {
 		super();
 		bounds = new Rectangle();
 	}
+	
+	public abstract void move();
 
 	public void act(float delta) {
-		if (sprite != null) {
-			sprite.update(delta);
+		spriteTimer += delta * 15;
+		while (spriteTimer > spriteLength) {
+			spriteTimer -= spriteLength;
 		}
 		x += dx;
 		y += dy;
 		super.setPosition(x, y);
-		bounds.set(getX(), getY(), getWidth(), getHeight());
 		super.act(delta);
+		bounds.set(getX(), getY(), getWidth(), getHeight());
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
@@ -40,23 +44,25 @@ public abstract class GameObject extends Actor implements Poolable {
 			int xSpr = (int) (getX() + 0.5f);
 			int ySpr = (int) (getY() + 0.5f);
 			if (stretched) {
-				batch.draw(sprite.getFrame(), xSpr, ySpr, getWidth(), getHeight());
+				batch.draw(sprite.getFrame((int) spriteTimer), xSpr, ySpr, getWidth(), getHeight());
 			} else {
-				batch.draw(sprite.getFrame(), xSpr + xSprOffset, ySpr + ySprOffset);
+				batch.draw(sprite.getFrame((int) spriteTimer), xSpr + xSprOffset, ySpr + ySprOffset);
 			}
 		}
 	}
 
-	public void drawDebug(ShapeRenderer shapes, float parentAlpha) {
-		shapes.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+	public void setSprite(Sprite sprite, int width, int height) {
+		setSprite(new Animation(sprite, width, height));
 	}
 
-	public void setSprite(Sprite sprite, int width, int height) {
-		this.sprite = new Animation(sprite, width, height);
+	public void setSprite(Animation sprite) {
+		this.sprite = sprite;
+		spriteLength = sprite.getLength();
+		spriteTimer = 0;
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(getX(), getY(), getWidth(), getHeight());
+		return bounds;
 	}
 	
 	public float getX() {
