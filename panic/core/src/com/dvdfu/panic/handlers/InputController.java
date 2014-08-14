@@ -49,8 +49,11 @@ public class InputController extends InputAdapter {
 		case Keys.Z:
 			Input.setKey(Input.Z, true);
 			break;
+		case Keys.X:
+			Input.setKey(Input.C, true);
+			break;
 		case Keys.CONTROL_LEFT:
-			Input.setKey(Input.CTRL, true);
+			Input.setKey(Input.C, true);
 			break;
 		}
 		return true;
@@ -73,8 +76,11 @@ public class InputController extends InputAdapter {
 		case Keys.Z:
 			Input.setKey(Input.Z, false);
 			break;
+		case Keys.X:
+			Input.setKey(Input.C, false);
+			break;
 		case Keys.CONTROL_LEFT:
-			Input.setKey(Input.CTRL, false);
+			Input.setKey(Input.C, false);
 			break;
 		}
 		return true;

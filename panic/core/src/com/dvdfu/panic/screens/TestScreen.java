@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dvdfu.panic.MainGame;
+import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
@@ -34,12 +35,12 @@ public class TestScreen extends AbstractScreen {
 		solids = new Group();
 		solids.setZIndex(0);
 		Solid s1 = new Solid(96, 0);
-		s1.setSize(Gdx.graphics.getWidth() - 192, 176);
+		s1.setSize(Consts.ScreenWidth - 192, 176);
 		solids.addActor(s1);
 		Solid s2 = new Solid(0, 360);
 		s2.setSize(256, 32);
 		solids.addActor(s2);
-		Solid s3 = new Solid(Gdx.graphics.getWidth() - 256, 360);
+		Solid s3 = new Solid(Consts.ScreenWidth - 256, 360);
 		s3.setSize(256, 32);
 		solids.addActor(s3);
 		stage.addActor(solids);
@@ -109,7 +110,7 @@ public class TestScreen extends AbstractScreen {
 		}
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
-			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.CTRL)) {
+			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.C)) {
 				player.getItem(item.getType());
 				items.removeActor(item);
 				objects.free(item);

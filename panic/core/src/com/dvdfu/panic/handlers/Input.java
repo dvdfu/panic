@@ -13,8 +13,9 @@ public class Input {
 	public static final int ARROW_LEFT = 2;
 	public static final int ARROW_RIGHT = 3;
 	public static final int Z = 4;
-	public static final int CTRL = 5;
-	private static final int NUM_KEYS = 6;
+	public static final int C = 5;
+	public static final int X = 6;
+	private static final int NUM_KEYS = 7;
 	static {
 		mouse = new Vector2();
 		keys = new boolean[NUM_KEYS];

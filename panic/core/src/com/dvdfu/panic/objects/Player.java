@@ -1,7 +1,7 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.Input;
@@ -11,6 +11,7 @@ public class Player extends GameObject {
 	private AbstractEnemy held;
 	private ItemType[] items = { null, null, null };
 	private float walkSpeed;
+	private float throwSpeed;
 	private int jumpTimer;
 	private int throwTimer;
 	private boolean grounded;
@@ -21,11 +22,16 @@ public class Player extends GameObject {
 		setSize(28, 18);
 		xSprOffset = -2;
 		setSprite(Sprites.atlas.createSprite("player"), 32, 32);
-		walkSpeed = 5;
+		throwSpeed = 12;
+		walkSpeed = 6;
 		reset();
 	}
 
-	/* must have functions called in this order: -move -must change dx/dy -must change grounded to false -collide -must correct x/y, dx/dy -must correct grounded -act -must add dx/dy to x/y, must finalize position */
+	/*
+	 * must have functions called in this order: -move -must change dx/dy -must
+	 * change grounded to false -collide -must correct x/y, dx/dy -must correct
+	 * grounded -act -must add dx/dy to x/y, must finalize position
+	 */
 
 	public void move() {
 		if (held != null) {
@@ -40,14 +46,15 @@ public class Player extends GameObject {
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
-				if (Input.KeyDown(Input.ARROW_UP)) dy = 8;
-				else if (Input.KeyDown(Input.ARROW_DOWN)) dy = 3;
-				else dy = 6;
-			}
-			if (Input.KeyReleased(Input.Z)) {
+				dy = 7;
+			} else {
 				jumpTimer = 0;
 			}
 		}
+		/*
+		 * if (Input.KeyDown(Input.C)) { walkSpeed = 6; throwSpeed = 12; } else
+		 * { walkSpeed = 3; throwSpeed = 8; }
+		 */
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
 			if (dx < walkSpeed) {
@@ -69,10 +76,8 @@ public class Player extends GameObject {
 			dx = 0;
 		}
 		if (grounded && Input.KeyPressed(Input.Z)) {
-			jumpTimer = 12;
-			if (Input.KeyDown(Input.ARROW_UP)) dy = 8;
-			else if (Input.KeyDown(Input.ARROW_DOWN)) dy = 3;
-			else dy = 6;
+			jumpTimer = 16;
+			dy = 7;
 		}
 		grounded = false;
 	}
@@ -85,13 +90,13 @@ public class Player extends GameObject {
 				if (throwTimer > 0) {
 					throwTimer--;
 				}
-				if (throwTimer == 0 && !Input.KeyDown(Input.CTRL)) {
+				if (throwTimer == 0 && !Input.KeyDown(Input.C)) {
 					float dyt = dy + 3;
 					float dxt = 0;
-					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -12;
-					if (Input.KeyDown(Input.ARROW_UP)) dyt = 12;
-					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -12;
-					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = 12;
+					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
+					if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
+					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
+					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
 					if (dyt == dy + 3 && dxt == 0) {
 						held.setState(EnemyState.STUNNED);
 					} else {
@@ -102,10 +107,16 @@ public class Player extends GameObject {
 				}
 			}
 		}
-		super.act(delta);
 		if (getTop() < 0) {
 			reset();
 		}
+		if (getX() > Consts.ScreenWidth) {
+			x = 1 - getWidth();
+		}
+		if (getRight() < 0) {
+			x = Consts.ScreenWidth - 1;
+		}
+		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
@@ -139,19 +150,24 @@ public class Player extends GameObject {
 	public void collideEnemy(AbstractEnemy enemy) {
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(enemy.bounds)) {
-			if (enemy.getState() == EnemyState.ACTIVE) {
+			if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
 				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
-					enemy.setState(EnemyState.STUNNED);
-					enemy.jumpOn();
-					dy = 6;
+					if (enemy.state != EnemyState.STUNNED) {
+						enemy.setState(EnemyState.STUNNED);
+						enemy.jumpOn();
+						if (!Input.KeyDown(Input.C)) {
+							dy = 7;
+							jumpTimer = 16;
+						}
+					}
 				}
 			}
 		}
 		if (bounds.overlaps(enemy.bounds)) {
-			if (enemy.getState() == EnemyState.STUNNED && Input.KeyDown(Input.CTRL) && held == null) {
+			if (enemy.state == EnemyState.STUNNED && Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
-			} else if (enemy.getState() == EnemyState.ACTIVE) {
+			} else if (enemy.state == EnemyState.ACTIVE) {
 				// PLAYER DIES
 				reset();
 			}
@@ -159,7 +175,9 @@ public class Player extends GameObject {
 	}
 
 	public void getItem(ItemType item) {
-		if (item == null) { return; }
+		if (item == null) {
+			return;
+		}
 		switch (hasItem(item)) {
 		case -1:
 		case 2:
@@ -184,11 +202,17 @@ public class Player extends GameObject {
 	}
 
 	/*
-	 * public void draw(Batch batch, float parentAlpha) { for (int i = 0; i < 3; i++) { if (items[i] != null) { Label p = new Label(items[i].toString()); p.drawC(batch, x + getWidth() / 2, y + 80 - i * 16); } } super.draw(batch, parentAlpha); } */
+	 * public void draw(Batch batch, float parentAlpha) { for (int i = 0; i < 3;
+	 * i++) { if (items[i] != null) { Label p = new Label(items[i].toString());
+	 * p.drawC(batch, x + getWidth() / 2, y + 80 - i * 16); } }
+	 * super.draw(batch, parentAlpha); }
+	 */
 
 	public void reset() {
-		x = (Gdx.graphics.getWidth() - getWidth()) / 2;
-		y = Gdx.graphics.getHeight();
+		x = (Consts.ScreenWidth - getWidth()) / 2;
+		y = Consts.ScreenHeight;
+		dy = 0;
+		dx = 0;
 		facingRight = true;
 	}
 }

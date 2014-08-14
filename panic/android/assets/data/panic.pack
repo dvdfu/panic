@@ -5,14 +5,28 @@ filter: Nearest,Nearest
 repeat: none
 player
   rotate: false
-  xy: 1, 1
+  xy: 1, 19
   size: 320, 32
   orig: 320, 32
   offset: 0, 0
   index: -1
+enemy_walk
+  rotate: false
+  xy: 323, 19
+  size: 292, 32
+  orig: 292, 32
+  offset: 0, 0
+  index: -1
+enemy_throw
+  rotate: false
+  xy: 1, 1
+  size: 174, 16
+  orig: 174, 16
+  offset: 0, 0
+  index: -1
 plain
   rotate: false
-  xy: 323, 1
+  xy: 617, 19
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

@@ -1,10 +1,10 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
@@ -17,10 +17,10 @@ public class EnemyBasic extends AbstractEnemy {
 	public EnemyBasic() {
 		super();
 		healthBar = new Label("" + stunnedTimer);
-		stretched = true;
 		reset();
+		stretched = true;
 		setSize(32, 32);
-		setSprite(Sprites.atlas.createSprite("plain"), 32, 32);
+		setSprite(Sprites.atlas.createSprite("enemy_walk"), 24, 32);
 	}
 
 	public void move() {
@@ -51,14 +51,22 @@ public class EnemyBasic extends AbstractEnemy {
 				setState(EnemyState.ACTIVE);
 			}
 		}
-		if (state != EnemyState.GRABBED && (getX() > Gdx.graphics.getWidth() || getRight() < 0 || getTop() < 0)) {
+		if (state != EnemyState.GRABBED && getTop() < 0) {
 			setState(EnemyState.REMOVE);
+		}
+		if (getX() > Consts.ScreenWidth) {
+			x = 1 - getWidth();
+		}
+		if (getRight() < 0) {
+			x = Consts.ScreenWidth - 1;
 		}
 		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
-		if (state == EnemyState.GRABBED) { return; }
+		if (state == EnemyState.GRABBED) {
+			return;
+		}
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
@@ -119,7 +127,7 @@ public class EnemyBasic extends AbstractEnemy {
 			break;
 		case GRABBED:
 			if (bounds.overlaps(enemy.bounds)) {
-				if (enemy.state == EnemyState.ACTIVE) {
+				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
 					enemy.setState(EnemyState.DEAD);
 					enemy.launch(dx == 0 ? enemy.dx * 2 : dx / 2, 5);
 				}
@@ -142,45 +150,40 @@ public class EnemyBasic extends AbstractEnemy {
 		switch (state) {
 		case ACTIVE:
 			dx = movingRight ? moveSpeed : -moveSpeed;
+			setSprite(Sprites.atlas.createSprite("enemy_walk"), 24, 32);
 			break;
 		case STUNNED:
 			dx = 0;
+			setSprite(Sprites.atlas.createSprite("enemy_throw"), 22, 16);
+			break;
+		case THROWN:
+		case GRABBED:
+			setSprite(Sprites.atlas.createSprite("enemy_throw"), 22, 16);
 			break;
 		case DEAD:
+			setSprite(Sprites.atlas.createSprite("enemy_throw"), 22, 16);
 			dy = 6;
 			break;
 		default:
+			setSprite(Sprites.atlas.createSprite("enemy_walk"), 24, 32);
 			break;
 		}
 		super.setState(state);
 	}
 
 	public void draw(Batch batch, float alpha) {
-		switch (state) {
-		case ACTIVE:
-			batch.setColor(new Color(1, 0, 0, 1));
-			break;
-		case STUNNED:
-			batch.setColor(new Color(1, 1, 0, 1));
-			break;
-		case GRABBED:
-			batch.setColor(new Color(0, 0, 1, 1));
-			break;
-		case THROWN:
-			batch.setColor(new Color(0, 1, 0, 1));
-			break;
-		case DEAD:
-			batch.setColor(new Color(1, 0, 1, 1));
-			break;
-		default:
-			break;
-		}
+		/*
+		 * switch (state) { case ACTIVE: batch.setColor(new Color(1, 0, 0, 1));
+		 * break; case STUNNED: batch.setColor(new Color(1, 1, 0, 1)); break;
+		 * case GRABBED: batch.setColor(new Color(0, 0, 1, 1)); break; case
+		 * THROWN: batch.setColor(new Color(0, 1, 0, 1)); break; case DEAD:
+		 * batch.setColor(new Color(1, 0, 1, 1)); break; default: break; }
+		 */
 		super.draw(batch, alpha);
 		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
 			healthBar.setText("" + stunnedTimer / 10);
 			healthBar.drawC(batch, x + 16, y + 40);
 		}
-		batch.setColor(1, 1, 1, 1);
 	}
 
 	public void reset() {
@@ -190,10 +193,10 @@ public class EnemyBasic extends AbstractEnemy {
 			x = 1 - getWidth() + MathUtils.random(160);
 			dx = moveSpeed;
 		} else {
-			x = Gdx.graphics.getWidth() - MathUtils.random(160) - 1;
+			x = Consts.ScreenWidth - MathUtils.random(160) - 1;
 			dx = -moveSpeed;
 		}
-		y = Gdx.graphics.getHeight();
+		y = Consts.ScreenHeight;
 		dy = 0;
 		setPosition(x, y);
 	}
