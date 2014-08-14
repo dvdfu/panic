@@ -110,6 +110,7 @@ public class TestScreen extends AbstractScreen {
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
 			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.CTRL)) {
+				player.getItem(item.getType());
 				items.removeActor(item);
 				objects.free(item);
 			}

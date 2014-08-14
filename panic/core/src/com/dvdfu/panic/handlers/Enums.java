@@ -6,6 +6,6 @@ public class Enums {
 	}
 
 	public enum ItemType {
-		EXPLOSIVE_JUMP
+		EXPLOSIVE_JUMP, GIANT_BIRD, MEGA_KICK, SUPER_SLIDE
 	}
 }

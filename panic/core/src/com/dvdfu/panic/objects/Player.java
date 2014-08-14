@@ -1,5 +1,6 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
@@ -24,11 +25,7 @@ public class Player extends GameObject {
 		reset();
 	}
 
-	/*
-	 * must have functions called in this order: -move -must change dx/dy -must
-	 * change grounded to false -collide -must correct x/y, dx/dy -must correct
-	 * grounded -act -must add dx/dy to x/y, must finalize position
-	 */
+	/* must have functions called in this order: -move -must change dx/dy -must change grounded to false -collide -must correct x/y, dx/dy -must correct grounded -act -must add dx/dy to x/y, must finalize position */
 
 	public void move() {
 		if (held != null) {
@@ -144,29 +141,38 @@ public class Player extends GameObject {
 		if (myRect.overlaps(enemy.bounds)) {
 			if (enemy.getState() == EnemyState.ACTIVE) {
 				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
-					enemy.jumpOn();
 					enemy.setState(EnemyState.STUNNED);
+					enemy.jumpOn();
 					dy = 6;
 				}
 			}
 		}
-		myRect = bounds.setPosition(x + dx, y);
-		if (myRect.overlaps(enemy.bounds)) {
+		if (bounds.overlaps(enemy.bounds)) {
 			if (enemy.getState() == EnemyState.STUNNED && Input.KeyDown(Input.CTRL) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 			} else if (enemy.getState() == EnemyState.ACTIVE) {
+				// PLAYER DIES
 				reset();
 			}
 		}
 	}
-	
+
 	public void getItem(ItemType item) {
-		if (hasItem(item) == -1) {
+		if (item == null) { return; }
+		switch (hasItem(item)) {
+		case -1:
+		case 2:
 			items[2] = items[1];
 			items[1] = items[0];
 			items[0] = item;
-		} else {
+			break;
+		case 1:
+			items[1] = items[0];
+			items[0] = item;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -177,9 +183,12 @@ public class Player extends GameObject {
 		return -1;
 	}
 
+	/*
+	 * public void draw(Batch batch, float parentAlpha) { for (int i = 0; i < 3; i++) { if (items[i] != null) { Label p = new Label(items[i].toString()); p.drawC(batch, x + getWidth() / 2, y + 80 - i * 16); } } super.draw(batch, parentAlpha); } */
+
 	public void reset() {
-		x = 100;
-		y = 300;
+		x = (Gdx.graphics.getWidth() - getWidth()) / 2;
+		y = Gdx.graphics.getHeight();
 		facingRight = true;
 	}
 }

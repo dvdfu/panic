@@ -44,10 +44,10 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void act(float delta) {
-		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED) {
+		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
-			} else {
+			} else if (state != EnemyState.THROWN) {
 				setState(EnemyState.ACTIVE);
 			}
 		}
@@ -58,9 +58,7 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void collideSolid(Solid block) {
-		if (state == EnemyState.GRABBED) {
-			return;
-		}
+		if (state == EnemyState.GRABBED) { return; }
 		Rectangle myRect = bounds.setPosition(x, y + dy);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
@@ -160,7 +158,7 @@ public class EnemyBasic extends AbstractEnemy {
 	public void draw(Batch batch, float alpha) {
 		switch (state) {
 		case ACTIVE:
-			batch.setColor(new Color(0, 1, 0, 1));
+			batch.setColor(new Color(1, 0, 0, 1));
 			break;
 		case STUNNED:
 			batch.setColor(new Color(1, 1, 0, 1));
@@ -169,7 +167,7 @@ public class EnemyBasic extends AbstractEnemy {
 			batch.setColor(new Color(0, 0, 1, 1));
 			break;
 		case THROWN:
-			batch.setColor(new Color(1, 0, 0, 1));
+			batch.setColor(new Color(0, 1, 0, 1));
 			break;
 		case DEAD:
 			batch.setColor(new Color(1, 0, 1, 1));

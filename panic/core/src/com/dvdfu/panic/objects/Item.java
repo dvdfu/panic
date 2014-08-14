@@ -2,6 +2,7 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.visuals.Sprites;
@@ -67,5 +68,7 @@ public class Item extends GameObject {
 		}
 	}
 
-	public void reset() {}
+	public void reset() {
+		type = ItemType.values()[MathUtils.random(ItemType.values().length - 1)];
+	}
 }
