@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
@@ -30,13 +31,13 @@ public class TestScreen extends AbstractScreen {
 		super(game);
 		objects = new ObjectPool();
 		stage = new Stage();
-		
+
 		particles = new Group();
 		stage.addActor(particles);
-		
+
 		items = new Group();
 		stage.addActor(items);
-		
+
 		solids = new Group();
 		solids.setZIndex(0);
 		Solid s1 = new Solid(96, 0);
@@ -56,7 +57,7 @@ public class TestScreen extends AbstractScreen {
 
 		player = new Player();
 		stage.addActor(player);
-		
+
 		timer = 0;
 	}
 
@@ -95,13 +96,20 @@ public class TestScreen extends AbstractScreen {
 				enemy2.collideEnemy(enemy);
 			}
 			if (enemy.getState() == EnemyState.REMOVE) {
+				for (int j = 0; j < 16; j++) {
+					Particle p = objects.getParticle();
+					p.setType(ParticleType.EXPLOSION);
+					p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY());
+					particles.addActor(p);
+				}
 				spawnItem(enemy.getX(), enemy.getY());
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}
 			if (enemy.getState() == EnemyState.THROWN) {
 				Particle p = objects.getParticle();
-				p.setPosition(enemy.getX() + enemy.getWidth() / 2 - p.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2 - p.getHeight() / 2);
+				p.setType(ParticleType.TRAIL);
+				p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2);
 				particles.addActor(p);
 			}
 		}
@@ -121,11 +129,12 @@ public class TestScreen extends AbstractScreen {
 			}
 		}
 	}
-	
+
 	public void spawnItem(float x, float y) {
-		Item item = objects.getItem();
-		item.setPosition(x, y);
-		items.addActor(item);
+		/*
+		 * Item item = objects.getItem(); item.setPosition(x, y);
+		 * items.addActor(item);
+		 */
 	}
 
 	public void resize(int width, int height) {}

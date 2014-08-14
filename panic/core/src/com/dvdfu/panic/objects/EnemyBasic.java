@@ -18,8 +18,8 @@ public class EnemyBasic extends AbstractEnemy {
 		healthBar = new Label("" + stunnedTimer);
 		reset();
 		stretched = true;
-		setSize(32, 32);
-		setSprite(Sprites.enemyWalk);
+		setSize(44, 32);
+		setSprite(Sprites.enemyThrow);
 	}
 
 	public void move() {
@@ -150,7 +150,7 @@ public class EnemyBasic extends AbstractEnemy {
 		switch (state) {
 		case ACTIVE:
 			dx = movingRight ? moveSpeed : -moveSpeed;
-			setSprite(Sprites.enemyWalk);
+			setSprite(Sprites.enemyThrow);
 			break;
 		case STUNNED:
 			dx = 0;
@@ -165,7 +165,7 @@ public class EnemyBasic extends AbstractEnemy {
 			dy = 6;
 			break;
 		default:
-			setSprite(Sprites.enemyWalk);
+			setSprite(Sprites.enemyThrow);
 			break;
 		}
 		super.setState(state);

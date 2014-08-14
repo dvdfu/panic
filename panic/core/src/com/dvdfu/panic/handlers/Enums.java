@@ -8,4 +8,8 @@ public class Enums {
 	public enum ItemType {
 		EXPLOSIVE_JUMP, GIANT_BIRD, MEGA_KICK, SUPER_SLIDE
 	}
+	
+	public enum ParticleType {
+		TRAIL, EXPLOSION
+	}
 }
