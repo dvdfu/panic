@@ -1,6 +1,5 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
@@ -28,58 +27,64 @@ public class Player extends GameObject {
 	}
 
 	/*
-	 * must have functions called in this order: -move -must change dx/dy -must
-	 * change grounded to false -collide -must correct x/y, dx/dy -must correct
-	 * grounded -act -must add dx/dy to x/y, must finalize position
+	 * must have functions called in this order: 
+	 * move 
+	 * -must change dx/dy 
+	 * -must change grounded to false
+	 * collide
+	 * -must correct x/y, dx/dy
+	 * -must correct grounded
+	 * act
+	 * -must add dx/dy to x/y
+	 * -must finalize position
 	 */
 
 	public void move() {
 		if (held != null) {
 			if (facingRight) {
-				held.x = x + 16;
+				held.setX(getX() + 16);
 			} else {
-				held.x = x - 16;
+				held.setX(getX() - 16);
 			}
-			held.y = y + 8;
+			held.setY(getY() + 8);
 		}
-		dy -= 0.3f;
+		ySpeed -= 0.3f;
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
-				dy = 7;
+				ySpeed = 7;
 			} else {
 				jumpTimer = 0;
 			}
 		}
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
-			if (dx < walkSpeed) {
-				dx += 0.5f;
+			if (xSpeed < walkSpeed) {
+				xSpeed += 0.5f;
 				facingRight = true;
-			} else dx = walkSpeed;
-		} else if (dx > 0) {
-			dx -= 0.5f;
+			} else xSpeed = walkSpeed;
+		} else if (xSpeed > 0) {
+			xSpeed -= 0.5f;
 		}
 		if (Input.KeyDown(Input.ARROW_LEFT)) {
-			if (dx > -walkSpeed) {
-				dx -= 0.5f;
+			if (xSpeed > -walkSpeed) {
+				xSpeed -= 0.5f;
 				facingRight = false;
-			} else dx = -walkSpeed;
-		} else if (dx < 0) {
-			dx += 0.5f;
+			} else xSpeed = -walkSpeed;
+		} else if (xSpeed < 0) {
+			xSpeed += 0.5f;
 		}
-		if (dx > -0.5f && dx < 0.5f) {
-			dx = 0;
+		if (xSpeed > -0.5f && xSpeed < 0.5f) {
+			xSpeed = 0;
 		}
 		if (grounded && Input.KeyPressed(Input.Z)) {
 			jumpTimer = 16;
-			dy = 7;
+			ySpeed = 7;
 		}
 		grounded = false;
 	}
 
 	public void act(float delta) {
-		move();
 		if (throwTimer > 0) {
 			throwTimer--;
 		}
@@ -87,13 +92,13 @@ public class Player extends GameObject {
 			if (held.getState() != EnemyState.GRABBED) {
 				held = null;
 			} else if (!Input.KeyDown(Input.C)) {
-				float dyt = dy + 3;
+				float dyt = ySpeed + 3;
 				float dxt = 0;
 				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
 				if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
 				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
 				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
-				if (dyt == dy + 3 && dxt == 0) {
+				if (dyt == ySpeed + 3 && dxt == 0) {
 					held.setState(EnemyState.STUNNED);
 				} else {
 					held.setState(EnemyState.THROWN);
@@ -107,56 +112,58 @@ public class Player extends GameObject {
 			reset();
 		}
 		if (getX() > Consts.ScreenWidth) {
-			x = 1 - getWidth();
+			setX(1 - getWidth());
 		}
 		if (getRight() < 0) {
-			x = Consts.ScreenWidth - 1;
+			setX(Consts.ScreenWidth - 1);
 		}
 		super.act(delta);
 	}
 
 	public void collideSolid(Solid block) {
-		Rectangle myRect = bounds.setPosition(x, y + dy);
-		if (myRect.overlaps(block.bounds)) {
-			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
-				y = block.getY() - getHeight();
-				dy = 0;
+		bounds.setPosition(getX(), getY() + ySpeed);
+		if (bounds.overlaps(block.bounds)) {
+			if (getTop() + ySpeed > block.getY() && bounds.y < block.getY()) {
+				setY(block.getY() - getHeight());
+				ySpeed = 0;
 				jumpTimer = 0;
 			}
-			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
-				y = block.getTop();
-				dy = 0;
+			if (getTop() + ySpeed > block.getTop() && bounds.y < block.getTop()) {
+				setY(block.getTop());
+				ySpeed = 0;
 				jumpTimer = 0;
 				grounded = true;
 			}
 		}
-		myRect.setPosition(x + dx, y);
-		if (myRect.overlaps(block.bounds)) {
-			if (getRight() + dx > block.getX() && myRect.x < block.getX()) {
-				x = block.getX() - getWidth();
-				dx = 0;
+		bounds = bounds.setPosition(getX() + xSpeed, getY());
+		if (bounds.overlaps(block.bounds)) {
+			if (getRight() + xSpeed > block.getX() && bounds.x < block.getX()) {
+				setX(block.getX() - getWidth());
+				xSpeed = 0;
 			}
-			if (getRight() + dx > block.getRight() && myRect.x < block.getRight()) {
-				x = block.getRight();
-				dx = 0;
+			if (getRight() + xSpeed > block.getRight() && bounds.x < block.getRight()) {
+				setX(block.getRight());
+				xSpeed = 0;
 			}
 		}
+		updateBounds();
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
-		Rectangle myRect = bounds.setPosition(x, y + dy);
-		if (myRect.overlaps(enemy.bounds)) {
+		bounds.setPosition(getX(), getY() + ySpeed);
+		if (bounds.overlaps(enemy.bounds)) {
 			if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
-				if (getTop() + dy > enemy.getTop() && bounds.y < enemy.getTop()) {
+				if (getTop() + ySpeed > enemy.getTop() && bounds.y < enemy.getTop()) {
 					enemy.setState(EnemyState.STUNNED);
 					enemy.jumpOn();
 					if (!Input.KeyDown(Input.C)) {
-						dy = 7;
+						ySpeed = 7;
 						jumpTimer = 16;
 					}
 				}
 			}
 		}
+		bounds.setPosition(getX() + xSpeed, getY());
 		if (bounds.overlaps(enemy.bounds)) {
 			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0)) && Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
@@ -166,6 +173,7 @@ public class Player extends GameObject {
 				reset();
 			}
 		}
+		updateBounds();
 	}
 
 	public void getItem(ItemType item) {
@@ -203,10 +211,10 @@ public class Player extends GameObject {
 	 */
 
 	public void reset() {
-		x = (Consts.ScreenWidth - getWidth()) / 2;
-		y = Consts.ScreenHeight;
-		dy = 0;
-		dx = 0;
+		setX(Consts.ScreenWidth / 2 - getWidth() / 2);
+		setY(Consts.ScreenHeight);
+		ySpeed = 0;
+		xSpeed = 0;
 		facingRight = true;
 	}
 }

@@ -49,6 +49,9 @@ public class TestScreen extends AbstractScreen {
 		Solid s3 = new Solid(Consts.ScreenWidth - 256, 360);
 		s3.setSize(256, 32);
 		solids.addActor(s3);
+		Solid s4 = new Solid(400, 176);
+		s4.setSize(64, 64);
+		solids.addActor(s4);
 		stage.addActor(solids);
 
 		enemies = new Group();
@@ -75,6 +78,9 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	private void collisions() {
+		// PLAYER
+		player.move();
+		// ALL SOLIDS
 		for (Actor actor : solids.getChildren()) {
 			Solid solid = (Solid) actor;
 			player.collideSolid(solid);
@@ -87,8 +93,10 @@ public class TestScreen extends AbstractScreen {
 				item.collideSolid(solid);
 			}
 		}
+		// ALL ENEMIES
 		for (int i = 0; i < enemies.getChildren().size; i++) {
 			EnemyBasic enemy = (EnemyBasic) enemies.getChildren().items[i];
+			enemy.move();
 			player.collideEnemy(enemy);
 			for (int j = i + 1; j < enemies.getChildren().size; j++) {
 				EnemyBasic enemy2 = (EnemyBasic) enemies.getChildren().items[j];
@@ -106,23 +114,27 @@ public class TestScreen extends AbstractScreen {
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}
-			if (enemy.getState() == EnemyState.THROWN) {
-				Particle p = objects.getParticle();
-				p.setType(ParticleType.TRAIL);
-				p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2);
-				particles.addActor(p);
-			}
+			/*
+			 * if (enemy.getState() == EnemyState.THROWN) { Particle p =
+			 * objects.getParticle(); p.setType(ParticleType.TRAIL);
+			 * p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() +
+			 * enemy.getHeight() / 2); particles.addActor(p); }
+			 */
 		}
+		// ALL ITEMS
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
+			item.move();
 			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.C)) {
 				player.getItem(item.getType());
 				items.removeActor(item);
 				objects.free(item);
 			}
 		}
+		// ALL PARTICLES
 		for (Actor actor : particles.getChildren()) {
 			Particle p = (Particle) actor;
+			p.move();
 			if (p.dead()) {
 				particles.removeActor(p);
 				objects.free(p);

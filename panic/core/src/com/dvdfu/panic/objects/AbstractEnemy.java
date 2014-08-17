@@ -28,8 +28,8 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	public void launch(float dx, float dy) {
-		this.dx = dx;
-		this.dy = dy;
+		this.xSpeed = dx;
+		this.ySpeed = dy;
 	}
 	
 	public void jumpOn() {

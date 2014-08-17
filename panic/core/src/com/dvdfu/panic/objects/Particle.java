@@ -24,14 +24,14 @@ public class Particle extends GameObject {
 		case TRAIL:
 			setSize(12, 12);
 			timer = 20;
-			dy = 0;
-			dx = 0;
+			ySpeed = 0;
+			xSpeed = 0;
 			break;
 		case EXPLOSION:
 			setSize(6, 6);
 			timer = 40;
-			dy = MathUtils.random(4f, 7f);
-			dx = MathUtils.random(-3f, 3f);
+			ySpeed = MathUtils.random(4f, 7f);
+			xSpeed = MathUtils.random(-3f, 3f);
 			break;
 		}
 		reset();
@@ -42,7 +42,7 @@ public class Particle extends GameObject {
 		case TRAIL:
 			break;
 		case EXPLOSION:
-			dy -= 0.3f;
+			ySpeed -= 0.3f;
 			break;
 		}
 		timer--;
@@ -56,9 +56,8 @@ public class Particle extends GameObject {
 	public void move() {}
 	
 	public void setPosition(float x, float y) {
-		this.x = x - getWidth() / 2;
-		this.y = y - getHeight() / 2;
-		super.setPosition(this.x, this.y);
+		setX(x - getWidth() / 2);
+		setY(y - getHeight() / 2);
 	}
 
 }

@@ -6,8 +6,7 @@ public class Solid extends GameObject {
 
 	public Solid(int x, int y) {
 		super();
-		this.x = x;
-		this.y = y;
+		setPosition(x, y);
 		stretched = true;
 		setSprite(Sprites.plain);
 	}

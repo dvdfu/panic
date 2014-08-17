@@ -27,7 +27,7 @@ public class Item extends GameObject {
 	}
 	
 	public void move() {
-		dy -= 0.2f;
+		ySpeed -= 0.2f;
 		grounded = false;
 	}
 
@@ -46,25 +46,25 @@ public class Item extends GameObject {
 		if (grounded) {
 			return;
 		}
-		Rectangle myRect = bounds.setPosition(x, y + dy);
+		Rectangle myRect = bounds.setPosition(getX(), getY() + ySpeed);
 		if (myRect.overlaps(block.bounds)) {
-			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
-				y = block.getY() - getHeight();
-				dy = 0;
+			if (getTop() + ySpeed > block.getY() && myRect.y < block.getY()) {
+				setY(block.getY() - getHeight());
+				ySpeed = 0;
 			}
-			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
-				y = block.getTop();
-				dy = 0;
+			if (getTop() + ySpeed > block.getTop() && myRect.y < block.getTop()) {
+				setY(block.getTop());
+				ySpeed = 0;
 				grounded = true;
 			}
 		}
-		myRect.setPosition(x + dx, y);
+		myRect.setPosition(getX() + xSpeed, getY());
 		if (myRect.overlaps(block.bounds)) {
-			if (getRight() + dx > block.getX() && myRect.x < block.getX()) {
-				x = block.getX() - getWidth();
+			if (getRight() + xSpeed > block.getX() && myRect.x < block.getX()) {
+				setX(block.getX() - getWidth());
 			}
-			if (getRight() + dx > block.getRight() && myRect.x < block.getRight()) {
-				x = block.getRight();
+			if (getRight() + xSpeed > block.getRight() && myRect.x < block.getRight()) {
+				setX(block.getRight());
 			}
 		}
 	}

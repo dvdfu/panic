@@ -24,26 +24,30 @@ public class EnemyBasic extends AbstractEnemy {
 
 	public void move() {
 		if (state != EnemyState.GRABBED) {
-			dy -= 0.3f;
+			ySpeed -= 0.3f;
 		}
-		if (grounded && (state == EnemyState.STUNNED || state == EnemyState.THROWN)) {
-			float dxt = 0.25f;
-			if (dx > dxt) {
-				dx -= dxt;
-			} else if (dx < -dxt) {
-				dx += dxt;
-			} else {
-				dx = 0;
-				if (state == EnemyState.THROWN) {
-					setState(EnemyState.STUNNED);
-				}
+		if (state == EnemyState.THROWN && grounded) {
+			brake(0, 0.25f);
+			if (xSpeed == 0) {
+				setState(EnemyState.STUNNED);
 			}
 		}
 		grounded = false;
 	}
 
+	private void brake(float vf, float a) {
+		if (xSpeed > vf) {
+			xSpeed -= a;
+		} else if (xSpeed > 0) {
+			xSpeed = vf;
+		} else if (xSpeed > -vf) {
+			xSpeed = -vf;
+		} else {
+			xSpeed += a;
+		}
+	}
+
 	public void act(float delta) {
-		move();
 		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
@@ -55,10 +59,10 @@ public class EnemyBasic extends AbstractEnemy {
 			setState(EnemyState.REMOVE);
 		}
 		if (getX() > Consts.ScreenWidth) {
-			x = 1 - getWidth();
+			setX(1 - getWidth());
 		}
 		if (getRight() < 0) {
-			x = Consts.ScreenWidth - 1;
+			setX(Consts.ScreenWidth - 1);
 		}
 		super.act(delta);
 	}
@@ -67,93 +71,77 @@ public class EnemyBasic extends AbstractEnemy {
 		if (state == EnemyState.GRABBED) {
 			return;
 		}
-		Rectangle myRect = bounds.setPosition(x, y + dy);
-		if (myRect.overlaps(block.bounds)) {
-			if (getTop() + dy > block.getY() && myRect.y < block.getY()) {
-				y = block.getY() - getHeight();
+		bounds.setPosition(getX(), getY() + ySpeed);
+		if (bounds.overlaps(block.bounds)) {
+			if (getTop() + ySpeed > block.getY() && bounds.y < block.getY()) {
+				setY(block.getY() - getHeight());
 			}
-			if (getTop() + dy > block.getTop() && myRect.y < block.getTop()) {
-				y = block.getTop();
+			if (getTop() + ySpeed > block.getTop() && bounds.y < block.getTop()) {
+				setY(block.getTop());
 				grounded = true;
 			}
-			dy = 0;
-			if (state == EnemyState.THROWN && dx == 0) {
-				setState(EnemyState.STUNNED);
-			}
+			ySpeed = 0;
 			if (state == EnemyState.DEAD) {
 				setState(EnemyState.REMOVE);
 			}
 		}
-		myRect.setPosition(x + dx, y);
-		if (myRect.overlaps(block.bounds)) {
-			if (getRight() + dx > block.getX() && myRect.x < block.getX()) {
-				x = block.getX() - getWidth();
-				if (state == EnemyState.THROWN) {
-					dx = -dx;
-				} else {
-					dx = 0;
-					dy = 0;
-				}
+		bounds.setPosition(getX() + xSpeed, getY());
+		if (bounds.overlaps(block.bounds)) {
+			if (getRight() + xSpeed > block.getX() && bounds.x < block.getX()) {
+				setX(block.getX() - getWidth());
 			}
-			if (getRight() + dx > block.getRight() && myRect.x < block.getRight()) {
-				x = block.getRight();
-				if (state == EnemyState.THROWN) {
-					dx = -dx;
-				} else {
-					dx = 0;
-					dy = 0;
-				}
+			if (getRight() + xSpeed > block.getRight() && bounds.x < block.getRight()) {
+				setX(block.getRight());
 			}
+			xSpeed = -xSpeed;
+			movingRight ^= true;
 		}
+		updateBounds();
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
+		if (enemy.state != EnemyState.ACTIVE && enemy.state != EnemyState.STUNNED) {
+			return;
+		}
 		switch (state) {
 		case ACTIVE:
+			bounds.setPosition(getX() + xSpeed, getY());
 			if (bounds.overlaps(enemy.bounds)) {
-				if (enemy.state == EnemyState.STUNNED && grounded) {
-					if (dx > 0) {
-						x = enemy.getX() - getWidth();
-						enemy.launch(3, 0);
+				if (grounded) {
+					if (getX() > enemy.getX()) {
+						setX(enemy.getRight());
+						xSpeed = moveSpeed;
+						movingRight = true;
+					} else {
+						setX(enemy.getX() - getWidth());
+						xSpeed = -moveSpeed;
+						movingRight = false;
 					}
-					if (dx < 0) {
-						x = enemy.getRight();
-						enemy.launch(-3, 0);
-					}
-					dx = -dx;
-					movingRight ^= true;
 				}
 			}
 			break;
 		case GRABBED:
-			if (bounds.overlaps(enemy.bounds)) {
-				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
-					enemy.setState(EnemyState.DEAD);
-					enemy.launch(dx == 0 ? enemy.dx * 2 : dx / 2, 5);
-				}
-			}
-			break;
 		case THROWN:
+			bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 			if (bounds.overlaps(enemy.bounds)) {
-				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
-					enemy.setState(EnemyState.DEAD);
-					enemy.launch(dx == 0 ? enemy.dx * 2 : dx / 2, 5);
-				}
+				enemy.setState(EnemyState.DEAD);
+				enemy.launch(xSpeed == 0 ? enemy.xSpeed * 2 : xSpeed / 2, 5);
 			}
 			break;
 		default:
 			break;
 		}
+		updateBounds();
 	}
 
 	public void setState(EnemyState state) {
 		switch (state) {
 		case ACTIVE:
-			dx = movingRight ? moveSpeed : -moveSpeed;
+			xSpeed = movingRight ? moveSpeed : -moveSpeed;
 			setSprite(Sprites.enemyThrow);
 			break;
 		case STUNNED:
-			dx = 0;
+			xSpeed = 0;
 			setSprite(Sprites.enemyThrow);
 			break;
 		case THROWN:
@@ -162,7 +150,7 @@ public class EnemyBasic extends AbstractEnemy {
 			break;
 		case DEAD:
 			setSprite(Sprites.enemyThrow);
-			dy = 6;
+			ySpeed = 6;
 			break;
 		default:
 			setSprite(Sprites.enemyThrow);
@@ -182,7 +170,7 @@ public class EnemyBasic extends AbstractEnemy {
 		super.draw(batch, alpha);
 		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
 			healthBar.setText("" + stunnedTimer / 10);
-			healthBar.drawC(batch, x + 16, y + 40);
+			healthBar.drawC(batch, getX() + 16, getY() + 40);
 		}
 	}
 
@@ -190,14 +178,13 @@ public class EnemyBasic extends AbstractEnemy {
 		state = EnemyState.ACTIVE;
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
-			x = 1 - getWidth() + MathUtils.random(160);
-			dx = moveSpeed;
+			setX(1 - getWidth() + MathUtils.random(160));
+			xSpeed = moveSpeed;
 		} else {
-			x = Consts.ScreenWidth - MathUtils.random(160) - 1;
-			dx = -moveSpeed;
+			setX(Consts.ScreenWidth - MathUtils.random(160) - 1);
+			xSpeed = -moveSpeed;
 		}
-		y = Consts.ScreenHeight;
-		dy = 0;
-		setPosition(x, y);
+		setY(Consts.ScreenHeight);
+		ySpeed = 0;
 	}
 }

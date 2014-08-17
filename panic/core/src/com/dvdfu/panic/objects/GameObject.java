@@ -15,10 +15,8 @@ public abstract class GameObject extends Actor implements Poolable {
 	protected boolean stretched;
 	protected int xSprOffset;
 	protected int ySprOffset;
-	protected float x;
-	protected float y;
-	protected float dx;
-	protected float dy;
+	protected float xSpeed;
+	protected float ySpeed;
 
 	public GameObject() {
 		super();
@@ -32,11 +30,9 @@ public abstract class GameObject extends Actor implements Poolable {
 		while (spriteTimer > spriteLength) {
 			spriteTimer -= spriteLength;
 		}
-		x += dx;
-		y += dy;
-		super.setPosition(x, y);
+		super.setPosition(getX() + xSpeed, getY() + ySpeed);
 		super.act(delta);
-		bounds.set(getX(), getY(), getWidth(), getHeight());
+		updateBounds();
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
@@ -60,22 +56,12 @@ public abstract class GameObject extends Actor implements Poolable {
 		spriteLength = sprite.getLength();
 		spriteTimer = 0;
 	}
+	
+	public void updateBounds() {
+		bounds.set(getX(), getY(), getWidth(), getHeight());
+	}
 
 	public Rectangle getBounds() {
 		return bounds;
-	}
-	
-	public float getX() {
-		return x;
-	}
-	
-	public float getY() {
-		return y;
-	}
-	
-	public void setPosition(float x, float y) {
-		this.x = x;
-		this.y = y;
-		super.setPosition(x, y);
 	}
 }
