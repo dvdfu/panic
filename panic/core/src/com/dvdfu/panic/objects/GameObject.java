@@ -15,14 +15,16 @@ public abstract class GameObject extends Actor implements Poolable {
 	protected boolean stretched;
 	protected int xSprOffset;
 	protected int ySprOffset;
+	protected int sprScale;
 	protected float xSpeed;
 	protected float ySpeed;
 
 	public GameObject() {
 		super();
 		bounds = new Rectangle();
+		sprScale = 1;
 	}
-	
+
 	public abstract void move();
 
 	public void act(float delta) {
@@ -41,6 +43,8 @@ public abstract class GameObject extends Actor implements Poolable {
 			int ySpr = (int) (getY() + 0.5f);
 			if (stretched) {
 				batch.draw(sprite.getFrame((int) spriteTimer), xSpr, ySpr, getWidth(), getHeight());
+			} else if (sprScale > 1) {
+				batch.draw(sprite.getFrame((int) spriteTimer), xSpr + xSprOffset * sprScale, ySpr + ySprOffset * sprScale, sprite.getWidth() * sprScale, sprite.getHeight() * sprScale);
 			} else {
 				batch.draw(sprite.getFrame((int) spriteTimer), xSpr + xSprOffset, ySpr + ySprOffset);
 			}
@@ -56,7 +60,7 @@ public abstract class GameObject extends Actor implements Poolable {
 		spriteLength = sprite.getLength();
 		spriteTimer = 0;
 	}
-	
+
 	public void updateBounds() {
 		bounds.set(getX(), getY(), getWidth(), getHeight());
 	}

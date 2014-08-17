@@ -92,13 +92,13 @@ public class Player extends GameObject {
 			if (held.getState() != EnemyState.GRABBED) {
 				held = null;
 			} else if (!Input.KeyDown(Input.C)) {
-				float dyt = ySpeed + 3;
+				float dyt = ySpeed + 6;
 				float dxt = 0;
 				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
 				if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
 				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
 				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
-				if (dyt == ySpeed + 3 && dxt == 0) {
+				if (dyt == ySpeed + 6 && dxt == 0) {
 					held.setState(EnemyState.STUNNED);
 				} else {
 					held.setState(EnemyState.THROWN);
@@ -125,26 +125,23 @@ public class Player extends GameObject {
 		if (bounds.overlaps(block.bounds)) {
 			if (getTop() + ySpeed > block.getY() && bounds.y < block.getY()) {
 				setY(block.getY() - getHeight());
-				ySpeed = 0;
-				jumpTimer = 0;
 			}
 			if (getTop() + ySpeed > block.getTop() && bounds.y < block.getTop()) {
 				setY(block.getTop());
-				ySpeed = 0;
-				jumpTimer = 0;
 				grounded = true;
 			}
+			ySpeed = 0;
+			jumpTimer = 0;
 		}
 		bounds = bounds.setPosition(getX() + xSpeed, getY());
 		if (bounds.overlaps(block.bounds)) {
 			if (getRight() + xSpeed > block.getX() && bounds.x < block.getX()) {
 				setX(block.getX() - getWidth());
-				xSpeed = 0;
 			}
 			if (getRight() + xSpeed > block.getRight() && bounds.x < block.getRight()) {
 				setX(block.getRight());
-				xSpeed = 0;
 			}
+			xSpeed = 0;
 		}
 		updateBounds();
 	}
