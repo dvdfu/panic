@@ -27,16 +27,9 @@ public class Player extends GameObject {
 	}
 
 	/*
-	 * must have functions called in this order: 
-	 * move 
-	 * -must change dx/dy 
-	 * -must change grounded to false
-	 * collide
-	 * -must correct x/y, dx/dy
-	 * -must correct grounded
-	 * act
-	 * -must add dx/dy to x/y
-	 * -must finalize position
+	 * must have functions called in this order: move -must change dx/dy -must
+	 * change grounded to false collide -must correct x/y, dx/dy -must correct
+	 * grounded act -must add dx/dy to x/y -must finalize position
 	 */
 
 	public void move() {
@@ -48,7 +41,9 @@ public class Player extends GameObject {
 			}
 			held.setY(getY() + 8);
 		}
-		ySpeed -= 0.3f;
+		if (throwTimer == 0) {
+			ySpeed -= 0.3f;
+		}
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
@@ -92,20 +87,28 @@ public class Player extends GameObject {
 			if (held.getState() != EnemyState.GRABBED) {
 				held = null;
 			} else if (!Input.KeyDown(Input.C)) {
-				float dyt = ySpeed + 6;
-				float dxt = 0;
-				if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
-				if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
-				if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
-				if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
-				if (dyt == ySpeed + 6 && dxt == 0) {
-					held.setState(EnemyState.STUNNED);
+				if (held instanceof Flower) {
+					if (grounded) {
+						held.setY(getY());
+						held = null;
+						throwTimer = 10;
+					}
 				} else {
-					held.setState(EnemyState.THROWN);
+					float dyt = ySpeed + 6;
+					float dxt = xSpeed;
+					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
+					if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
+					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
+					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
+					if (dyt == ySpeed + 6 && dxt == xSpeed) {
+						held.setState(EnemyState.STUNNED);
+					} else {
+						held.setState(EnemyState.THROWN);
+					}
+					held.launch(dxt, dyt);
+					held = null;
+					throwTimer = 10;
 				}
-				held.launch(dxt, dyt);
-				held = null;
-				throwTimer = 10;
 			}
 		}
 		if (getTop() < 0) {
@@ -149,8 +152,8 @@ public class Player extends GameObject {
 	public void collideEnemy(AbstractEnemy enemy) {
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (bounds.overlaps(enemy.bounds)) {
-			if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
-				if (getTop() + ySpeed > enemy.getTop() && bounds.y < enemy.getTop()) {
+			if (getTop() + ySpeed > enemy.getTop() && bounds.y < enemy.getTop()) {
+				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
 					enemy.setState(EnemyState.STUNNED);
 					enemy.jumpOn();
 					if (!Input.KeyDown(Input.C)) {
@@ -160,7 +163,7 @@ public class Player extends GameObject {
 				}
 			}
 		}
-		bounds.setPosition(getX() + xSpeed, getY());
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(enemy.bounds)) {
 			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0)) && Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
@@ -171,6 +174,15 @@ public class Player extends GameObject {
 			}
 		}
 		updateBounds();
+	}
+
+	public void collideFlower(Flower flower) {
+		if (bounds.overlaps(flower.bounds)) {
+			if (Input.KeyDown(Input.C) && held == null) {
+				held = flower;
+				flower.setState(EnemyState.GRABBED);
+			}
+		}
 	}
 
 	public void getItem(ItemType item) {

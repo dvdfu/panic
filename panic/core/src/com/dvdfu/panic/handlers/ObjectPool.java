@@ -1,12 +1,13 @@
 package com.dvdfu.panic.handlers;
 
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.objects.EnemyBasic;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 
-public class ObjectPool {
+public class ObjectPool implements Disposable {
 	private Pool<EnemyBasic> enemyBasic;
 	private Pool<Item> item;
 	private Pool<Particle> particle;
@@ -49,5 +50,8 @@ public class ObjectPool {
 		} else if (object instanceof Particle) {
 			particle.free((Particle) object);
 		}
+	}
+
+	public void dispose() {
 	}
 }

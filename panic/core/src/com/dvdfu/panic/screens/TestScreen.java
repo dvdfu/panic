@@ -2,6 +2,7 @@ package com.dvdfu.panic.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,6 +13,7 @@ import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
+import com.dvdfu.panic.objects.Flower;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
@@ -25,6 +27,7 @@ public class TestScreen extends AbstractScreen {
 	private Group items;
 	private Group particles;
 	private Player player;
+	private Flower flower;
 	private int timer;
 
 	public TestScreen(MainGame game) {
@@ -49,14 +52,15 @@ public class TestScreen extends AbstractScreen {
 		Solid s3 = new Solid(Consts.ScreenWidth - 256, 360);
 		s3.setSize(256, 32);
 		solids.addActor(s3);
-		Solid s4 = new Solid(400, 176);
-		s4.setSize(64, 64);
-		solids.addActor(s4);
 		stage.addActor(solids);
 
 		enemies = new Group();
 		enemies.addActor(new EnemyBasic());
 		stage.addActor(enemies);
+		
+		flower = new Flower();
+		flower.setPosition(MathUtils.random(96, Consts.ScreenWidth - 96), 176);
+		stage.addActor(flower);
 
 		player = new Player();
 		stage.addActor(player);
@@ -67,7 +71,7 @@ public class TestScreen extends AbstractScreen {
 	public void render(float delta) {
 		timer++;
 		if (timer == 120) {
-			enemies.addActor(objects.getEnemyBasic());
+			//enemies.addActor(objects.getEnemyBasic());
 			timer = 0;
 		}
 		collisions();
@@ -80,6 +84,7 @@ public class TestScreen extends AbstractScreen {
 	private void collisions() {
 		// PLAYER
 		player.move();
+		player.collideFlower(flower);
 		// ALL SOLIDS
 		for (Actor actor : solids.getChildren()) {
 			Solid solid = (Solid) actor;
@@ -113,6 +118,9 @@ public class TestScreen extends AbstractScreen {
 				spawnItem(enemy.getX(), enemy.getY());
 				enemies.removeActor(enemy);
 				objects.free(enemy);
+			}
+			if(enemy.getBounds().overlaps(flower.getBounds())) {
+				game.changeScreen(new GameOverScreen(game));
 			}
 			/*
 			 * if (enemy.getState() == EnemyState.THROWN) { Particle p =
@@ -160,6 +168,7 @@ public class TestScreen extends AbstractScreen {
 	public void resume() {}
 
 	public void dispose() {
+		objects.dispose();
 		stage.dispose();
 	}
 }
