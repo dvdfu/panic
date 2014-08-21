@@ -13,6 +13,7 @@ import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
+import com.dvdfu.panic.objects.Floor;
 import com.dvdfu.panic.objects.Flower;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
@@ -42,22 +43,27 @@ public class TestScreen extends AbstractScreen {
 		stage.addActor(items);
 
 		solids = new Group();
-		solids.setZIndex(0);
-		Solid s1 = new Solid(96, 0);
+		Solid s1 = new Solid();
+		s1.setPosition(96, 0);
 		s1.setSize(Consts.ScreenWidth - 192, 176);
 		solids.addActor(s1);
-		Solid s2 = new Solid(0, 360);
+		Solid s2 = new Solid();
+		s2.setPosition(0, 360);
 		s2.setSize(256, 32);
 		solids.addActor(s2);
-		Solid s3 = new Solid(Consts.ScreenWidth - 256, 360);
+		Solid s3 = new Solid();
+		s3.setPosition(Consts.ScreenWidth - 256, 360);
 		s3.setSize(256, 32);
 		solids.addActor(s3);
+		/*Floor floor = new Floor(0, 0);
+		floor.setSize(Consts.ScreenWidth, 16);
+		solids.addActor(floor);*/
 		stage.addActor(solids);
 
 		enemies = new Group();
 		enemies.addActor(new EnemyBasic());
 		stage.addActor(enemies);
-		
+
 		flower = new Flower();
 		flower.setPosition(MathUtils.random(96, Consts.ScreenWidth - 96), 176);
 		stage.addActor(flower);
@@ -71,7 +77,7 @@ public class TestScreen extends AbstractScreen {
 	public void render(float delta) {
 		timer++;
 		if (timer == 120) {
-			//enemies.addActor(objects.getEnemyBasic());
+			enemies.addActor(objects.getEnemyBasic());
 			timer = 0;
 		}
 		collisions();
@@ -119,15 +125,15 @@ public class TestScreen extends AbstractScreen {
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}
-			if(enemy.getBounds().overlaps(flower.getBounds())) {
+			if (enemy.getBounds().overlaps(flower.getBounds())) {
 				game.changeScreen(new GameOverScreen(game));
 			}
-			/*
-			 * if (enemy.getState() == EnemyState.THROWN) { Particle p =
-			 * objects.getParticle(); p.setType(ParticleType.TRAIL);
-			 * p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() +
-			 * enemy.getHeight() / 2); particles.addActor(p); }
-			 */
+			if (enemy.getState() == EnemyState.THROWN) {
+				Particle p = objects.getParticle();
+				p.setType(ParticleType.TRAIL);
+				p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2);
+				particles.addActor(p);
+			}
 		}
 		// ALL ITEMS
 		for (Actor actor : items.getChildren()) {
@@ -151,10 +157,9 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void spawnItem(float x, float y) {
-		/*
-		 * Item item = objects.getItem(); item.setPosition(x, y);
-		 * items.addActor(item);
-		 */
+		Item item = objects.getItem();
+		item.setPosition(x, y);
+		items.addActor(item);
 	}
 
 	public void resize(int width, int height) {}

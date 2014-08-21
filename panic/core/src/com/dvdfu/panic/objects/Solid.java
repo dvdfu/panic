@@ -4,15 +4,10 @@ import com.dvdfu.panic.visuals.Sprites;
 
 public class Solid extends GameObject {
 
-	public Solid(int x, int y) {
+	public Solid() {
 		super();
-		setPosition(x, y);
 		stretched = true;
 		setSprite(Sprites.plain);
-	}
-
-	public void act(float delta) {
-		super.act(delta);
 	}
 
 	public void move() {}
