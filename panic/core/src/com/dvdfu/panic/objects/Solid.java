@@ -10,8 +10,6 @@ public class Solid extends GameObject {
 		setSprite(Sprites.plain);
 	}
 
-	public void move() {}
-
 	public void reset() {}
 
 }

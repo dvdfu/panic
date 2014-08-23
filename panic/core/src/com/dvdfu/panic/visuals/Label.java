@@ -7,16 +7,20 @@ public class Label {
 	private String text;
 	private BitmapFont font;
 	
+	public Label() {
+		this("");
+	}
+	
 	public Label(String text) {
 		this.text = text;
 		font = new BitmapFont();
 	}
 	
-	public int width() {
+	public int getWidth() {
 		return (int) font.getBounds(text).width;
 	}
 	
-	public int height() {
+	public int getHeight() {
 		return (int) font.getBounds(text).height;
 	}
 	
@@ -25,7 +29,7 @@ public class Label {
 	}
 	
 	public void drawC(Batch batch, float x, float y) {
-		font.draw(batch, text, x - width() / 2, y + height() / 2);
+		font.draw(batch, text, x - getWidth() / 2, y + getHeight() / 2);
 	}
 	
 	public void setText(String text) {

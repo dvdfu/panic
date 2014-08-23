@@ -31,3 +31,45 @@ plain
   orig: 32, 32
   offset: 0, 0
   index: -1
+player_run_r
+  rotate: false
+  xy: 177, 1
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+player_run_l
+  rotate: false
+  xy: 651, 35
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+player_idle_l
+  rotate: false
+  xy: 211, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+player_jump_l
+  rotate: false
+  xy: 685, 35
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+player_idle_r
+  rotate: false
+  xy: 229, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+player_jump_r
+  rotate: false
+  xy: 703, 35
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1

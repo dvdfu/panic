@@ -2,7 +2,6 @@ package com.dvdfu.panic.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,14 +12,14 @@ import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
-import com.dvdfu.panic.objects.Floor;
-import com.dvdfu.panic.objects.Flower;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
 import com.dvdfu.panic.objects.Solid;
+import com.dvdfu.panic.visuals.UI;
 
 public class TestScreen extends AbstractScreen {
+	private UI ui;
 	private ObjectPool objects;
 	private Stage stage;
 	private Group enemies;
@@ -28,16 +27,13 @@ public class TestScreen extends AbstractScreen {
 	private Group items;
 	private Group particles;
 	private Player player;
-	private Flower flower;
+	// private Flower flower;
 	private int timer;
 
 	public TestScreen(MainGame game) {
 		super(game);
 		objects = new ObjectPool();
 		stage = new Stage();
-
-		particles = new Group();
-		stage.addActor(particles);
 
 		items = new Group();
 		stage.addActor(items);
@@ -55,21 +51,24 @@ public class TestScreen extends AbstractScreen {
 		s3.setPosition(Consts.ScreenWidth - 256, 360);
 		s3.setSize(256, 32);
 		solids.addActor(s3);
-		/*Floor floor = new Floor(0, 0);
-		floor.setSize(Consts.ScreenWidth, 16);
-		solids.addActor(floor);*/
+		/* Floor floor = new Floor(0, 0); floor.setSize(Consts.ScreenWidth, 16); solids.addActor(floor); */
 		stage.addActor(solids);
 
 		enemies = new Group();
-		enemies.addActor(new EnemyBasic());
 		stage.addActor(enemies);
 
-		flower = new Flower();
-		flower.setPosition(MathUtils.random(96, Consts.ScreenWidth - 96), 176);
-		stage.addActor(flower);
+		// flower = new Flower();
+		// flower.setPosition(MathUtils.random(96, Consts.ScreenWidth - 96), 176);
+		// stage.addActor(flower);
 
 		player = new Player();
 		stage.addActor(player);
+
+		particles = new Group();
+		stage.addActor(particles);
+
+		ui = new UI();
+		stage.addActor(ui);
 
 		timer = 0;
 	}
@@ -90,7 +89,7 @@ public class TestScreen extends AbstractScreen {
 	private void collisions() {
 		// PLAYER
 		player.move();
-		player.collideFlower(flower);
+		// player.collideFlower(flower);
 		// ALL SOLIDS
 		for (Actor actor : solids.getChildren()) {
 			Solid solid = (Solid) actor;
@@ -122,12 +121,13 @@ public class TestScreen extends AbstractScreen {
 					particles.addActor(p);
 				}
 				spawnItem(enemy.getX(), enemy.getY());
+				// ui.addScore(10);
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}
-			if (enemy.getBounds().overlaps(flower.getBounds())) {
-				game.changeScreen(new GameOverScreen(game));
-			}
+			// if (enemy.getBounds().overlaps(flower.getBounds())) {
+			// game.changeScreen(new GameOverScreen(game));
+			// }
 			if (enemy.getState() == EnemyState.THROWN) {
 				Particle p = objects.getParticle();
 				p.setType(ParticleType.TRAIL);

@@ -25,8 +25,6 @@ public abstract class GameObject extends Actor implements Poolable {
 		sprScale = 1;
 	}
 
-	public abstract void move();
-
 	public void act(float delta) {
 		spriteTimer += delta * 15;
 		while (spriteTimer > spriteLength) {
@@ -56,6 +54,9 @@ public abstract class GameObject extends Actor implements Poolable {
 	}
 
 	public void setSprite(Animation sprite) {
+		if (this.sprite == sprite) {
+			return;
+		}
 		this.sprite = sprite;
 		spriteLength = sprite.getLength();
 		spriteTimer = 0;

@@ -1,9 +1,11 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.Input;
+import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
@@ -18,19 +20,16 @@ public class Player extends GameObject {
 
 	public Player() {
 		super();
-		setSize(28, 18);
-		xSprOffset = -2;
+		sprScale = 2;
+		xSprOffset = -1 * sprScale;
+		setSize(12 * sprScale, 16 * sprScale);
 		setSprite(Sprites.player);
 		throwSpeed = 12;
 		walkSpeed = 6;
 		reset();
 	}
 
-	/*
-	 * must have functions called in this order: move -must change dx/dy -must
-	 * change grounded to false collide -must correct x/y, dx/dy -must correct
-	 * grounded act -must add dx/dy to x/y -must finalize position
-	 */
+	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
 
 	public void move() {
 		if (held != null) {
@@ -100,11 +99,7 @@ public class Player extends GameObject {
 					if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
 					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
 					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
-					if (dyt == ySpeed + 6 && dxt == xSpeed) {
-						held.setState(EnemyState.STUNNED);
-					} else {
-						held.setState(EnemyState.THROWN);
-					}
+					held.setState(EnemyState.THROWN);
 					held.launch(dxt, dyt);
 					held = null;
 					throwTimer = 10;
@@ -121,6 +116,7 @@ public class Player extends GameObject {
 			setX(Consts.ScreenWidth - 1);
 		}
 		super.act(delta);
+		handleSprite();
 	}
 
 	public void collideSolid(Solid block) {
@@ -151,21 +147,27 @@ public class Player extends GameObject {
 
 	public void collideEnemy(AbstractEnemy enemy) {
 		bounds.setPosition(getX(), getY() + ySpeed);
-		if (bounds.overlaps(enemy.bounds)) {
+		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
 			if (getTop() + ySpeed > enemy.getTop() && bounds.y < enemy.getTop()) {
-				if (enemy.state == EnemyState.ACTIVE || enemy.state == EnemyState.STUNNED) {
+				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.STUNNED);
 					enemy.jumpOn();
 					if (!Input.KeyDown(Input.C)) {
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
+				} else if (enemy.state == EnemyState.STUNNED && !Input.KeyDown(Input.C)) {
+					enemy.setState(EnemyState.DEAD);
+					enemy.launch(xSpeed, -ySpeed);
+					ySpeed = 7;
+					jumpTimer = 16;
 				}
 			}
 		}
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(enemy.bounds)) {
-			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0)) && Input.KeyDown(Input.C) && held == null) {
+			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
+				&& Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 			} else if (enemy.state == EnemyState.ACTIVE) {
@@ -186,9 +188,7 @@ public class Player extends GameObject {
 	}
 
 	public void getItem(ItemType item) {
-		if (item == null) {
-			return;
-		}
+		if (item == null) { return; }
 		switch (hasItem(item)) {
 		case -1:
 		case 2:
@@ -212,12 +212,15 @@ public class Player extends GameObject {
 		return -1;
 	}
 
-	/*
-	 * public void draw(Batch batch, float parentAlpha) { for (int i = 0; i < 3;
-	 * i++) { if (items[i] != null) { Label p = new Label(items[i].toString());
-	 * p.drawC(batch, x + getWidth() / 2, y + 80 - i * 16); } }
-	 * super.draw(batch, parentAlpha); }
-	 */
+	public void draw(Batch batch, float parentAlpha) {
+		for (int i = 0; i < 3; i++) {
+			if (items[i] != null) {
+				Label p = new Label(items[i].toString());
+				p.drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
+			}
+		}
+		super.draw(batch, parentAlpha);
+	}
 
 	public void reset() {
 		setX(Consts.ScreenWidth / 2 - getWidth() / 2);
@@ -225,5 +228,17 @@ public class Player extends GameObject {
 		ySpeed = 0;
 		xSpeed = 0;
 		facingRight = true;
+	}
+
+	private void handleSprite() {
+		if (!grounded) {
+			setSprite(facingRight ? Sprites.playerJumpR : Sprites.playerJumpL);
+		} else if (xSpeed > 0) {
+			setSprite(Sprites.playerRunR);
+		} else if (xSpeed < 0) {
+			setSprite(Sprites.playerRunL);
+		} else {
+			setSprite(facingRight ? Sprites.playerIdleR : Sprites.playerIdleL);
+		}
 	}
 }

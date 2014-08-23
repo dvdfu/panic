@@ -1,5 +1,6 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Consts;
@@ -67,9 +68,7 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void collideSolid(Solid other) {
-		if (state == EnemyState.GRABBED) {
-			return;
-		}
+		if (state == EnemyState.GRABBED) { return; }
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (bounds.overlaps(other.bounds)) {
 			if (getTop() + ySpeed > other.getY() && bounds.y < other.getY()) {
@@ -99,9 +98,7 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void collideEnemy(AbstractEnemy other) {
-		if (other.state == EnemyState.DEAD || other.state == EnemyState.REMOVE || state == EnemyState.REMOVE) {
-			return;
-		}
+		if (other.state == EnemyState.DEAD || other.state == EnemyState.REMOVE || state == EnemyState.REMOVE) { return; }
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(other.bounds)) {
 			if (state == EnemyState.GRABBED || state == EnemyState.THROWN) {
@@ -156,27 +153,27 @@ public class EnemyBasic extends AbstractEnemy {
 	}
 
 	public void draw(Batch batch, float alpha) {
-		// switch (state) {
-		// case ACTIVE:
-		// batch.setColor(new Color(1, 0, 0, 1));
-		// break;
-		// case STUNNED:
-		// batch.setColor(new Color(1, 1, 0, 1));
-		// break;
-		// case GRABBED:
-		// batch.setColor(new Color(0, 0, 1, 1));
-		// break;
-		// case THROWN:
-		// batch.setColor(new Color(0, 1, 0, 1));
-		// break;
-		// case DEAD:
-		// batch.setColor(new Color(1, 0, 1, 1));
-		// break;
-		// default:
-		// break;
-		// }
+		switch (state) {
+		case ACTIVE:
+			batch.setColor(new Color(1, 0, 0, 1));
+			break;
+		case STUNNED:
+			batch.setColor(new Color(1, 1, 0, 1));
+			break;
+		case GRABBED:
+			batch.setColor(new Color(0, 0, 1, 1));
+			break;
+		case THROWN:
+			batch.setColor(new Color(0, 1, 0, 1));
+			break;
+		case DEAD:
+			batch.setColor(new Color(1, 0, 1, 1));
+			break;
+		default:
+			break;
+		}
 		super.draw(batch, alpha);
-		// batch.setColor(new Color(1, 1, 1, 1));
+		batch.setColor(new Color(1, 1, 1, 1));
 		if (state == EnemyState.STUNNED || state == EnemyState.GRABBED || state == EnemyState.THROWN) {
 			healthBar.setText("" + stunnedTimer / 10);
 			healthBar.drawC(batch, getX() + getWidth() / 2, getY() + 40);
