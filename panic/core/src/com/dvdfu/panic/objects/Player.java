@@ -35,10 +35,12 @@ public class Player extends GameObject {
 		if (held != null) {
 			if (facingRight) {
 				held.setX(getX() + 16);
+				held.xSpeed = xSpeed;
 			} else {
 				held.setX(getX() - 16);
+				held.xSpeed = xSpeed;
 			}
-			held.setY(getY() + 8);
+			held.setY(getY() + 26);
 		}
 		if (throwTimer == 0) {
 			ySpeed -= 0.3f;
@@ -75,6 +77,9 @@ public class Player extends GameObject {
 			jumpTimer = 16;
 			ySpeed = 7;
 		}
+		if (getTop() < 0) {
+			reset();
+		}
 		grounded = false;
 	}
 
@@ -93,7 +98,7 @@ public class Player extends GameObject {
 						throwTimer = 10;
 					}
 				} else {
-					float dyt = ySpeed + 6;
+					float dyt = ySpeed + 2;
 					float dxt = xSpeed;
 					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
 					if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
@@ -106,22 +111,15 @@ public class Player extends GameObject {
 				}
 			}
 		}
-		if (getTop() < 0) {
-			reset();
-		}
-		if (getX() > Consts.ScreenWidth) {
-			setX(1 - getWidth());
-		}
-		if (getRight() < 0) {
-			setX(Consts.ScreenWidth - 1);
-		}
 		super.act(delta);
 		handleSprite();
 	}
 
-	public void collideSolid(Solid block) {
+	public boolean collideSolid(Solid block) {
+		boolean collided = false;
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (bounds.overlaps(block.bounds)) {
+			collided = true;
 			if (getTop() + ySpeed > block.getY() && bounds.y < block.getY()) {
 				setY(block.getY() - getHeight());
 			}
@@ -134,6 +132,7 @@ public class Player extends GameObject {
 		}
 		bounds = bounds.setPosition(getX() + xSpeed, getY());
 		if (bounds.overlaps(block.bounds)) {
+			collided = true;
 			if (getRight() + xSpeed > block.getX() && bounds.x < block.getX()) {
 				setX(block.getX() - getWidth());
 			}
@@ -143,24 +142,24 @@ public class Player extends GameObject {
 			xSpeed = 0;
 		}
 		updateBounds();
+		return collided;
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
-			if (getTop() + ySpeed > enemy.getTop() && bounds.y < enemy.getTop()) {
+			if (getTop() + ySpeed > enemy.getTop()) {
 				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.STUNNED);
-					enemy.jumpOn();
-					if (!Input.KeyDown(Input.C)) {
+					ySpeed = 7;
+					jumpTimer = 16;
+				} else if (enemy.state == EnemyState.STUNNED) {
+					if (!Input.KeyDown(Input.C) || held != null) {
+						enemy.setState(EnemyState.DEAD);
+						enemy.launch(xSpeed, -ySpeed);
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
-				} else if (enemy.state == EnemyState.STUNNED && !Input.KeyDown(Input.C)) {
-					enemy.setState(EnemyState.DEAD);
-					enemy.launch(xSpeed, -ySpeed);
-					ySpeed = 7;
-					jumpTimer = 16;
 				}
 			}
 		}

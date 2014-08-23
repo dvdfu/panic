@@ -40,17 +40,25 @@ public class TestScreen extends AbstractScreen {
 
 		solids = new Group();
 		Solid s1 = new Solid();
-		s1.setPosition(96, 0);
-		s1.setSize(Consts.ScreenWidth - 192, 176);
+		s1.setPosition(160, 0);
+		s1.setSize(Consts.ScreenWidth - 320, 176);
 		solids.addActor(s1);
 		Solid s2 = new Solid();
 		s2.setPosition(0, 360);
-		s2.setSize(256, 32);
+		s2.setSize(320, 32);
 		solids.addActor(s2);
 		Solid s3 = new Solid();
-		s3.setPosition(Consts.ScreenWidth - 256, 360);
-		s3.setSize(256, 32);
+		s3.setPosition(Consts.ScreenWidth - 320, 360);
+		s3.setSize(320, 32);
 		solids.addActor(s3);
+		Solid s4 = new Solid();
+		s4.setPosition(0, 0);
+		s4.setSize(32, Consts.ScreenHeight);
+		solids.addActor(s4);
+		Solid s5 = new Solid();
+		s5.setPosition(Consts.ScreenWidth - 32, 0);
+		s5.setSize(32, Consts.ScreenHeight);
+		solids.addActor(s5);
 		/* Floor floor = new Floor(0, 0); floor.setSize(Consts.ScreenWidth, 16); solids.addActor(floor); */
 		stage.addActor(solids);
 
@@ -84,6 +92,9 @@ public class TestScreen extends AbstractScreen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
+		if (Input.KeyPressed(Input.X)) {
+			game.changeScreen(new GameOverScreen(game));
+		}
 	}
 
 	private void collisions() {
@@ -120,14 +131,13 @@ public class TestScreen extends AbstractScreen {
 					p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY());
 					particles.addActor(p);
 				}
-				spawnItem(enemy.getX(), enemy.getY());
-				// ui.addScore(10);
+				if (enemy.getTop() > 0) {
+					spawnItem(enemy.getX(), enemy.getY());
+					ui.addScore(1);
+				}
 				enemies.removeActor(enemy);
 				objects.free(enemy);
 			}
-			// if (enemy.getBounds().overlaps(flower.getBounds())) {
-			// game.changeScreen(new GameOverScreen(game));
-			// }
 			if (enemy.getState() == EnemyState.THROWN) {
 				Particle p = objects.getParticle();
 				p.setType(ParticleType.TRAIL);

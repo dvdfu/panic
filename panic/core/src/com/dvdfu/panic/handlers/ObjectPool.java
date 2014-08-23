@@ -36,7 +36,7 @@ public class ObjectPool implements Disposable {
 			}
 		};
 	}
-	
+
 	public Solid getSolid() {
 		return solid.obtain();
 	}
@@ -65,6 +65,5 @@ public class ObjectPool implements Disposable {
 		}
 	}
 
-	public void dispose() {
-	}
+	public void dispose() {}
 }
