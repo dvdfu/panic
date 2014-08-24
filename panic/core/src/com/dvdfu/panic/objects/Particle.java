@@ -11,7 +11,6 @@ public class Particle extends GameObject {
 		reset();
 		type = ParticleType.TRAIL;
 		stretched = true;
-		setSprite(Sprites.plain);
 	}
 	
 	public boolean dead() {
@@ -22,13 +21,18 @@ public class Particle extends GameObject {
 		this.type = type;
 		switch (type) {
 		case TRAIL:
-			setSize(12, 12);
+			setSprite(Sprites.enemyThrow);
+			sprScale = 2;
+			setSize(19 * sprScale, 15 * sprScale);
+			xSprOffset = -2;
 			timer = 20;
 			ySpeed = 0;
 			xSpeed = 0;
 			break;
 		case EXPLOSION:
+			setSprite(Sprites.plain);
 			setSize(6, 6);
+			xSprOffset = 0;
 			timer = 40;
 			ySpeed = MathUtils.random(4f, 7f);
 			xSpeed = MathUtils.random(-3f, 3f);

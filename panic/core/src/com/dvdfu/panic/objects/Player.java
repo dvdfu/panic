@@ -1,5 +1,6 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
@@ -13,6 +14,7 @@ public class Player extends GameObject {
 	private float throwSpeed;
 	private int jumpTimer;
 	private int throwTimer;
+	private int hurtTimer;
 	private boolean grounded;
 	private boolean facingRight;
 
@@ -75,12 +77,23 @@ public class Player extends GameObject {
 			jumpTimer = 16;
 			ySpeed = 7;
 		}
+		if (getRight() > Consts.BoundsR) {
+			setX(Consts.BoundsR - getWidth());
+			xSpeed = 0;
+		}
+		if (getX() < Consts.BoundsL) {
+			setX(Consts.BoundsL);
+			xSpeed = 0;
+		}
 		grounded = false;
 	}
 
 	public void act(float delta) {
 		if (throwTimer > 0) {
 			throwTimer--;
+		}
+		if (hurtTimer > 0) {
+			hurtTimer--;
 		}
 		if (held != null) {
 			if (held.getState() != EnemyState.GRABBED) {
@@ -145,15 +158,20 @@ public class Player extends GameObject {
 		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
 			if (getTop() + ySpeed > enemy.getTop()) {
 				if (enemy.state == EnemyState.ACTIVE) {
-					enemy.setState(EnemyState.STUNNED);
-					if (held != null || !Input.KeyDown(Input.C)) {
+					if (hurtTimer == 0) {
+						enemy.setState(EnemyState.STUNNED);
+					}
+					if (hurtTimer > 0 || held != null || !Input.KeyDown(Input.C)) {
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
 				} else if (enemy.state == EnemyState.STUNNED) {
 					if (!Input.KeyDown(Input.C) || held != null) {
-						enemy.setState(EnemyState.DEAD);
-						enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
+
+						if (hurtTimer == 0) {
+							enemy.setState(EnemyState.DEAD);
+							enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
+						}
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
@@ -161,17 +179,33 @@ public class Player extends GameObject {
 			}
 		}
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(enemy.bounds)) {
+		if (hurtTimer == 0 && bounds.overlaps(enemy.bounds)) {
 			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
 				&& Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 			} else if (enemy.state == EnemyState.ACTIVE) {
-				// PLAYER DIES
-				reset();
+				hurt(enemy);
 			}
 		}
 		updateBounds();
+	}
+
+	public void hurt(AbstractEnemy other) {
+		if (hurtTimer == 0) {
+			if (held != null) {
+				held.setState(EnemyState.STUNNED);
+				held = null;
+				throwTimer = 10;
+			}
+			if (xSpeed == 0) {
+				xSpeed = other.xSpeed * 3;
+			} else {
+				xSpeed = -xSpeed * 3;
+			}
+			hurtTimer = 180;
+			ySpeed = 6;
+		}
 	}
 
 	public void collideFlower(Flower flower) {
@@ -208,15 +242,21 @@ public class Player extends GameObject {
 		return -1;
 	}
 
-	// public void draw(Batch batch, float parentAlpha) {
-	// for (int i = 0; i < 3; i++) {
-	// if (items[i] != null) {
-	// Label p = new Label(items[i].toString());
-	// p.drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
-	// }
-	// }
-	// super.draw(batch, parentAlpha);
-	// }
+	public void draw(Batch batch, float parentAlpha) {
+		// for (int i = 0; i < 3; i++) {
+		// if (items[i] != null) {
+		// Label p = new Label(items[i].toString());
+		// p.drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
+		// }
+		// }
+		if (hurtTimer > 0) {
+			batch.setColor(0, 0, 1, 1);
+		}
+		super.draw(batch, parentAlpha);
+		if (hurtTimer > 0) {
+			batch.setColor(1, 1, 1, 1);
+		}
+	}
 
 	public void reset() {
 		setX(Consts.ScreenWidth / 2 - getWidth() / 2);

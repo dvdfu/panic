@@ -34,6 +34,16 @@ public class EnemyBasic extends AbstractEnemy {
 				setState(EnemyState.STUNNED);
 			}
 		}
+		if (getRight() > Consts.BoundsR) {
+			setX(Consts.BoundsR - getWidth());
+			xSpeed = -xSpeed;
+			movingRight ^= true;
+		}
+		if (getX() < Consts.BoundsL) {
+			setX(Consts.BoundsL);
+			xSpeed = -xSpeed;
+			movingRight ^= true;
+		}
 		grounded = false;
 	}
 
@@ -99,23 +109,31 @@ public class EnemyBasic extends AbstractEnemy {
 				other.launch(xSpeed / 2, 6);
 			} else if (state == EnemyState.GRABBED) {
 				other.setState(EnemyState.STUNNED);
-				other.launch(xSpeed / 2, 6);
+				if (xSpeed == 0) {
+					if (getX() > other.getX()) {
+						other.launch(-1, 6);
+					} else {
+						other.launch(1, 6);
+					}
+				} else {
+					other.launch(xSpeed / 2, 6);
+				}
 			}
 		}
-		// bounds.setPosition(getX() + xSpeed, getY());
-		// if (bounds.overlaps(other.bounds)) {
-		// if (state == EnemyState.ACTIVE && grounded) {
-		// if (getRight() + xSpeed > other.getX() && bounds.x < other.getX()) {
-		// setX(other.getX() - getWidth());
-		// }
-		// if (getRight() + xSpeed > other.getRight() && bounds.x < other.getRight()) {
-		// setX(other.getRight());
-		// }
-		// xSpeed = -xSpeed;
-		// movingRight ^= true;
-		// }
-		// }
-		// updateBounds();
+		bounds.setPosition(getX() + xSpeed, getY());
+		if (bounds.overlaps(other.bounds)) {
+			if (state == EnemyState.ACTIVE && other.state == EnemyState.STUNNED && grounded) {
+				if (getRight() + xSpeed > other.getX() && bounds.x < other.getX()) {
+					setX(other.getX() - getWidth());
+				}
+				if (getRight() + xSpeed > other.getRight() && bounds.x < other.getRight()) {
+					setX(other.getRight());
+				}
+				xSpeed = -xSpeed;
+				movingRight ^= true;
+			}
+		}
+		updateBounds();
 	}
 
 	public void setState(EnemyState state) {

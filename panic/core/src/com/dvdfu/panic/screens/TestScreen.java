@@ -12,7 +12,7 @@ import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
-import com.dvdfu.panic.objects.Floor;
+import com.dvdfu.panic.objects.Lava;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
@@ -28,7 +28,7 @@ public class TestScreen extends AbstractScreen {
 	private Group items;
 	private Group particles;
 	private Player player;
-	private Floor floor;
+	private Lava lava;
 	private int timer;
 
 	public TestScreen(MainGame game) {
@@ -40,26 +40,26 @@ public class TestScreen extends AbstractScreen {
 		stage.addActor(items);
 
 		solids = new Group();
-		Solid s1 = new Solid();
-		s1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
-		s1.setSize(Consts.F1Width, Consts.F1Height);
-		solids.addActor(s1);
-		Solid s2 = new Solid();
-		s2.setPosition(0, Consts.F2Y);
-		s2.setSize(Consts.F2Width, 32);
-		solids.addActor(s2);
-		Solid s3 = new Solid();
-		s3.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y);
-		s3.setSize(320, 32);
-		solids.addActor(s3);
-		Solid s4 = new Solid();
-		s4.setPosition(0, 0);
-		s4.setSize(32, Consts.ScreenHeight);
-		solids.addActor(s4);
-		Solid s5 = new Solid();
-		s5.setPosition(Consts.ScreenWidth - 32, 0);
-		s5.setSize(32, Consts.ScreenHeight);
-		solids.addActor(s5);
+		Solid floor1 = new Solid();
+		floor1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
+		floor1.setSize(Consts.F1Width, Consts.F1Height);
+		solids.addActor(floor1);
+		Solid floor2L = new Solid();
+		floor2L.setPosition(0, Consts.F2Y);
+		floor2L.setSize(Consts.F2Width, 32);
+		solids.addActor(floor2L);
+		Solid floor2R = new Solid();
+		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y);
+		floor2R.setSize(320, 32);
+		solids.addActor(floor2R);
+		// Solid s4 = new Solid();
+		// s4.setPosition(0, 0);
+		// s4.setSize(32, Consts.ScreenHeight);
+		// solids.addActor(s4);
+		// Solid s5 = new Solid();
+		// s5.setPosition(Consts.ScreenWidth - 32, 0);
+		// s5.setSize(32, Consts.ScreenHeight);
+		// solids.addActor(s5);
 		/* Floor floor = new Floor(0, 0); floor.setSize(Consts.ScreenWidth, 16); solids.addActor(floor); */
 		stage.addActor(solids);
 
@@ -76,8 +76,8 @@ public class TestScreen extends AbstractScreen {
 		particles = new Group();
 		stage.addActor(particles);
 		
-		floor = new Floor();
-		stage.addActor(floor);
+		lava = new Lava();
+		stage.addActor(lava);
 
 		ui = new UI();
 		stage.addActor(ui);
@@ -105,7 +105,7 @@ public class TestScreen extends AbstractScreen {
 	private void collisions() {
 		// PLAYER
 		player.move();
-		if (player.getY() < floor.getTop()) {
+		if (player.getY() < lava.getTop()) {
 			gameOver();
 		}
 		// player.collideFlower(flower);
@@ -127,9 +127,9 @@ public class TestScreen extends AbstractScreen {
 			EnemyBasic enemy = (EnemyBasic) enemies.getChildren().items[i];
 			enemy.move();
 			player.collideEnemy(enemy);
-			if (enemy.getTop() < floor.getTop()) {
+			if (enemy.getTop() < lava.getTop()) {
 				if (enemy.getState() == EnemyState.ACTIVE) {
-					floor.raise();
+					lava.raise();
 				}
 				enemy.setState(EnemyState.REMOVE);
 			}
@@ -168,7 +168,7 @@ public class TestScreen extends AbstractScreen {
 				items.removeActor(item);
 				objects.free(item);
 			}
-			if (item.getTop() < floor.getTop()) {
+			if (item.getTop() < lava.getTop()) {
 				items.removeActor(item);
 				objects.free(item);
 			}
@@ -185,9 +185,9 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void spawnItem(float x, float y) {
-		Item item = objects.getItem();
-		item.setPosition(x, y);
-		items.addActor(item);
+		// Item item = objects.getItem();
+		// item.setPosition(x, y);
+		// items.addActor(item);
 	}
 
 	public void resize(int width, int height) {}

@@ -9,4 +9,6 @@ public class Consts {
 	public static final int F1Width = ScreenWidth - 320;
 	public static final int F2Y = 360;
 	public static final int F2Width = 320;
+	public static final int BoundsL = 0;
+	public static final int BoundsR = ScreenWidth - BoundsL;
 }
