@@ -27,8 +27,9 @@ public class Item extends GameObject {
 	}
 	
 	public void move() {
-		ySpeed -= 0.2f;
-		grounded = false;
+		if (!grounded) {
+			ySpeed -= 0.2f;
+		}
 	}
 
 	public void act(float delta) {

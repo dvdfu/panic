@@ -37,7 +37,7 @@ public class UI extends Actor {
 	}
 
 	public void addScore(int score) {
-		this.score += score + scoreTimer * 10;
+		this.score += score;
 		scoreTimer = 6;
 	}
 

@@ -12,6 +12,7 @@ import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.EnemyBasic;
+import com.dvdfu.panic.objects.Floor;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
@@ -27,7 +28,7 @@ public class TestScreen extends AbstractScreen {
 	private Group items;
 	private Group particles;
 	private Player player;
-	// private Flower flower;
+	private Floor floor;
 	private int timer;
 
 	public TestScreen(MainGame game) {
@@ -40,15 +41,15 @@ public class TestScreen extends AbstractScreen {
 
 		solids = new Group();
 		Solid s1 = new Solid();
-		s1.setPosition(160, 0);
-		s1.setSize(Consts.ScreenWidth - 320, 176);
+		s1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
+		s1.setSize(Consts.F1Width, Consts.F1Height);
 		solids.addActor(s1);
 		Solid s2 = new Solid();
-		s2.setPosition(0, 360);
-		s2.setSize(320, 32);
+		s2.setPosition(0, Consts.F2Y);
+		s2.setSize(Consts.F2Width, 32);
 		solids.addActor(s2);
 		Solid s3 = new Solid();
-		s3.setPosition(Consts.ScreenWidth - 320, 360);
+		s3.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y);
 		s3.setSize(320, 32);
 		solids.addActor(s3);
 		Solid s4 = new Solid();
@@ -74,6 +75,9 @@ public class TestScreen extends AbstractScreen {
 
 		particles = new Group();
 		stage.addActor(particles);
+		
+		floor = new Floor();
+		stage.addActor(floor);
 
 		ui = new UI();
 		stage.addActor(ui);
@@ -92,14 +96,18 @@ public class TestScreen extends AbstractScreen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
-		if (Input.KeyPressed(Input.X)) {
-			game.changeScreen(new GameOverScreen(game));
-		}
+	}
+	
+	private void gameOver() {
+		game.changeScreen(new GameOverScreen(game));
 	}
 
 	private void collisions() {
 		// PLAYER
 		player.move();
+		if (player.getY() < floor.getTop()) {
+			gameOver();
+		}
 		// player.collideFlower(flower);
 		// ALL SOLIDS
 		for (Actor actor : solids.getChildren()) {
@@ -119,6 +127,12 @@ public class TestScreen extends AbstractScreen {
 			EnemyBasic enemy = (EnemyBasic) enemies.getChildren().items[i];
 			enemy.move();
 			player.collideEnemy(enemy);
+			if (enemy.getTop() < floor.getTop()) {
+				if (enemy.getState() == EnemyState.ACTIVE) {
+					floor.raise();
+				}
+				enemy.setState(EnemyState.REMOVE);
+			}
 			for (int j = i + 1; j < enemies.getChildren().size; j++) {
 				EnemyBasic enemy2 = (EnemyBasic) enemies.getChildren().items[j];
 				enemy.collideEnemy(enemy2);
@@ -151,6 +165,10 @@ public class TestScreen extends AbstractScreen {
 			item.move();
 			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.C)) {
 				player.getItem(item.getType());
+				items.removeActor(item);
+				objects.free(item);
+			}
+			if (item.getTop() < floor.getTop()) {
 				items.removeActor(item);
 				objects.free(item);
 			}

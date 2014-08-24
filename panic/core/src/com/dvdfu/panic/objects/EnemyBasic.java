@@ -57,9 +57,6 @@ public class EnemyBasic extends AbstractEnemy {
 				setState(EnemyState.ACTIVE);
 			}
 		}
-		if (state != EnemyState.GRABBED && getTop() < 0) {
-			setState(EnemyState.REMOVE);
-		}
 		super.act(delta);
 	}
 

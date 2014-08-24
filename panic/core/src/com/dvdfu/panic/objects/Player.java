@@ -1,11 +1,9 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.Input;
-import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
@@ -76,9 +74,6 @@ public class Player extends GameObject {
 		if (grounded && Input.KeyPressed(Input.Z)) {
 			jumpTimer = 16;
 			ySpeed = 7;
-		}
-		if (getTop() < 0) {
-			reset();
 		}
 		grounded = false;
 	}
@@ -151,12 +146,14 @@ public class Player extends GameObject {
 			if (getTop() + ySpeed > enemy.getTop()) {
 				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.STUNNED);
-					ySpeed = 7;
-					jumpTimer = 16;
+					if (held != null || !Input.KeyDown(Input.C)) {
+						ySpeed = 7;
+						jumpTimer = 16;
+					}
 				} else if (enemy.state == EnemyState.STUNNED) {
 					if (!Input.KeyDown(Input.C) || held != null) {
 						enemy.setState(EnemyState.DEAD);
-						enemy.launch(xSpeed, -ySpeed);
+						enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
@@ -211,15 +208,15 @@ public class Player extends GameObject {
 		return -1;
 	}
 
-	public void draw(Batch batch, float parentAlpha) {
-		for (int i = 0; i < 3; i++) {
-			if (items[i] != null) {
-				Label p = new Label(items[i].toString());
-				p.drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
-			}
-		}
-		super.draw(batch, parentAlpha);
-	}
+	// public void draw(Batch batch, float parentAlpha) {
+	// for (int i = 0; i < 3; i++) {
+	// if (items[i] != null) {
+	// Label p = new Label(items[i].toString());
+	// p.drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
+	// }
+	// }
+	// super.draw(batch, parentAlpha);
+	// }
 
 	public void reset() {
 		setX(Consts.ScreenWidth / 2 - getWidth() / 2);

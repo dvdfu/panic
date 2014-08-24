@@ -22,7 +22,7 @@ public class GameOverScreen extends AbstractScreen {
 		if (Input.KeyPressed(Input.ARROW_DOWN)) {
 			game.changeScreen(new TestScreen(game));
 		}
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		// Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		batch.begin();
 		message.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight /  2);
