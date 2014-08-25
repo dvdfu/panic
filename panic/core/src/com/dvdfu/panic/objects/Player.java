@@ -154,7 +154,7 @@ public class Player extends GameObject {
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
-		if (hurtTimer > 0) { return; }
+		if (hurtTimer > 0 || enemy instanceof EnemyRunner) { return; }
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
 			if (getTop() + ySpeed > enemy.getTop()) {

@@ -11,20 +11,13 @@ public class EnemyRunner extends AbstractEnemy {
 
 	public EnemyRunner() {
 		super();
-		moveSpeed = 3;
+		moveSpeed = 4.5f;
 		stretched = false;
 		sprScale = 2;
 		setSize(19 * sprScale, 15 * sprScale);
 		xSprOffset = -2;
 		setSprite(Sprites.enemyThrow);
 		reset();
-	}
-	
-	public void act(float delta) {
-		if (state == EnemyState.STUNNED) {
-			setState(EnemyState.DEAD);
-		}
-		super.act(delta);
 	}
 
 	public void setState(EnemyState state) {
@@ -38,20 +31,35 @@ public class EnemyRunner extends AbstractEnemy {
 		case ACTIVE:
 			xSpeed = movingRight ? moveSpeed : -moveSpeed;
 			setSprite(Sprites.enemyThrow);
+			super.setState(state);
 			break;
+		case STUNNED:
+			super.setState(EnemyState.DEAD);
+		break;
 		case DEAD:
-			ySpeed = 4;
 			setSprite(Sprites.enemyThrow);
+			super.setState(state);
 			break;
 		default:
 			setSprite(Sprites.enemyThrow);
+			super.setState(state);
 			break;
 		}
-		super.setState(state);
+	}
+
+	public void collidePlayer(Player other) {
+		if (state == EnemyState.DEAD) {
+			return;
+		}
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		if (bounds.overlaps(other.getBounds())){
+			setState(EnemyState.REMOVE);
+		}
+		updateBounds();
 	}
 
 	public void draw(Batch batch, float alpha) {
-		batch.setColor(new Color(1, 1, 0, 1));
+		batch.setColor(new Color(1, 0, 1, 1));
 		super.draw(batch, alpha);
 		batch.setColor(new Color(1, 1, 1, 1));
 	}

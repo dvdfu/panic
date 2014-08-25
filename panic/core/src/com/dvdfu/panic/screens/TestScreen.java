@@ -136,6 +136,7 @@ public class TestScreen extends AbstractScreen {
 			AbstractEnemy enemy = (AbstractEnemy) enemies.getChildren().items[i];
 			enemy.move();
 			player.collideEnemy(enemy);
+			enemy.collidePlayer(player);
 			if (enemy.getY() < lava.getTop()) {
 				if (enemy.getState() == EnemyState.ACTIVE) {
 					lava.raise();

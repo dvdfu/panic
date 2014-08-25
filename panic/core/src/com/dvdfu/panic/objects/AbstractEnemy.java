@@ -12,7 +12,7 @@ public abstract class AbstractEnemy extends GameObject {
 	protected boolean movingRight;
 	protected int stunnedTimer;
 	protected int damagedTimer;
-	protected int moveSpeed;
+	protected float moveSpeed;
 	protected Label stunBar;
 
 	public AbstractEnemy() {
@@ -41,11 +41,11 @@ public abstract class AbstractEnemy extends GameObject {
 			xSpeed = vf;
 		} else if (xSpeed < -vf - a) {
 			xSpeed += a;
-		} else if (xSpeed < -vf){
-			xSpeed  = -vf;
+		} else if (xSpeed < -vf) {
+			xSpeed = -vf;
 		}
 	}
-	
+
 	protected void contain() {
 		if (getRight() > Consts.BoundsR) {
 			setX(Consts.BoundsR - getWidth());
@@ -69,7 +69,7 @@ public abstract class AbstractEnemy extends GameObject {
 		}
 		super.act(delta);
 	}
-	
+
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 		if (state == EnemyState.STUNNED) {
@@ -85,9 +85,9 @@ public abstract class AbstractEnemy extends GameObject {
 	public void setState(EnemyState state) {
 		this.state = state;
 	}
-	
+
 	protected void justLanded() {
-		
+
 	}
 
 	public void collideSolid(Solid other) {
@@ -155,6 +155,9 @@ public abstract class AbstractEnemy extends GameObject {
 			}
 		}
 		updateBounds();
+	}
+
+	public void collidePlayer(Player other) {
 	}
 
 	public void launch(float dx, float dy) {
