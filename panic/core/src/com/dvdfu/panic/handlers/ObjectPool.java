@@ -2,7 +2,9 @@ package com.dvdfu.panic.handlers;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
-import com.dvdfu.panic.objects.EnemyBasic;
+import com.dvdfu.panic.objects.EnemyRunner;
+import com.dvdfu.panic.objects.EnemyJump;
+import com.dvdfu.panic.objects.EnemyWalker;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
@@ -10,7 +12,9 @@ import com.dvdfu.panic.objects.Solid;
 
 public class ObjectPool implements Disposable {
 	private Pool<Solid> solid;
-	private Pool<EnemyBasic> enemyBasic;
+	private Pool<EnemyWalker> enemyWalker;
+	private Pool<EnemyJump> enemyJump;
+	private Pool<EnemyRunner> enemyRunner;
 	private Pool<Item> item;
 	private Pool<Particle> particle;
 
@@ -20,9 +24,19 @@ public class ObjectPool implements Disposable {
 				return new Solid();
 			}
 		};
-		enemyBasic = new Pool<EnemyBasic>() {
-			protected EnemyBasic newObject() {
-				return new EnemyBasic();
+		enemyWalker = new Pool<EnemyWalker>() {
+			protected EnemyWalker newObject() {
+				return new EnemyWalker();
+			}
+		};
+		enemyJump = new Pool<EnemyJump>() {
+			protected EnemyJump newObject() {
+				return new EnemyJump();
+			}
+		};
+		enemyRunner = new Pool<EnemyRunner>() {
+			protected EnemyRunner newObject() {
+				return new EnemyRunner();
 			}
 		};
 		item = new Pool<Item>() {
@@ -41,8 +55,16 @@ public class ObjectPool implements Disposable {
 		return solid.obtain();
 	}
 
-	public EnemyBasic getEnemyBasic() {
-		return enemyBasic.obtain();
+	public EnemyWalker getEnemyWalker() {
+		return enemyWalker.obtain();
+	}
+
+	public EnemyJump getEnemyJump() {
+		return enemyJump.obtain();
+	}
+
+	public EnemyRunner getEnemyRunner() {
+		return enemyRunner.obtain();
 	}
 
 	public Item getItem() {
@@ -56,8 +78,12 @@ public class ObjectPool implements Disposable {
 	public void free(GameObject object) {
 		if (object instanceof Solid) {
 			solid.free((Solid) object);
-		} else if (object instanceof EnemyBasic) {
-			enemyBasic.free((EnemyBasic) object);
+		} else if (object instanceof EnemyWalker) {
+			enemyWalker.free((EnemyWalker) object);
+		} else if (object instanceof EnemyJump) {
+			enemyJump.free((EnemyJump) object);
+		} else if (object instanceof EnemyRunner) {
+			enemyRunner.free((EnemyRunner) object);
 		} else if (object instanceof Item) {
 			item.free((Item) object);
 		} else if (object instanceof Particle) {

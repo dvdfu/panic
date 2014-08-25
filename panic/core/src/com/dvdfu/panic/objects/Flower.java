@@ -16,4 +16,10 @@ public class Flower extends AbstractEnemy {
 
 	public void move() {}
 
+	@Override
+	public void collideSolid(Solid solid) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

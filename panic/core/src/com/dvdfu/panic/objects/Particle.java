@@ -21,10 +21,8 @@ public class Particle extends GameObject {
 		this.type = type;
 		switch (type) {
 		case TRAIL:
-			setSprite(Sprites.enemyThrow);
-			sprScale = 2;
-			setSize(19 * sprScale, 15 * sprScale);
-			xSprOffset = -2;
+			setSprite(Sprites.plain);
+			setSize(4, 4);
 			timer = 20;
 			ySpeed = 0;
 			xSpeed = 0;

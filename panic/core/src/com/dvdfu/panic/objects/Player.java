@@ -154,24 +154,20 @@ public class Player extends GameObject {
 	}
 
 	public void collideEnemy(AbstractEnemy enemy) {
+		if (hurtTimer > 0) { return; }
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
 			if (getTop() + ySpeed > enemy.getTop()) {
 				if (enemy.state == EnemyState.ACTIVE) {
-					if (hurtTimer == 0) {
-						enemy.setState(EnemyState.STUNNED);
-					}
-					if (hurtTimer > 0 || held != null || !Input.KeyDown(Input.C)) {
+					enemy.setState(EnemyState.STUNNED);
+					if (held != null || !Input.KeyDown(Input.C)) {
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
 				} else if (enemy.state == EnemyState.STUNNED) {
 					if (!Input.KeyDown(Input.C) || held != null) {
-
-						if (hurtTimer == 0) {
-							enemy.setState(EnemyState.DEAD);
-							enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
-						}
+						enemy.setState(EnemyState.DEAD);
+						enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
 						ySpeed = 7;
 						jumpTimer = 16;
 					}
@@ -179,7 +175,7 @@ public class Player extends GameObject {
 			}
 		}
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (hurtTimer == 0 && bounds.overlaps(enemy.bounds)) {
+		if (bounds.overlaps(enemy.bounds)) {
 			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
 				&& Input.KeyDown(Input.C) && held == null) {
 				held = enemy;
@@ -203,7 +199,7 @@ public class Player extends GameObject {
 			} else {
 				xSpeed = -xSpeed * 3;
 			}
-			hurtTimer = 180;
+			hurtTimer = 32;
 			ySpeed = 6;
 		}
 	}

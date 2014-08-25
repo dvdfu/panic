@@ -2,6 +2,7 @@ package com.dvdfu.panic.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,9 +12,9 @@ import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
-import com.dvdfu.panic.objects.EnemyBasic;
-import com.dvdfu.panic.objects.Lava;
+import com.dvdfu.panic.objects.AbstractEnemy;
 import com.dvdfu.panic.objects.Item;
+import com.dvdfu.panic.objects.Lava;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
 import com.dvdfu.panic.objects.Solid;
@@ -75,7 +76,7 @@ public class TestScreen extends AbstractScreen {
 
 		particles = new Group();
 		stage.addActor(particles);
-		
+
 		lava = new Lava();
 		stage.addActor(lava);
 
@@ -88,7 +89,15 @@ public class TestScreen extends AbstractScreen {
 	public void render(float delta) {
 		timer++;
 		if (timer == 120) {
-			enemies.addActor(objects.getEnemyBasic());
+			if (MathUtils.randomBoolean()) {
+				enemies.addActor(objects.getEnemyWalker());
+			} else {
+				if (MathUtils.randomBoolean()) {
+					enemies.addActor(objects.getEnemyJump());
+				} else {
+					enemies.addActor(objects.getEnemyRunner());
+				}
+			}
 			timer = 0;
 		}
 		collisions();
@@ -97,7 +106,7 @@ public class TestScreen extends AbstractScreen {
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
 	}
-	
+
 	private void gameOver() {
 		game.changeScreen(new GameOverScreen(game));
 	}
@@ -114,7 +123,7 @@ public class TestScreen extends AbstractScreen {
 			Solid solid = (Solid) actor;
 			player.collideSolid(solid);
 			for (Actor actor2 : enemies.getChildren()) {
-				EnemyBasic enemy = (EnemyBasic) actor2;
+				AbstractEnemy enemy = (AbstractEnemy) actor2;
 				enemy.collideSolid(solid);
 			}
 			for (Actor actor2 : items.getChildren()) {
@@ -124,17 +133,17 @@ public class TestScreen extends AbstractScreen {
 		}
 		// ALL ENEMIES
 		for (int i = 0; i < enemies.getChildren().size; i++) {
-			EnemyBasic enemy = (EnemyBasic) enemies.getChildren().items[i];
+			AbstractEnemy enemy = (AbstractEnemy) enemies.getChildren().items[i];
 			enemy.move();
 			player.collideEnemy(enemy);
-			if (enemy.getTop() < lava.getTop()) {
+			if (enemy.getY() < lava.getTop()) {
 				if (enemy.getState() == EnemyState.ACTIVE) {
 					lava.raise();
 				}
 				enemy.setState(EnemyState.REMOVE);
 			}
 			for (int j = i + 1; j < enemies.getChildren().size; j++) {
-				EnemyBasic enemy2 = (EnemyBasic) enemies.getChildren().items[j];
+				AbstractEnemy enemy2 = (AbstractEnemy) enemies.getChildren().items[j];
 				enemy.collideEnemy(enemy2);
 				enemy2.collideEnemy(enemy);
 			}
