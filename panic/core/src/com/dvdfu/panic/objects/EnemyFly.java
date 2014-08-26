@@ -7,11 +7,12 @@ import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.visuals.Sprites;
 
-public class EnemyRunner extends AbstractEnemy {
+public class EnemyFly extends AbstractEnemy {
+	private float xGoal;
+	private float yGoal;
 
-	public EnemyRunner() {
+	public EnemyFly() {
 		super();
-		moveSpeed = 4.5f;
 		stretched = false;
 		sprScale = 2;
 		setSize(19 * sprScale, 15 * sprScale);
@@ -20,42 +21,70 @@ public class EnemyRunner extends AbstractEnemy {
 		reset();
 	}
 
+	public void move() {
+		if (state != EnemyState.GRABBED && state != EnemyState.ACTIVE) {
+			ySpeed -= 0.3f;
+		}
+		if (state == EnemyState.ACTIVE) {
+			xSpeed = MathUtils.clamp((xGoal - getX()) / 60, -2.5f, 2.5f);
+			ySpeed = MathUtils.clamp((yGoal - getY()) / 60, -2.5f, 2.5f);
+		}
+		if ((state == EnemyState.THROWN || state == EnemyState.STUNNED) && grounded) {
+			brake(0, 0.25f);
+			if (state == EnemyState.THROWN && xSpeed == 0) {
+				setState(EnemyState.STUNNED);
+			}
+		}
+		if (state != EnemyState.ACTIVE) {
+			contain();
+		}
+		grounded = false;
+	}
+
+	public void collideSolid(Solid other) {
+		if (state == EnemyState.ACTIVE) { return; }
+		super.collideSolid(other);
+	}
+
 	public void setState(EnemyState state) {
 		// STATE EXIT
 		switch (this.state) {
+		case ACTIVE:
+			xSpeed = 0;
+			ySpeed = 0;
 		default:
 			break;
 		}
 		// STATE ENTER
 		switch (state) {
 		case ACTIVE:
-			xSpeed = movingRight ? moveSpeed : -moveSpeed;
 			setSprite(Sprites.enemyThrow);
-			super.setState(state);
 			break;
 		case STUNNED:
-			super.setState(EnemyState.DEAD);
-		break;
+			xSpeed = 0;
+			stunnedTimer = 600;
+			setSprite(Sprites.enemyThrow);
+			break;
+		case GRABBED:
+			xSpeed = 0;
+			ySpeed = 0;
+		case THROWN:
+			stunnedTimer = 0;
+			setSprite(Sprites.enemyThrow);
+			break;
 		case DEAD:
 			setSprite(Sprites.enemyThrow);
-			super.setState(state);
 			break;
 		default:
 			setSprite(Sprites.enemyThrow);
-			super.setState(state);
 			break;
 		}
+		super.setState(state);
 	}
-
-	public void collidePlayer(Player other) {
-		if (state == EnemyState.DEAD) {
-			return;
-		}
-		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(other.getBounds())){
-			setState(EnemyState.REMOVE);
-		}
-		updateBounds();
+	
+	public void setGoal(float x, float y) {
+		xGoal = x;
+		yGoal = y;
 	}
 
 	public void draw(Batch batch, float alpha) {
@@ -69,12 +98,9 @@ public class EnemyRunner extends AbstractEnemy {
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
 			setX(1 - getWidth() + MathUtils.random(160));
-			xSpeed = moveSpeed;
 		} else {
 			setX(Consts.ScreenWidth - MathUtils.random(160) - 1);
-			xSpeed = -moveSpeed;
 		}
 		setY(Consts.ScreenHeight);
-		ySpeed = 0;
 	}
 }

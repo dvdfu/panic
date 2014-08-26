@@ -13,6 +13,7 @@ import com.dvdfu.panic.handlers.Enums.ParticleType;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.AbstractEnemy;
+import com.dvdfu.panic.objects.EnemyFly;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Lava;
 import com.dvdfu.panic.objects.Particle;
@@ -95,7 +96,7 @@ public class TestScreen extends AbstractScreen {
 				if (MathUtils.randomBoolean()) {
 					enemies.addActor(objects.getEnemyJump());
 				} else {
-					enemies.addActor(objects.getEnemyRunner());
+					enemies.addActor(objects.getEnemyFly());
 				}
 			}
 			timer = 0;
@@ -137,6 +138,10 @@ public class TestScreen extends AbstractScreen {
 			enemy.move();
 			player.collideEnemy(enemy);
 			enemy.collidePlayer(player);
+			if (enemy instanceof EnemyFly) {
+				EnemyFly flyer = (EnemyFly) enemy;
+				flyer.setGoal(player.getX(), player.getY());
+			}
 			if (enemy.getY() < lava.getTop()) {
 				if (enemy.getState() == EnemyState.ACTIVE) {
 					lava.raise();
@@ -195,9 +200,9 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void spawnItem(float x, float y) {
-		// Item item = objects.getItem();
-		// item.setPosition(x, y);
-		// items.addActor(item);
+		Item item = objects.getItem();
+		item.setPosition(x, y);
+		items.addActor(item);
 	}
 
 	public void resize(int width, int height) {}
