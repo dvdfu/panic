@@ -2,21 +2,30 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
+import com.dvdfu.panic.handlers.Enums;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.Input;
+import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Player extends GameObject {
 	private AbstractEnemy held;
 	private ItemType[] items = { null, null, null };
-	private float walkSpeed;
-	private float throwSpeed;
-	private int jumpTimer;
-	private int throwTimer;
-	private int hurtTimer;
+	private Label[] itemLabels = { new Label(), new Label(), new Label() };
 	private boolean grounded;
 	private boolean facingRight;
+	
+	private float walkSpeed;
+	private float walkAcceleration;
+	private float jumpSpeed;
+	private int jumpTimer;
+	private int jumpsTotal;
+	private int jumpsLeft;
+	private float gravity;
+	private float throwSpeed;
+	private int throwTimer;
+	private int hurtTimer;
 
 	public Player() {
 		super();
@@ -24,14 +33,21 @@ public class Player extends GameObject {
 		xSprOffset = -1 * sprScale;
 		setSize(12 * sprScale, 16 * sprScale);
 		setSprite(Sprites.player);
-		throwSpeed = 12;
-		walkSpeed = 6;
 		reset();
+	}
+
+	private void applyPowerups() {
+		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 8 : 6;
+		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 3 : 0.5f;
+		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 20 : 12;
+		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 10 : 7;
+		gravity = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 1 : 0.3f;
 	}
 
 	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
 
 	public void move() {
+		// applyPowerups();
 		if (held != null) {
 			if (facingRight) {
 				held.setX(getX() + 16);
@@ -43,12 +59,12 @@ public class Player extends GameObject {
 			held.setY(getY() + 26);
 		}
 		if (throwTimer == 0) {
-			ySpeed -= 0.3f;
+			ySpeed -= gravity;
 		}
 		if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
-				ySpeed = 7;
+				ySpeed = jumpSpeed;
 			} else {
 				jumpTimer = 0;
 			}
@@ -56,26 +72,29 @@ public class Player extends GameObject {
 
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
 			if (xSpeed < walkSpeed) {
-				xSpeed += 0.5f;
+				xSpeed += walkAcceleration;
 				facingRight = true;
 			} else xSpeed = walkSpeed;
 		} else if (xSpeed > 0) {
-			xSpeed -= 0.5f;
+			xSpeed -= walkAcceleration;
 		}
 		if (Input.KeyDown(Input.ARROW_LEFT)) {
 			if (xSpeed > -walkSpeed) {
-				xSpeed -= 0.5f;
+				xSpeed -= walkAcceleration;
 				facingRight = false;
 			} else xSpeed = -walkSpeed;
 		} else if (xSpeed < 0) {
-			xSpeed += 0.5f;
+			xSpeed += walkAcceleration;
 		}
-		if (xSpeed > -0.5f && xSpeed < 0.5f) {
+		if (xSpeed > -walkAcceleration && xSpeed < walkAcceleration) {
 			xSpeed = 0;
 		}
-		if (grounded && Input.KeyPressed(Input.Z)) {
-			jumpTimer = 16;
-			ySpeed = 7;
+		if (jumpsLeft > 0 && Input.KeyPressed(Input.Z)) {
+			if (grounded) {
+				jumpTimer = 16;
+			}
+			ySpeed = jumpSpeed;
+			jumpsLeft--;
 		}
 		if (getRight() > Consts.BoundsR) {
 			setX(Consts.BoundsR - getWidth());
@@ -134,6 +153,7 @@ public class Player extends GameObject {
 			if (getTop() + ySpeed > block.getTop() && bounds.y < block.getTop()) {
 				setY(block.getTop());
 				grounded = true;
+				jumpsLeft = jumpsTotal;
 			}
 			ySpeed = 0;
 			jumpTimer = 0;
@@ -161,14 +181,14 @@ public class Player extends GameObject {
 				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.STUNNED);
 					if (held != null || !Input.KeyDown(Input.C)) {
-						ySpeed = 7;
+						ySpeed = jumpSpeed;
 						jumpTimer = 16;
 					}
 				} else if (enemy.state == EnemyState.STUNNED) {
 					if (!Input.KeyDown(Input.C) || held != null) {
 						enemy.setState(EnemyState.DEAD);
 						enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
-						ySpeed = 7;
+						ySpeed = jumpSpeed;
 						jumpTimer = 16;
 					}
 				}
@@ -200,7 +220,7 @@ public class Player extends GameObject {
 				xSpeed = -xSpeed * 3;
 			}
 			hurtTimer = 32;
-			ySpeed = 6;
+			ySpeed = jumpSpeed;
 		}
 	}
 
@@ -239,12 +259,12 @@ public class Player extends GameObject {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		// for (int i = 0; i < 3; i++) {
-		// if (items[i] != null) {
-		// Label p = new Label(items[i].toString());
-		// p.drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
-		// }
-		// }
+		for (int i = 0; i < 3; i++) {
+			if (items[i] != null) {
+				itemLabels[i].setText(items[i].toString());
+				itemLabels[i].drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
+			}
+		}
 		if (hurtTimer > 0) {
 			batch.setColor(0, 0, 1, 1);
 		}
@@ -260,6 +280,13 @@ public class Player extends GameObject {
 		ySpeed = 0;
 		xSpeed = 0;
 		facingRight = true;
+		
+		walkSpeed = 6;
+		walkAcceleration = 0.3f;
+		jumpSpeed = 7;
+		jumpsTotal = 1;
+		gravity = 0.3f;
+		throwSpeed = 12;
 	}
 
 	private void handleSprite() {

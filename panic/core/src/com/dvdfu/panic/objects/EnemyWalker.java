@@ -11,9 +11,10 @@ public class EnemyWalker extends AbstractEnemy {
 		super();
 		moveSpeed = 1;
 		stretched = false;
-		sprScale = 2;
-		setSize(19 * sprScale, 15 * sprScale);
-		xSprOffset = -2;
+		sprScale = 1;
+		setSize(29 * sprScale, 28 * sprScale);
+		xSprOffset = -1;
+		ySprOffset = -2;
 		setSprite(Sprites.enemyThrow);
 		reset();
 	}
@@ -32,7 +33,7 @@ public class EnemyWalker extends AbstractEnemy {
 			break;
 		case STUNNED:
 			xSpeed = 0;
-			stunnedTimer = 180;
+			stunnedTimer = 300;
 			setSprite(Sprites.enemyThrow);
 			break;
 		case GRABBED:

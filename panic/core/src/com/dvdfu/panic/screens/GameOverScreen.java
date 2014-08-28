@@ -1,6 +1,7 @@
 package com.dvdfu.panic.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
@@ -21,7 +22,7 @@ public class GameOverScreen extends AbstractScreen {
 		if (Input.KeyPressed(Input.ARROW_DOWN)) {
 			game.changeScreen(new TestScreen(game));
 		}
-		// Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		batch.begin();
 		message.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight /  2);

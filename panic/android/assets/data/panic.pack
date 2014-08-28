@@ -24,9 +24,16 @@ enemy_throw
   orig: 174, 16
   offset: 0, 0
   index: -1
-plain
+enemy_jump
   rotate: false
   xy: 617, 19
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+plain
+  rotate: false
+  xy: 747, 19
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -40,7 +47,7 @@ player_run_r
   index: -1
 player_run_l
   rotate: false
-  xy: 651, 35
+  xy: 781, 35
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
@@ -54,7 +61,7 @@ player_idle_l
   index: -1
 player_jump_l
   rotate: false
-  xy: 685, 35
+  xy: 815, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -68,7 +75,7 @@ player_idle_r
   index: -1
 player_jump_r
   rotate: false
-  xy: 703, 35
+  xy: 833, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

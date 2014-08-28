@@ -15,9 +15,10 @@ public class EnemyJump extends AbstractEnemy {
 		super();
 		moveSpeed = 3;
 		stretched = false;
-		sprScale = 2;
-		setSize(19 * sprScale, 15 * sprScale);
-		xSprOffset = -2;
+		sprScale = 1;
+		setSize(29 * sprScale, 28 * sprScale);
+		xSprOffset = -1;
+		ySprOffset = -2;
 		setSprite(Sprites.enemyThrow);
 		reset();
 	}
@@ -86,13 +87,7 @@ public class EnemyJump extends AbstractEnemy {
 		}
 		super.setState(state);
 	}
-
-	public void draw(Batch batch, float alpha) {
-		batch.setColor(new Color(1, 0, 0, 1));
-		super.draw(batch, alpha);
-		batch.setColor(new Color(1, 1, 1, 1));
-	}
-
+	
 	public void reset() {
 		jumping = true;
 		state = EnemyState.ACTIVE;

@@ -146,7 +146,7 @@ public class TestScreen extends AbstractScreen {
 				if (enemy.getState() == EnemyState.ACTIVE) {
 					lava.raise();
 				}
-				enemy.setState(EnemyState.REMOVE);
+				removeEnemy(enemy);
 			}
 			for (int j = i + 1; j < enemies.getChildren().size; j++) {
 				AbstractEnemy enemy2 = (AbstractEnemy) enemies.getChildren().items[j];
@@ -154,18 +154,7 @@ public class TestScreen extends AbstractScreen {
 				enemy2.collideEnemy(enemy);
 			}
 			if (enemy.getState() == EnemyState.REMOVE) {
-				for (int j = 0; j < 16; j++) {
-					Particle p = objects.getParticle();
-					p.setType(ParticleType.EXPLOSION);
-					p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY());
-					particles.addActor(p);
-				}
-				if (enemy.getTop() > 0) {
-					spawnItem(enemy.getX(), enemy.getY());
-					ui.addScore(1);
-				}
-				enemies.removeActor(enemy);
-				objects.free(enemy);
+				removeEnemy(enemy);
 			}
 			if (enemy.getState() == EnemyState.THROWN) {
 				Particle p = objects.getParticle();
@@ -199,10 +188,25 @@ public class TestScreen extends AbstractScreen {
 		}
 	}
 
+	private void removeEnemy(AbstractEnemy enemy) {
+		for (int j = 0; j < 16; j++) {
+			Particle p = objects.getParticle();
+			p.setType(ParticleType.EXPLOSION);
+			p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY());
+			particles.addActor(p);
+		}
+		spawnItem(enemy.getX(), enemy.getY());
+		ui.addScore(1);
+		enemies.removeActor(enemy);
+		objects.free(enemy);
+	}
+
 	public void spawnItem(float x, float y) {
-		Item item = objects.getItem();
-		item.setPosition(x, y);
-		items.addActor(item);
+		if (MathUtils.randomBoolean(0)) {
+			Item item = objects.getItem();
+			item.setPosition(x, y);
+			items.addActor(item);
+		}
 	}
 
 	public void resize(int width, int height) {}
