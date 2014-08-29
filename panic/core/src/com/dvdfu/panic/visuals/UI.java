@@ -42,7 +42,7 @@ public class UI extends Actor {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		scoreLabel.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight - 48 + scoreTimer * 2);
-		timerLabel.draw(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight - 64);
+		scoreLabel.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight - 16 + scoreTimer * 2);
+		timerLabel.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight - 32);
 	}
 }

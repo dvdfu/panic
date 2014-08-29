@@ -9,9 +9,8 @@ public class EnemyWalker extends AbstractEnemy {
 
 	public EnemyWalker() {
 		super();
-		moveSpeed = 1;
-		stretched = false;
-		setSize(28 * sprScale, 26 * sprScale);
+		moveSpeed = 0.5f;
+		setSize(28, 26);
 		xSprOffset = -2;
 		setSprite(Sprites.enemyWalk2);
 		reset();

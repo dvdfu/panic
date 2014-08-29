@@ -22,18 +22,18 @@ public class Particle extends GameObject {
 		switch (type) {
 		case TRAIL:
 			setSprite(Sprites.plain);
-			setSize(4, 4);
+			setSize(2, 2);
 			timer = 20;
 			ySpeed = 0;
 			xSpeed = 0;
 			break;
 		case EXPLOSION:
 			setSprite(Sprites.plain);
-			setSize(6, 6);
+			setSize(2, 2);
 			xSprOffset = 0;
 			timer = 40;
-			ySpeed = MathUtils.random(4f, 7f);
-			xSpeed = MathUtils.random(-3f, 3f);
+			ySpeed = MathUtils.random(2f, 5f);
+			xSpeed = MathUtils.random(-2f, 2f);
 			break;
 		}
 		reset();

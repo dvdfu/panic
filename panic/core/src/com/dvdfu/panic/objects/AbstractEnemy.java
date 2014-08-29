@@ -22,7 +22,7 @@ public abstract class AbstractEnemy extends GameObject {
 
 	public void move() {
 		if (state != EnemyState.GRABBED) {
-			ySpeed -= 0.3f;
+			ySpeed -= Consts.Gravity;
 		}
 		if ((state == EnemyState.THROWN || state == EnemyState.STUNNED) && grounded) {
 			brake(0, 0.25f);
@@ -60,6 +60,7 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	public void act(float delta) {
+		facingRight = xSpeed >= 0;
 		if (state == EnemyState.STUNNED) {
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
@@ -115,7 +116,7 @@ public abstract class AbstractEnemy extends GameObject {
 			if (getRight() + xSpeed > other.getRight() && bounds.x < other.getRight()) {
 				setX(other.getRight());
 			}
-			xSpeed = -xSpeed / 2;
+			xSpeed = -xSpeed;
 			movingRight ^= true;
 		}
 		updateBounds();
@@ -157,8 +158,7 @@ public abstract class AbstractEnemy extends GameObject {
 		updateBounds();
 	}
 
-	public void collidePlayer(Player other) {
-	}
+	public void collidePlayer(Player other) {}
 
 	public void launch(float dx, float dy) {
 		this.xSpeed = dx;

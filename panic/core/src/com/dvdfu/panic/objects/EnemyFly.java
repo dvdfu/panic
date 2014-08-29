@@ -11,8 +11,7 @@ public class EnemyFly extends AbstractEnemy {
 
 	public EnemyFly() {
 		super();
-		stretched = false;
-		setSize(28 * sprScale, 26 * sprScale);
+		setSize(28, 26);
 		xSprOffset = -2;
 		setSprite(Sprites.enemyWalk);
 		reset();
@@ -20,11 +19,11 @@ public class EnemyFly extends AbstractEnemy {
 
 	public void move() {
 		if (state != EnemyState.GRABBED && state != EnemyState.ACTIVE) {
-			ySpeed -= 0.3f;
+			ySpeed -= Consts.Gravity;
 		}
 		if (state == EnemyState.ACTIVE) {
-			xSpeed = MathUtils.clamp((xGoal - getX()) / 60, -2.5f, 2.5f);
-			ySpeed = MathUtils.clamp((yGoal - getY()) / 60, -2.5f, 2.5f);
+			xSpeed = MathUtils.clamp((xGoal - getX()) / 60, -1, 1);
+			ySpeed = MathUtils.clamp((yGoal - getY()) / 60, -1, 1);
 		}
 		if ((state == EnemyState.THROWN || state == EnemyState.STUNNED) && grounded) {
 			brake(0, 0.25f);

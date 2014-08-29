@@ -8,12 +8,13 @@ import com.dvdfu.panic.visuals.Sprites;
 public class EnemyJump extends AbstractEnemy {
 	private boolean jumping;
 	private int jumpTimer;
+	private int jumpSpeed;
 
 	public EnemyJump() {
 		super();
-		moveSpeed = 3;
-		stretched = false;
-		setSize(28 * sprScale, 26 * sprScale);
+		jumpSpeed = 7;
+		moveSpeed = 2;
+		setSize(28, 26);
 		xSprOffset = -2;
 		setSprite(Sprites.enemyWalk2);
 		reset();
@@ -26,13 +27,13 @@ public class EnemyJump extends AbstractEnemy {
 				jumping = false;
 				xSpeed = 0;
 			} else if (grounded) {
-				ySpeed = 10;
+				ySpeed = jumpSpeed;
 				xSpeed = movingRight ? moveSpeed : -moveSpeed;
 				jumping = true;
 			}
 		}
 		if (state != EnemyState.GRABBED) {
-			ySpeed -= 0.3f;
+			ySpeed -= Consts.Gravity;
 		}
 		if ((state == EnemyState.THROWN || state == EnemyState.STUNNED) && grounded) {
 			brake(0, 0.25f);

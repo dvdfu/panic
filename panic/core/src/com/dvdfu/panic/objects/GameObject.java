@@ -13,16 +13,15 @@ public abstract class GameObject extends Actor implements Poolable {
 	private float spriteTimer;
 	protected Rectangle bounds;
 	protected boolean stretched;
+	protected boolean facingRight;
 	protected int xSprOffset;
 	protected int ySprOffset;
-	protected int sprScale;
 	protected float xSpeed;
 	protected float ySpeed;
 
 	public GameObject() {
 		super();
 		bounds = new Rectangle();
-		sprScale = 1;
 	}
 
 	public void act(float delta) {
@@ -41,10 +40,10 @@ public abstract class GameObject extends Actor implements Poolable {
 			int ySpr = (int) (getY() + 0.5f);
 			if (stretched) {
 				batch.draw(sprite.getFrame((int) spriteTimer), xSpr, ySpr, getWidth(), getHeight());
-			} else if (sprScale > 1) {
-				batch.draw(sprite.getFrame((int) spriteTimer), xSpr + xSprOffset * sprScale, ySpr + ySprOffset * sprScale, sprite.getWidth() * sprScale, sprite.getHeight() * sprScale);
 			} else {
-				batch.draw(sprite.getFrame((int) spriteTimer), xSpr + xSprOffset, ySpr + ySprOffset);
+				batch.draw(sprite.getFrame((int) spriteTimer), xSpr, ySpr, sprite.getWidth() / 2, sprite.getHeight() / 2,
+					sprite.getWidth(), sprite.getHeight(), facingRight ? -1 : 1, 1, 0);
+				// batch.draw(sprite.getFrame((int) spriteTimer), xSpr + xSprOffset, ySpr + ySprOffset);
 			}
 		}
 	}
@@ -54,9 +53,7 @@ public abstract class GameObject extends Actor implements Poolable {
 	}
 
 	public void setSprite(Animation sprite) {
-		if (this.sprite == sprite) {
-			return;
-		}
+		if (this.sprite == sprite) { return; }
 		this.sprite = sprite;
 		spriteLength = sprite.getLength();
 		spriteTimer = 0;

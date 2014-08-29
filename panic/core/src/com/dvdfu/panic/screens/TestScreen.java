@@ -44,12 +44,12 @@ public class TestScreen extends AbstractScreen {
 		floor1.setSize(Consts.F1Width, Consts.F1Height);
 		solids.addActor(floor1);
 		Solid floor2L = new Solid();
-		floor2L.setPosition(0, Consts.F2Y);
-		floor2L.setSize(Consts.F2Width, 16);
+		floor2L.setPosition(0, Consts.F2Y - Consts.F2Height);
+		floor2L.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2L);
 		Solid floor2R = new Solid();
-		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y);
-		floor2R.setSize(Consts.F2Width, 16);
+		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y - Consts.F2Height);
+		floor2R.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2R);
 		stage.addActor(solids);
 		stage.addActor(enemies = new Group());
@@ -141,7 +141,7 @@ public class TestScreen extends AbstractScreen {
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
 			item.move();
-			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.C)) {
+			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.CTRL)) {
 				player.getItem(item.getType());
 				items.removeActor(item);
 				objects.free(item);

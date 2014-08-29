@@ -33,6 +33,7 @@ public class InputController extends InputAdapter {
 	}
 
 	public boolean keyDown(int k) {
+		Input.setKey(Input.ANY_KEY, true);
 		switch (k) {
 		case Keys.UP:
 			Input.setKey(Input.ARROW_UP, true);
@@ -50,16 +51,17 @@ public class InputController extends InputAdapter {
 			Input.setKey(Input.Z, true);
 			break;
 		case Keys.X:
-			Input.setKey(Input.C, true);
+			Input.setKey(Input.CTRL, true);
 			break;
 		case Keys.CONTROL_LEFT:
-			Input.setKey(Input.C, true);
+			Input.setKey(Input.CTRL, true);
 			break;
 		}
 		return true;
 	}
 
 	public boolean keyUp(int k) {
+		Input.setKey(Input.ANY_KEY, false);
 		switch (k) {
 		case Keys.UP:
 			Input.setKey(Input.ARROW_UP, false);
@@ -77,10 +79,10 @@ public class InputController extends InputAdapter {
 			Input.setKey(Input.Z, false);
 			break;
 		case Keys.X:
-			Input.setKey(Input.C, false);
+			Input.setKey(Input.CTRL, false);
 			break;
 		case Keys.CONTROL_LEFT:
-			Input.setKey(Input.C, false);
+			Input.setKey(Input.CTRL, false);
 			break;
 		}
 		return true;
