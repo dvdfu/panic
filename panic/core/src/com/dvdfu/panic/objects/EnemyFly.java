@@ -1,7 +1,5 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
@@ -14,11 +12,9 @@ public class EnemyFly extends AbstractEnemy {
 	public EnemyFly() {
 		super();
 		stretched = false;
-		sprScale = 1;
-		setSize(29 * sprScale, 28 * sprScale);
-		xSprOffset = -1;
-		ySprOffset = -2;
-		setSprite(Sprites.enemyThrow);
+		setSize(28 * sprScale, 26 * sprScale);
+		xSprOffset = -2;
+		setSprite(Sprites.enemyWalk);
 		reset();
 	}
 
@@ -59,25 +55,25 @@ public class EnemyFly extends AbstractEnemy {
 		// STATE ENTER
 		switch (state) {
 		case ACTIVE:
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk);
 			break;
 		case STUNNED:
 			xSpeed = 0;
 			stunnedTimer = 600;
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk);
 			break;
 		case GRABBED:
 			xSpeed = 0;
 			ySpeed = 0;
 		case THROWN:
 			stunnedTimer = 0;
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk);
 			break;
 		case DEAD:
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk);
 			break;
 		default:
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk);
 			break;
 		}
 		super.setState(state);

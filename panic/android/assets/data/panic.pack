@@ -10,11 +10,18 @@ player
   orig: 320, 32
   offset: 0, 0
   index: -1
-enemy_walk
+enemy_walk2
   rotate: false
   xy: 323, 19
-  size: 292, 32
-  orig: 292, 32
+  size: 192, 32
+  orig: 192, 32
+  offset: 0, 0
+  index: -1
+enemy_walk
+  rotate: false
+  xy: 517, 19
+  size: 192, 32
+  orig: 192, 32
   offset: 0, 0
   index: -1
 enemy_throw
@@ -26,14 +33,14 @@ enemy_throw
   index: -1
 enemy_jump
   rotate: false
-  xy: 617, 19
+  xy: 711, 19
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
 plain
   rotate: false
-  xy: 747, 19
+  xy: 841, 19
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -47,7 +54,7 @@ player_run_r
   index: -1
 player_run_l
   rotate: false
-  xy: 781, 35
+  xy: 875, 35
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
@@ -61,7 +68,7 @@ player_idle_l
   index: -1
 player_jump_l
   rotate: false
-  xy: 815, 35
+  xy: 909, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -75,7 +82,7 @@ player_idle_r
   index: -1
 player_jump_r
   rotate: false
-  xy: 833, 35
+  xy: 927, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

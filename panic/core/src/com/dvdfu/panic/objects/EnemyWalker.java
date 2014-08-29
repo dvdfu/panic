@@ -11,11 +11,9 @@ public class EnemyWalker extends AbstractEnemy {
 		super();
 		moveSpeed = 1;
 		stretched = false;
-		sprScale = 1;
-		setSize(29 * sprScale, 28 * sprScale);
-		xSprOffset = -1;
-		ySprOffset = -2;
-		setSprite(Sprites.enemyThrow);
+		setSize(28 * sprScale, 26 * sprScale);
+		xSprOffset = -2;
+		setSprite(Sprites.enemyWalk2);
 		reset();
 	}
 
@@ -29,25 +27,25 @@ public class EnemyWalker extends AbstractEnemy {
 		switch (state) {
 		case ACTIVE:
 			xSpeed = movingRight ? moveSpeed : -moveSpeed;
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk2);
 			break;
 		case STUNNED:
 			xSpeed = 0;
 			stunnedTimer = 300;
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk2);
 			break;
 		case GRABBED:
 			xSpeed = 0;
 			ySpeed = 0;
 		case THROWN:
 			stunnedTimer = 0;
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk2);
 			break;
 		case DEAD:
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk2);
 			break;
 		default:
-			setSprite(Sprites.enemyThrow);
+			setSprite(Sprites.enemyWalk2);
 			break;
 		}
 		super.setState(state);

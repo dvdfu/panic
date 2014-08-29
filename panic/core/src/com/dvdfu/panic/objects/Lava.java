@@ -13,7 +13,7 @@ public class Lava extends Solid {
 
 	public void raise() {
 		if (getHeight() <= Consts.F1Height || heightGoal >= Consts.F2Y - 80) {
-			heightGoal += 32;
+			heightGoal += 16;
 		}
 	}
 
@@ -27,6 +27,9 @@ public class Lava extends Solid {
 		}
 
 		if (getHeight() > Consts.F1Height && heightGoal < Consts.F2Y - 80) {
+			if (!Consts.F1) {
+				Consts.F1 = true;
+			}
 			heightGoal++;
 		}
 	}

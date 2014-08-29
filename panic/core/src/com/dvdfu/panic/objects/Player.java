@@ -15,7 +15,7 @@ public class Player extends GameObject {
 	private Label[] itemLabels = { new Label(), new Label(), new Label() };
 	private boolean grounded;
 	private boolean facingRight;
-	
+
 	private float walkSpeed;
 	private float walkAcceleration;
 	private float jumpSpeed;
@@ -29,34 +29,33 @@ public class Player extends GameObject {
 
 	public Player() {
 		super();
-		sprScale = 2;
-		xSprOffset = -1 * sprScale;
-		setSize(12 * sprScale, 16 * sprScale);
+		xSprOffset = -2;
+		setSize(12, 16);
 		setSprite(Sprites.player);
 		reset();
 	}
 
 	private void applyPowerups() {
-		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 8 : 6;
-		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 3 : 0.5f;
-		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 20 : 12;
-		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 10 : 7;
+		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 8 : 3;
+		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 3 : 0.3f;
+		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 20 : 9;
+		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 10 : 6;
 		gravity = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 1 : 0.3f;
 	}
 
 	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
 
 	public void move() {
-		// applyPowerups();
+		applyPowerups();
 		if (held != null) {
 			if (facingRight) {
-				held.setX(getX() + 16);
+				held.setX(getX() + getWidth() / 2);
 				held.xSpeed = xSpeed;
 			} else {
-				held.setX(getX() - 16);
+				held.setX(getX() - getWidth() / 2);
 				held.xSpeed = xSpeed;
 			}
-			held.setY(getY() + 26);
+			held.setY(getY() + getHeight() / 2);
 		}
 		if (throwTimer == 0) {
 			ySpeed -= gravity;
@@ -280,7 +279,7 @@ public class Player extends GameObject {
 		ySpeed = 0;
 		xSpeed = 0;
 		facingRight = true;
-		
+
 		walkSpeed = 6;
 		walkAcceleration = 0.3f;
 		jumpSpeed = 7;

@@ -115,7 +115,7 @@ public abstract class AbstractEnemy extends GameObject {
 			if (getRight() + xSpeed > other.getRight() && bounds.x < other.getRight()) {
 				setX(other.getRight());
 			}
-			xSpeed = -xSpeed;
+			xSpeed = -xSpeed / 2;
 			movingRight ^= true;
 		}
 		updateBounds();

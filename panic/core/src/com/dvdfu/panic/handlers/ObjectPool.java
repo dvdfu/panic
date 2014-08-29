@@ -1,6 +1,5 @@
 package com.dvdfu.panic.handlers;
 
-import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.objects.EnemyFly;
 import com.dvdfu.panic.objects.EnemyJump;
@@ -10,7 +9,7 @@ import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Solid;
 
-public class ObjectPool implements Disposable {
+public class ObjectPool {
 	private Pool<Solid> solid;
 	private Pool<EnemyWalker> enemyWalker;
 	private Pool<EnemyJump> enemyJump;
@@ -90,6 +89,4 @@ public class ObjectPool implements Disposable {
 			particle.free((Particle) object);
 		}
 	}
-
-	public void dispose() {}
 }

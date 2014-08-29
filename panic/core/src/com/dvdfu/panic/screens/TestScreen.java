@@ -37,10 +37,7 @@ public class TestScreen extends AbstractScreen {
 		super(game);
 		objects = new ObjectPool();
 		stage = new Stage();
-
-		items = new Group();
-		stage.addActor(items);
-
+		stage.addActor(items = new Group());
 		solids = new Group();
 		Solid floor1 = new Solid();
 		floor1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
@@ -48,43 +45,18 @@ public class TestScreen extends AbstractScreen {
 		solids.addActor(floor1);
 		Solid floor2L = new Solid();
 		floor2L.setPosition(0, Consts.F2Y);
-		floor2L.setSize(Consts.F2Width, 32);
+		floor2L.setSize(Consts.F2Width, 16);
 		solids.addActor(floor2L);
 		Solid floor2R = new Solid();
 		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y);
-		floor2R.setSize(320, 32);
+		floor2R.setSize(Consts.F2Width, 16);
 		solids.addActor(floor2R);
-		// Solid s4 = new Solid();
-		// s4.setPosition(0, 0);
-		// s4.setSize(32, Consts.ScreenHeight);
-		// solids.addActor(s4);
-		// Solid s5 = new Solid();
-		// s5.setPosition(Consts.ScreenWidth - 32, 0);
-		// s5.setSize(32, Consts.ScreenHeight);
-		// solids.addActor(s5);
-		/* Floor floor = new Floor(0, 0); floor.setSize(Consts.ScreenWidth, 16); solids.addActor(floor); */
 		stage.addActor(solids);
-
-		enemies = new Group();
-		stage.addActor(enemies);
-
-		// flower = new Flower();
-		// flower.setPosition(MathUtils.random(96, Consts.ScreenWidth - 96), 176);
-		// stage.addActor(flower);
-
-		player = new Player();
-		stage.addActor(player);
-
-		particles = new Group();
-		stage.addActor(particles);
-
-		lava = new Lava();
-		stage.addActor(lava);
-
-		ui = new UI();
-		stage.addActor(ui);
-
-		timer = 0;
+		stage.addActor(enemies = new Group());
+		stage.addActor(player = new Player());
+		stage.addActor(particles = new Group());
+		stage.addActor(lava = new Lava());
+		stage.addActor(ui = new UI());
 	}
 
 	public void render(float delta) {
@@ -102,10 +74,12 @@ public class TestScreen extends AbstractScreen {
 			timer = 0;
 		}
 		collisions();
+		// stage.getCamera().position.set(Consts.ScreenWidth / 2, player.getY() + Consts.ScreenHeight / 6, 0);
 		stage.act(delta);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 		stage.draw();
+
 	}
 
 	private void gameOver() {
@@ -220,7 +194,6 @@ public class TestScreen extends AbstractScreen {
 	public void resume() {}
 
 	public void dispose() {
-		objects.dispose();
 		stage.dispose();
 	}
 }

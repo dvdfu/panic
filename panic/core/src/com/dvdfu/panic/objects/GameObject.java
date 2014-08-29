@@ -26,7 +26,7 @@ public abstract class GameObject extends Actor implements Poolable {
 	}
 
 	public void act(float delta) {
-		spriteTimer += delta * 15;
+		spriteTimer += delta * 6;
 		while (spriteTimer > spriteLength) {
 			spriteTimer -= spriteLength;
 		}
