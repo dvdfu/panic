@@ -26,7 +26,7 @@ public class GameOverScreen extends AbstractScreen {
 		if (!rendered) {
 			Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
 			batch.begin();
-			message.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight /  2);
+			message.drawC(batch, Consts.WindowWidth / 2, Consts.WindowHeight /  2);
 			batch.end();
 			rendered = true;
 		}

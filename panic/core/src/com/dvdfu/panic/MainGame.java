@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Input;
@@ -19,8 +20,10 @@ public class MainGame extends Game {
 	private FrameBuffer fbo;
 	private SpriteBatch fbBatch;
 	private Matrix4 fbMatrix;
+	private ShaderProgram shader;
 
 	public void create() {
+		shader = new ShaderProgram(Gdx.files.internal("data/shader.vert"), Gdx.files.internal("data/shader.frag"));
 		Gdx.input.setInputProcessor(new InputController());
 		screens = new Stack<AbstractScreen>();
 		enterScreen(new TestScreen(this));
@@ -61,12 +64,14 @@ public class MainGame extends Game {
 
 	public void render() {
 		fbo.begin();
+		fbBatch.setShader(shader);
 		if (getScreen() != null) {
 			super.render();
 		}
 		fbo.end();
 		fbBatch.begin();
-		fbBatch.draw(fbo.getColorBufferTexture(), 0, 0, Consts.WindowWidth, Consts.WindowHeight, 0, 0, 1, 1);
+		fbBatch.draw(fbo.getColorBufferTexture(), -Consts.ScreenWidth * (Consts.Resolution - 1) / 2, -Consts.ScreenHeight
+			* (Consts.Resolution - 1) / 2, Consts.WindowWidth, Consts.WindowHeight, 0, 0, 1, 1);
 		fbBatch.end();
 		Input.update();
 	}

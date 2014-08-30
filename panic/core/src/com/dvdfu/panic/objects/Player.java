@@ -35,10 +35,10 @@ public class Player extends GameObject {
 	}
 
 	private void applyPowerups() {
-		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 8 : 3;
-		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 3 : 0.3f;
-		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 20 : 6;
-		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 10 : 4;
+		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 4.5f : 3;
+		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 1 : 0.3f;
+		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 9 : 6;
+		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 6 : 4;
 	}
 
 	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
@@ -47,10 +47,10 @@ public class Player extends GameObject {
 		applyPowerups();
 		if (held != null) {
 			if (facingRight) {
-				held.setX(getX() + getWidth() / 2);
+				held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
 				held.xSpeed = xSpeed;
 			} else {
-				held.setX(getX() - getWidth() / 2);
+				held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
 				held.xSpeed = xSpeed;
 			}
 			held.setY(getY() + getHeight() / 2);
@@ -295,5 +295,9 @@ public class Player extends GameObject {
 		} else {
 			setSprite(facingRight ? Sprites.playerIdleR : Sprites.playerIdleL);
 		}
+	}
+	
+	public boolean isGrounded() {
+		return grounded;
 	}
 }

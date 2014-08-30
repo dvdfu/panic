@@ -13,7 +13,7 @@ public class Item extends GameObject {
 
 	public Item() {
 		reset();
-		setSize(32, 32);
+		setSize(12, 12);
 		stretched = true;
 		setSprite(Sprites.plain);
 	}

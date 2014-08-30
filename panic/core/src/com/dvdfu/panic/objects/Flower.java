@@ -7,7 +7,6 @@ public class Flower extends AbstractEnemy {
 	public Flower() {
 		super();
 		reset();
-		stretched = false;
 		setSize(32, 32);
 		setSprite(Sprites.enemyWalk);
 	}

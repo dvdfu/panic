@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ParticleType;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.AbstractEnemy;
@@ -24,7 +24,7 @@ import com.dvdfu.panic.visuals.UI;
 public class TestScreen extends AbstractScreen {
 	private UI ui;
 	private ObjectPool objects;
-	private Stage stage;
+	private GameStage stage;
 	private Group enemies;
 	private Group solids;
 	private Group items;
@@ -36,7 +36,7 @@ public class TestScreen extends AbstractScreen {
 	public TestScreen(MainGame game) {
 		super(game);
 		objects = new ObjectPool();
-		stage = new Stage();
+		stage = new GameStage();
 		stage.addActor(items = new Group());
 		solids = new Group();
 		Solid floor1 = new Solid();
@@ -51,12 +51,17 @@ public class TestScreen extends AbstractScreen {
 		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y - Consts.F2Height);
 		floor2R.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2R);
+		Solid floor3 = new Solid();
+		floor3.setPosition((Consts.ScreenWidth - Consts.F3Width) / 2, Consts.F3Y - Consts.F3Height);
+		floor3.setSize(Consts.F3Width, Consts.F3Height);
+		solids.addActor(floor3);
 		stage.addActor(solids);
 		stage.addActor(enemies = new Group());
 		stage.addActor(player = new Player());
 		stage.addActor(particles = new Group());
 		stage.addActor(lava = new Lava());
 		stage.addActor(ui = new UI());
+		stage.setCameraPosition(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
 	}
 
 	public void render(float delta) {
@@ -74,10 +79,10 @@ public class TestScreen extends AbstractScreen {
 			timer = 0;
 		}
 		collisions();
-		// stage.getCamera().position.set(Consts.ScreenWidth / 2, player.getY() + Consts.ScreenHeight / 6, 0);
+		stage.setCameraFocus(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
 		stage.act(delta);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
+		Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
 		stage.draw();
 
 	}
@@ -176,7 +181,7 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void spawnItem(float x, float y) {
-		if (MathUtils.randomBoolean(0)) {
+		if (MathUtils.randomBoolean(0.3f)) {
 			Item item = objects.getItem();
 			item.setPosition(x, y);
 			items.addActor(item);
