@@ -91,7 +91,7 @@ public abstract class AbstractEnemy extends GameObject {
 
 	}
 
-	public void collideSolid(Solid other) {
+	public void collideSolid(Floor other) {
 		if (state == EnemyState.GRABBED) { return; }
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (bounds.overlaps(other.bounds)) {

@@ -43,7 +43,7 @@ public class Item extends GameObject {
 		batch.setColor(1, 1, 1, 1);
 	}
 
-	public void collideSolid(Solid block) {
+	public void collideSolid(Floor block) {
 		if (grounded) {
 			return;
 		}

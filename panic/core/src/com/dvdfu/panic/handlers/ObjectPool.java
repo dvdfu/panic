@@ -7,10 +7,10 @@ import com.dvdfu.panic.objects.EnemyWalker;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
-import com.dvdfu.panic.objects.Solid;
+import com.dvdfu.panic.objects.Floor;
 
 public class ObjectPool {
-	private Pool<Solid> solid;
+	private Pool<Floor> solid;
 	private Pool<EnemyWalker> enemyWalker;
 	private Pool<EnemyJump> enemyJump;
 	private Pool<EnemyFly> enemyFly;
@@ -18,9 +18,9 @@ public class ObjectPool {
 	private Pool<Particle> particle;
 
 	public ObjectPool() {
-		solid = new Pool<Solid>() {
-			protected Solid newObject() {
-				return new Solid();
+		solid = new Pool<Floor>() {
+			protected Floor newObject() {
+				return new Floor();
 			}
 		};
 		enemyWalker = new Pool<EnemyWalker>() {
@@ -50,7 +50,7 @@ public class ObjectPool {
 		};
 	}
 
-	public Solid getSolid() {
+	public Floor getSolid() {
 		return solid.obtain();
 	}
 
@@ -75,8 +75,8 @@ public class ObjectPool {
 	}
 
 	public void free(GameObject object) {
-		if (object instanceof Solid) {
-			solid.free((Solid) object);
+		if (object instanceof Floor) {
+			solid.free((Floor) object);
 		} else if (object instanceof EnemyWalker) {
 			enemyWalker.free((EnemyWalker) object);
 		} else if (object instanceof EnemyJump) {

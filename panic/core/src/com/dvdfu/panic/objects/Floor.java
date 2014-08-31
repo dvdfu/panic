@@ -2,9 +2,9 @@ package com.dvdfu.panic.objects;
 
 import com.dvdfu.panic.visuals.Sprites;
 
-public class Solid extends GameObject {
+public class Floor extends GameObject {
 
-	public Solid() {
+	public Floor() {
 		super();
 		stretched = true;
 		setSprite(Sprites.plain);

@@ -1,23 +1,15 @@
 package com.dvdfu.panic.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.dvdfu.panic.handlers.Consts;
 
-public class Lava extends Solid {
-	private FrameBuffer fbo;
-	private ShaderProgram fboShader;
+public class Lava extends Floor {
 	private float heightGoal;
 
 	public Lava() {
+		heightGoal = 16;
 		setPosition(0, -Consts.ScreenHeight / 2);
 		setSize(Consts.ScreenWidth, Consts.ScreenHeight / 2);
-		fbo = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
-		fboShader = new ShaderProgram(Gdx.files.internal("data/shader.vert"), Gdx.files.internal("data/shader.frag"));
-		heightGoal = 16;
 	}
 
 	public void raise() {

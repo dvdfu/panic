@@ -18,7 +18,7 @@ import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Lava;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
-import com.dvdfu.panic.objects.Solid;
+import com.dvdfu.panic.objects.Floor;
 import com.dvdfu.panic.visuals.UI;
 
 public class TestScreen extends AbstractScreen {
@@ -39,19 +39,19 @@ public class TestScreen extends AbstractScreen {
 		stage = new GameStage();
 		stage.addActor(items = new Group());
 		solids = new Group();
-		Solid floor1 = new Solid();
+		Floor floor1 = new Floor();
 		floor1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
 		floor1.setSize(Consts.F1Width, Consts.F1Height);
 		solids.addActor(floor1);
-		Solid floor2L = new Solid();
+		Floor floor2L = new Floor();
 		floor2L.setPosition(0, Consts.F2Y - Consts.F2Height);
 		floor2L.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2L);
-		Solid floor2R = new Solid();
+		Floor floor2R = new Floor();
 		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y - Consts.F2Height);
 		floor2R.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2R);
-		Solid floor3 = new Solid();
+		Floor floor3 = new Floor();
 		floor3.setPosition((Consts.ScreenWidth - Consts.F3Width) / 2, Consts.F3Y - Consts.F3Height);
 		floor3.setSize(Consts.F3Width, Consts.F3Height);
 		solids.addActor(floor3);
@@ -61,7 +61,7 @@ public class TestScreen extends AbstractScreen {
 		stage.addActor(particles = new Group());
 		stage.addActor(lava = new Lava());
 		stage.addActor(ui = new UI());
-		stage.setCameraPosition(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
+		stage.setCamPosition(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
 	}
 
 	public void render(float delta) {
@@ -79,12 +79,12 @@ public class TestScreen extends AbstractScreen {
 			timer = 0;
 		}
 		collisions();
-		stage.setCameraFocus(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
 		stage.act(delta);
+		stage.setCamFocus(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
+		ui.setView(stage.getCamX(), stage.getCamY());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
 		stage.draw();
-
 	}
 
 	private void gameOver() {
@@ -100,7 +100,7 @@ public class TestScreen extends AbstractScreen {
 		// player.collideFlower(flower);
 		// ALL SOLIDS
 		for (Actor actor : solids.getChildren()) {
-			Solid solid = (Solid) actor;
+			Floor solid = (Floor) actor;
 			player.collideSolid(solid);
 			for (Actor actor2 : enemies.getChildren()) {
 				AbstractEnemy enemy = (AbstractEnemy) actor2;

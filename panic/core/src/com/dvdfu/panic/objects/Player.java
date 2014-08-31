@@ -41,24 +41,31 @@ public class Player extends GameObject {
 		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 6 : 4;
 	}
 
-	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
+	private void holdItem() {
+		if (held == null) { return; }
+		if (facingRight) {
+			held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
+			held.xSpeed = xSpeed;
+		} else {
+			held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
+			held.xSpeed = xSpeed;
+		}
+		held.setY(getY() + getHeight() / 2);
+	}
 
-	public void move() {
-		applyPowerups();
-		if (held != null) {
-			if (facingRight) {
-				held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
-				held.xSpeed = xSpeed;
-			} else {
-				held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
-				held.xSpeed = xSpeed;
+	private void tryJump() {
+		ySpeed -= Consts.Gravity;
+		if (Input.KeyPressed(Input.Z)) {
+			if (grounded) {
+				jumpTimer = 16;
+				ySpeed = jumpSpeed;
+
+			} else if (jumpsLeft > 0) {
+				jumpTimer = 16;
+				ySpeed = jumpSpeed;
+				jumpsLeft--;
 			}
-			held.setY(getY() + getHeight() / 2);
-		}
-		if (throwTimer == 0) {
-			ySpeed -= Consts.Gravity;
-		}
-		if (jumpTimer > 0) {
+		} else if (jumpTimer > 0) {
 			jumpTimer--;
 			if (Input.KeyDown(Input.Z)) {
 				ySpeed = jumpSpeed;
@@ -66,7 +73,10 @@ public class Player extends GameObject {
 				jumpTimer = 0;
 			}
 		}
+		grounded = false;
+	}
 
+	private void tryWalk() {
 		if (Input.KeyDown(Input.ARROW_RIGHT)) {
 			if (xSpeed < walkSpeed) {
 				xSpeed += walkAcceleration;
@@ -86,13 +96,9 @@ public class Player extends GameObject {
 		if (xSpeed > -walkAcceleration && xSpeed < walkAcceleration) {
 			xSpeed = 0;
 		}
-		if (jumpsLeft > 0 && Input.KeyPressed(Input.Z)) {
-			if (grounded) {
-				jumpTimer = 16;
-			}
-			ySpeed = jumpSpeed;
-			jumpsLeft--;
-		}
+	}
+
+	private void contain() {
 		if (getRight() > Consts.BoundsR) {
 			setX(Consts.BoundsR - getWidth());
 			xSpeed = 0;
@@ -101,7 +107,16 @@ public class Player extends GameObject {
 			setX(Consts.BoundsL);
 			xSpeed = 0;
 		}
-		grounded = false;
+	}
+
+	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
+
+	public void move() {
+		applyPowerups();
+		holdItem();
+		tryJump();
+		tryWalk();
+		contain();
 	}
 
 	public void act(float delta) {
@@ -139,7 +154,7 @@ public class Player extends GameObject {
 		handleSprite();
 	}
 
-	public boolean collideSolid(Solid block) {
+	public boolean collideSolid(Floor block) {
 		boolean collided = false;
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (bounds.overlaps(block.bounds)) {
@@ -216,7 +231,7 @@ public class Player extends GameObject {
 			} else {
 				xSpeed = -xSpeed * 3;
 			}
-			hurtTimer = 32;
+			hurtTimer = 80;
 			ySpeed = jumpSpeed;
 		}
 	}
@@ -278,11 +293,11 @@ public class Player extends GameObject {
 		xSpeed = 0;
 		facingRight = true;
 
-		walkSpeed = 6;
+		walkSpeed = 3;
 		walkAcceleration = 0.3f;
-		jumpSpeed = 7;
-		jumpsTotal = 1;
-		throwSpeed = 12;
+		throwSpeed = 6;
+		jumpSpeed = 4;
+		jumpsTotal = 0;
 	}
 
 	private void handleSprite() {
@@ -296,7 +311,7 @@ public class Player extends GameObject {
 			setSprite(facingRight ? Sprites.playerIdleR : Sprites.playerIdleL);
 		}
 	}
-	
+
 	public boolean isGrounded() {
 		return grounded;
 	}

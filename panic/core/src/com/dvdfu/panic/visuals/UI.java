@@ -12,6 +12,11 @@ public class UI extends Actor {
 	private int score;
 	private int scoreTimer;
 	private Label scoreLabel;
+	private float viewL;
+	private float viewR;
+	private float viewT;
+
+	// private float viewB;
 
 	public UI() {
 		scoreLabel = new Label();
@@ -42,7 +47,14 @@ public class UI extends Actor {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		scoreLabel.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight - 16 + scoreTimer * 2);
-		timerLabel.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight - 32);
+		scoreLabel.drawC(batch, (viewL + viewR) / 2, viewT - 16 + scoreTimer * 2);
+		timerLabel.drawC(batch, (viewL + viewR) / 2, viewT - 32);
+	}
+
+	public void setView(float x, float y) {
+		viewL = x - Consts.ScreenWidth / 2;
+		viewR = x + Consts.ScreenWidth / 2;
+		viewT = y + Consts.ScreenHeight / 2;
+		// viewB = y - Consts.ScreenHeight / 2;
 	}
 }

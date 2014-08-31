@@ -17,22 +17,25 @@ import com.dvdfu.panic.screens.TestScreen;
 
 public class MainGame extends Game {
 	private Stack<AbstractScreen> screens;
-	private FrameBuffer fbo;
-	private SpriteBatch fbBatch;
+	private FrameBuffer fb;
 	private Matrix4 fbMatrix;
-	private ShaderProgram shader;
+	private ShaderProgram fbShader;
+	private SpriteBatch fbBatch;
 
 	public void create() {
-		shader = new ShaderProgram(Gdx.files.internal("data/shader.vert"), Gdx.files.internal("data/shader.frag"));
 		Gdx.input.setInputProcessor(new InputController());
 		screens = new Stack<AbstractScreen>();
 		enterScreen(new TestScreen(this));
-		fbo = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
-		fbo.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		fbBatch = new SpriteBatch();
+		fb = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
+		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		fbMatrix = new Matrix4();
-		fbMatrix.setToOrtho2D(0, 0, Consts.ScreenWidth, Consts.ScreenHeight);
+		fbMatrix.setToOrtho2D(Consts.ScreenWidth * (Consts.Resolution - 1) / 2, Consts.ScreenHeight * (Consts.Resolution - 1)
+			/ 2, Consts.ScreenWidth, Consts.ScreenHeight);
+		fbShader = new ShaderProgram(Gdx.files.internal("data/shader.vert"), Gdx.files.internal("data/shader.frag"));
+		// fbShader.pedantic = false;
+		fbBatch = new SpriteBatch();
 		fbBatch.setProjectionMatrix(fbMatrix);
+		fbBatch.setShader(fbShader);
 	}
 
 	public void enterScreen(AbstractScreen screen) {
@@ -58,20 +61,18 @@ public class MainGame extends Game {
 	}
 
 	public void dispose() {
-		fbo.dispose();
+		fb.dispose();
 		fbBatch.dispose();
 	}
 
 	public void render() {
-		fbo.begin();
-		fbBatch.setShader(shader);
+		fb.begin();
 		if (getScreen() != null) {
 			super.render();
 		}
-		fbo.end();
+		fb.end();
 		fbBatch.begin();
-		fbBatch.draw(fbo.getColorBufferTexture(), -Consts.ScreenWidth * (Consts.Resolution - 1) / 2, -Consts.ScreenHeight
-			* (Consts.Resolution - 1) / 2, Consts.WindowWidth, Consts.WindowHeight, 0, 0, 1, 1);
+		fbBatch.draw(fb.getColorBufferTexture(), 0, 0, Consts.WindowWidth, Consts.WindowHeight, 0, 0, 1, 1);
 		fbBatch.end();
 		Input.update();
 	}
