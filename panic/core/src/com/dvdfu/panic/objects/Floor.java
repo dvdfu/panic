@@ -10,6 +10,12 @@ public class Floor extends GameObject {
 		setSprite(Sprites.plain);
 	}
 
-	public void reset() {}
+	public void update() {
+		return;
+	}
+
+	public void reset() {
+		return;
+	}
 
 }

@@ -2,7 +2,6 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
-import com.dvdfu.panic.handlers.Enums;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.Input;
@@ -20,11 +19,11 @@ public class Player extends GameObject {
 	private float walkAcceleration;
 	private float jumpSpeed;
 	private int jumpTimer;
-	private int jumpsTotal;
-	private int jumpsLeft;
+	private int jumps, jumpsMax;
 	private float throwSpeed;
 	private int throwTimer;
 	private int hurtTimer;
+	private int health, healthMax;
 
 	public Player() {
 		super();
@@ -35,10 +34,10 @@ public class Player extends GameObject {
 	}
 
 	private void applyPowerups() {
-		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 4.5f : 3;
-		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 1 : 0.3f;
-		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 9 : 6;
-		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 6 : 4;
+		// walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 4.5f : 3;
+		// walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 1 : 0.3f;
+		// throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 9 : 6;
+		// jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 6 : 4;
 	}
 
 	private void holdItem() {
@@ -60,10 +59,10 @@ public class Player extends GameObject {
 				jumpTimer = 16;
 				ySpeed = jumpSpeed;
 
-			} else if (jumpsLeft > 0) {
+			} else if (jumps > 0) {
 				jumpTimer = 16;
 				ySpeed = jumpSpeed;
-				jumpsLeft--;
+				jumps--;
 			}
 		} else if (jumpTimer > 0) {
 			jumpTimer--;
@@ -111,7 +110,7 @@ public class Player extends GameObject {
 
 	/* must have functions called in this order: move -must change dx/dy -must change grounded to false collide -must correct x/y, dx/dy -must correct grounded act -must add dx/dy to x/y -must finalize position */
 
-	public void move() {
+	public void update() {
 		applyPowerups();
 		holdItem();
 		tryJump();
@@ -144,7 +143,7 @@ public class Player extends GameObject {
 					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
 					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
 					held.setState(EnemyState.THROWN);
-					held.launch(dxt, dyt);
+					held.setVelocity(dxt, dyt);
 					held = null;
 					throwTimer = 10;
 				}
@@ -165,12 +164,12 @@ public class Player extends GameObject {
 			if (getTop() + ySpeed > block.getTop() && bounds.y < block.getTop()) {
 				setY(block.getTop());
 				grounded = true;
-				jumpsLeft = jumpsTotal;
+				jumps = jumpsMax;
 			}
 			ySpeed = 0;
 			jumpTimer = 0;
 		}
-		bounds = bounds.setPosition(getX() + xSpeed, getY());
+		bounds.setPosition(getX() + xSpeed, getY());
 		if (bounds.overlaps(block.bounds)) {
 			collided = true;
 			if (getRight() + xSpeed > block.getX() && bounds.x < block.getX()) {
@@ -181,12 +180,12 @@ public class Player extends GameObject {
 			}
 			xSpeed = 0;
 		}
-		updateBounds();
+		setBounds();
 		return collided;
 	}
 
-	public void collideEnemy(AbstractEnemy enemy) {
-		if (hurtTimer > 0) { return; }
+	public boolean collideEnemy(AbstractEnemy enemy) {
+		if (hurtTimer > 0) { return false; }
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
 			if (getTop() + ySpeed > enemy.getTop()) {
@@ -195,45 +194,31 @@ public class Player extends GameObject {
 					if (held != null || !Input.KeyDown(Input.CTRL)) {
 						ySpeed = jumpSpeed;
 						jumpTimer = 16;
+						return false;
 					}
 				} else if (enemy.state == EnemyState.STUNNED) {
 					if (!Input.KeyDown(Input.CTRL) || held != null) {
 						enemy.setState(EnemyState.DEAD);
-						enemy.launch(xSpeed / 2, -ySpeed * 2 / 3);
+						enemy.setVelocity(xSpeed / 2, -ySpeed * 2 / 3);
 						ySpeed = jumpSpeed;
 						jumpTimer = 16;
+						return false;
 					}
 				}
 			}
 		}
-		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		bounds.setPosition(getX(), getY());
 		if (bounds.overlaps(enemy.bounds)) {
 			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
 				&& Input.KeyDown(Input.CTRL) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
+				return false;
 			} else if (enemy.state == EnemyState.ACTIVE) {
-				hurt(enemy);
+				return true;
 			}
 		}
-		updateBounds();
-	}
-
-	public void hurt(AbstractEnemy other) {
-		if (hurtTimer == 0) {
-			if (held != null) {
-				held.setState(EnemyState.STUNNED);
-				held = null;
-				throwTimer = 10;
-			}
-			if (xSpeed == 0) {
-				xSpeed = other.xSpeed * 3;
-			} else {
-				xSpeed = -xSpeed * 3;
-			}
-			hurtTimer = 80;
-			ySpeed = jumpSpeed;
-		}
+		return false;
 	}
 
 	public void collideFlower(Flower flower) {
@@ -297,7 +282,9 @@ public class Player extends GameObject {
 		walkAcceleration = 0.3f;
 		throwSpeed = 6;
 		jumpSpeed = 4;
-		jumpsTotal = 0;
+		jumpsMax = 0;
+		healthMax = 3;
+		health = healthMax;
 	}
 
 	private void handleSprite() {
@@ -314,5 +301,9 @@ public class Player extends GameObject {
 
 	public boolean isGrounded() {
 		return grounded;
+	}
+
+	public int getHealth() {
+		return health;
 	}
 }

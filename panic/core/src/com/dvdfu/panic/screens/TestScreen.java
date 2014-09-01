@@ -67,17 +67,22 @@ public class TestScreen extends AbstractScreen {
 	public void render(float delta) {
 		timer++;
 		if (timer == 120) {
+			AbstractEnemy newEnemy = null;
 			if (MathUtils.randomBoolean()) {
-				enemies.addActor(objects.getEnemyWalker());
+				newEnemy = objects.getEnemyWalker();
 			} else {
 				if (MathUtils.randomBoolean()) {
-					enemies.addActor(objects.getEnemyJump());
+					newEnemy = objects.getEnemyJump();
 				} else {
-					enemies.addActor(objects.getEnemyFly());
+					newEnemy = objects.getEnemyFly();
 				}
 			}
+			newEnemy.setPosition(Consts.ScreenWidth / 2 - newEnemy.getWidth() / 2,
+				Math.max(Consts.ScreenHeight, stage.getCamY() + Consts.ScreenHeight / 2));
+			enemies.addActor(newEnemy);
 			timer = 0;
 		}
+		update();
 		collisions();
 		stage.act(delta);
 		stage.setCamFocus(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
@@ -88,16 +93,30 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	private void gameOver() {
-		game.changeScreen(new GameOverScreen(game));
+		// game.changeScreen(new GameOverScreen(game));
+	}
+
+	private void update() {
+		player.update();
+		for (Actor actor : enemies.getChildren()) {
+			AbstractEnemy enemy = (AbstractEnemy) actor;
+			enemy.update();
+		}
+		for (Actor actor : items.getChildren()) {
+			Item item = (Item) actor;
+			item.update();
+		}
+		for (Actor actor : particles.getChildren()) {
+			Particle p = (Particle) actor;
+			p.update();
+		}
 	}
 
 	private void collisions() {
 		// PLAYER
-		player.move();
 		if (player.getY() < lava.getTop()) {
 			gameOver();
 		}
-		// player.collideFlower(flower);
 		// ALL SOLIDS
 		for (Actor actor : solids.getChildren()) {
 			Floor solid = (Floor) actor;
@@ -114,9 +133,9 @@ public class TestScreen extends AbstractScreen {
 		// ALL ENEMIES
 		for (int i = 0; i < enemies.getChildren().size; i++) {
 			AbstractEnemy enemy = (AbstractEnemy) enemies.getChildren().items[i];
-			enemy.move();
-			player.collideEnemy(enemy);
-			enemy.collidePlayer(player);
+			if (player.collideEnemy(enemy)) {
+				gameOver();
+			}
 			if (enemy instanceof EnemyFly) {
 				EnemyFly flyer = (EnemyFly) enemy;
 				flyer.setGoal(player.getX(), player.getY());
@@ -145,7 +164,6 @@ public class TestScreen extends AbstractScreen {
 		// ALL ITEMS
 		for (Actor actor : items.getChildren()) {
 			Item item = (Item) actor;
-			item.move();
 			if (player.getBounds().overlaps(item.getBounds()) && Input.KeyPressed(Input.CTRL)) {
 				player.getItem(item.getType());
 				items.removeActor(item);
@@ -159,7 +177,6 @@ public class TestScreen extends AbstractScreen {
 		// ALL PARTICLES
 		for (Actor actor : particles.getChildren()) {
 			Particle p = (Particle) actor;
-			p.move();
 			if (p.dead()) {
 				particles.removeActor(p);
 				objects.free(p);
@@ -174,16 +191,18 @@ public class TestScreen extends AbstractScreen {
 			p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY());
 			particles.addActor(p);
 		}
-		spawnItem(enemy.getX(), enemy.getY());
+		spawnItem(enemy);
 		ui.addScore(1);
 		enemies.removeActor(enemy);
 		objects.free(enemy);
 	}
 
-	public void spawnItem(float x, float y) {
+	public void spawnItem(AbstractEnemy enemy) {
 		if (MathUtils.randomBoolean(0.3f)) {
 			Item item = objects.getItem();
-			item.setPosition(x, y);
+			item.setPosition(enemy.getX() + enemy.getWidth() / 2 - item.getWidth() / 2,
+				enemy.getY() + enemy.getHeight() - item.getHeight() / 2);
+			item.setVelocity(enemy.getXSpeed(), 6);
 			items.addActor(item);
 		}
 	}

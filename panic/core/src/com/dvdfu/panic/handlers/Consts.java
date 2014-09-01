@@ -3,7 +3,7 @@ package com.dvdfu.panic.handlers;
 public class Consts {
 	public static final int Resolution = 2;
 	public static final int ScreenHeight = 240;
-	public static final int ScreenWidth = ScreenHeight / 5 * 8;
+	public static final int ScreenWidth = ScreenHeight * 8 / 5;
 	public static final int WindowWidth = ScreenWidth * Resolution;
 	public static final int WindowHeight = ScreenHeight * Resolution;
 	public static final int FY = 80;

@@ -12,6 +12,7 @@ public class EnemyJump extends AbstractEnemy {
 
 	public EnemyJump() {
 		super();
+		collidesOthers = true;
 		jumpSpeed = 7;
 		moveSpeed = 2;
 		setSize(28, 26);
@@ -20,7 +21,7 @@ public class EnemyJump extends AbstractEnemy {
 		reset();
 	}
 
-	public void move() {
+	public void update() {
 		if (state == EnemyState.ACTIVE) {
 			if (jumpTimer > 0) {
 				jumpTimer--;
@@ -90,13 +91,10 @@ public class EnemyJump extends AbstractEnemy {
 		state = EnemyState.ACTIVE;
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
-			setX(1 - getWidth() + MathUtils.random(160));
 			xSpeed = moveSpeed;
 		} else {
-			setX(Consts.ScreenWidth - MathUtils.random(160) - 1);
 			xSpeed = -moveSpeed;
 		}
-		setY(Consts.ScreenHeight);
 		ySpeed = 0;
 	}
 }

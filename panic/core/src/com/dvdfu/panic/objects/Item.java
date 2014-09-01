@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.visuals.Sprites;
 
@@ -25,15 +26,28 @@ public class Item extends GameObject {
 	public ItemType getType() {
 		return type;
 	}
-	
-	public void move() {
+
+	public void update() {
 		if (!grounded) {
 			ySpeed -= 0.2f;
+		}
+		contain();
+		grounded = false;
+	}
+
+	private void contain() {
+		if (getRight() > Consts.BoundsR) {
+			setX(Consts.BoundsR - getWidth());
+			xSpeed = -xSpeed;
+		}
+		if (getX() < Consts.BoundsL) {
+			setX(Consts.BoundsL);
+			xSpeed = -xSpeed;
 		}
 	}
 
 	public void act(float delta) {
-		move();
+		update();
 		super.act(delta);
 	}
 
@@ -44,9 +58,6 @@ public class Item extends GameObject {
 	}
 
 	public void collideSolid(Floor block) {
-		if (grounded) {
-			return;
-		}
 		Rectangle myRect = bounds.setPosition(getX(), getY() + ySpeed);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + ySpeed > block.getY() && myRect.y < block.getY()) {
@@ -55,8 +66,17 @@ public class Item extends GameObject {
 			}
 			if (getTop() + ySpeed > block.getTop() && myRect.y < block.getTop()) {
 				setY(block.getTop());
-				ySpeed = 0;
+				if (ySpeed < -0.1f) {
+					ySpeed *= -0.6f;
+				} else {
+					ySpeed = 0;
+				}
 				grounded = true;
+				if (xSpeed > 0.1f) {
+					xSpeed *= 0.6f;
+				} else {
+					xSpeed = 0;
+				}
 			}
 		}
 		myRect.setPosition(getX() + xSpeed, getY());

@@ -55,7 +55,7 @@ public class Particle extends GameObject {
 		setOrigin(getWidth() / 2, getHeight() / 2);
 	}
 
-	public void move() {}
+	public void update() {}
 	
 	public void setPosition(float x, float y) {
 		setX(x - getWidth() / 2);

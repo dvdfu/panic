@@ -1,6 +1,7 @@
 package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.dvdfu.panic.handlers.Bound;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.visuals.Label;
@@ -8,6 +9,7 @@ import com.dvdfu.panic.visuals.Label;
 public abstract class AbstractEnemy extends GameObject {
 
 	protected EnemyState state;
+	protected boolean collidesOthers;
 	protected boolean grounded;
 	protected boolean movingRight;
 	protected int stunnedTimer;
@@ -20,7 +22,7 @@ public abstract class AbstractEnemy extends GameObject {
 		stunBar = new Label("" + stunnedTimer);
 	}
 
-	public void move() {
+	public void update() {
 		if (state != EnemyState.GRABBED) {
 			ySpeed -= Consts.Gravity;
 		}
@@ -30,7 +32,6 @@ public abstract class AbstractEnemy extends GameObject {
 				setState(EnemyState.STUNNED);
 			}
 		}
-		contain();
 		grounded = false;
 	}
 
@@ -68,6 +69,7 @@ public abstract class AbstractEnemy extends GameObject {
 				setState(EnemyState.ACTIVE);
 			}
 		}
+		contain();
 		super.act(delta);
 	}
 
@@ -93,75 +95,79 @@ public abstract class AbstractEnemy extends GameObject {
 
 	public void collideSolid(Floor other) {
 		if (state == EnemyState.GRABBED) { return; }
+		Bound otherBounds = other.bounds;
 		bounds.setPosition(getX(), getY() + ySpeed);
-		if (bounds.overlaps(other.bounds)) {
-			if (getTop() + ySpeed > other.getY() && bounds.y < other.getY()) {
+		if (bounds.overlaps(otherBounds)) {
+			if (bounds.bottomOf(otherBounds)) {
 				setY(other.getY() - getHeight());
-			}
-			if (getTop() + ySpeed > other.getTop() && bounds.y < other.getTop()) {
+			} else if (bounds.topOf(otherBounds)) {
 				setY(other.getTop());
 				grounded = true;
 				justLanded();
+				if (state == EnemyState.DEAD) {
+					setState(EnemyState.REMOVE);
+				}
 			}
 			ySpeed = 0;
-			if (state == EnemyState.DEAD) {
-				setState(EnemyState.REMOVE);
-			}
 		}
 		bounds.setPosition(getX() + xSpeed, getY());
-		if (bounds.overlaps(other.bounds)) {
-			if (getRight() + xSpeed > other.getX() && bounds.x < other.getX()) {
+		if (bounds.overlaps(otherBounds)) {
+			if (bounds.leftOf(otherBounds)) {
 				setX(other.getX() - getWidth());
-			}
-			if (getRight() + xSpeed > other.getRight() && bounds.x < other.getRight()) {
+			} else if (bounds.rightOf(otherBounds)) {
 				setX(other.getRight());
 			}
 			xSpeed = -xSpeed;
 			movingRight ^= true;
 		}
-		updateBounds();
+		setBounds();
 	}
 
 	public void collideEnemy(AbstractEnemy other) {
 		if (other.state == EnemyState.DEAD || other.state == EnemyState.REMOVE || state == EnemyState.REMOVE) { return; }
+		Bound otherBounds = other.bounds;
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
-		if (bounds.overlaps(other.bounds)) {
+		if (bounds.overlaps(otherBounds)) {
 			if (state == EnemyState.THROWN) {
 				other.setState(EnemyState.DEAD);
-				other.launch(xSpeed / 2, 6);
+				other.setVelocity(xSpeed / 2, 6);
 			} else if (state == EnemyState.GRABBED) {
 				other.setState(EnemyState.STUNNED);
 				if (xSpeed == 0) {
 					if (getX() > other.getX()) {
-						other.launch(-1, 6);
+						other.setVelocity(-1, 6);
 					} else {
-						other.launch(1, 6);
+						other.setVelocity(1, 6);
 					}
 				} else {
-					other.launch(xSpeed / 2, 6);
+					other.setVelocity(xSpeed / 2, 6);
 				}
 			}
 		}
-		bounds.setPosition(getX() + xSpeed, getY());
-		if (bounds.overlaps(other.bounds)) {
-			if (state == EnemyState.ACTIVE && other.state == EnemyState.STUNNED && grounded) {
-				if (getRight() + xSpeed > other.getX() && bounds.x < other.getX()) {
-					setX(other.getX() - getWidth());
+		if (state == EnemyState.ACTIVE && collidesOthers && (other.collidesOthers || other.state == EnemyState.STUNNED)) {
+			bounds.setPosition(getX(), getY() + ySpeed);
+			if (bounds.overlaps(otherBounds)) {
+				if (bounds.bottomOf(otherBounds) && !grounded) {
+					setY(other.getY() - getHeight());
+					if (ySpeed > 0) {
+						ySpeed = 0;
+					}
+				} else if (bounds.topOf(otherBounds)) {
+					setY(other.getTop());
+					ySpeed = 4;
 				}
-				if (getRight() + xSpeed > other.getRight() && bounds.x < other.getRight()) {
+			}
+			bounds.setPosition(getX() + xSpeed, getY());
+			if (bounds.overlaps(otherBounds)) {
+				if (bounds.leftOf(otherBounds)) {
+					setX(other.getX() - getWidth());
+				} else if (bounds.rightOf(otherBounds)) {
 					setX(other.getRight());
 				}
 				xSpeed = -xSpeed;
 				movingRight ^= true;
 			}
 		}
-		updateBounds();
-	}
-
-	public void collidePlayer(Player other) {}
-
-	public void launch(float dx, float dy) {
-		this.xSpeed = dx;
-		this.ySpeed = dy;
+		setBounds();
 	}
 }

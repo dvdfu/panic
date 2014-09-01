@@ -13,7 +13,7 @@ public class Flower extends AbstractEnemy {
 
 	public void reset() {}
 
-	public void move() {}
+	public void update() {}
 
 	@Override
 	public void collideSolid(Floor solid) {

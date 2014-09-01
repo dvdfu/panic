@@ -2,16 +2,16 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.dvdfu.panic.handlers.Bound;
 import com.dvdfu.panic.visuals.Animation;
 
 public abstract class GameObject extends Actor implements Poolable {
 	protected Animation sprite;
 	private int spriteLength;
 	private float spriteTimer;
-	protected Rectangle bounds;
+	protected Bound bounds;
 	protected boolean stretched;
 	protected boolean facingRight;
 	protected int xSprOffset;
@@ -21,7 +21,7 @@ public abstract class GameObject extends Actor implements Poolable {
 
 	public GameObject() {
 		super();
-		bounds = new Rectangle();
+		bounds = new Bound();
 	}
 
 	public void act(float delta) {
@@ -31,7 +31,7 @@ public abstract class GameObject extends Actor implements Poolable {
 		}
 		super.setPosition(getX() + xSpeed, getY() + ySpeed);
 		super.act(delta);
-		updateBounds();
+		setBounds();
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
@@ -47,6 +47,8 @@ public abstract class GameObject extends Actor implements Poolable {
 			}
 		}
 	}
+	
+	public abstract void update();
 
 	public void setSprite(Sprite sprite, int width, int height) {
 		setSprite(new Animation(sprite, width, height));
@@ -58,12 +60,25 @@ public abstract class GameObject extends Actor implements Poolable {
 		spriteLength = sprite.getLength();
 		spriteTimer = 0;
 	}
+	
+	public void setVelocity(float xSpeed, float ySpeed) {
+		this.xSpeed = xSpeed;
+		this.ySpeed = ySpeed;
+	}
+	
+	public float getXSpeed() {
+		return xSpeed;
+	}
+	
+	public float getYSpeed() {
+		return ySpeed;
+	}
 
-	public void updateBounds() {
+	public void setBounds() {
 		bounds.set(getX(), getY(), getWidth(), getHeight());
 	}
 
-	public Rectangle getBounds() {
+	public Bound getBounds() {
 		return bounds;
 	}
 }

@@ -17,7 +17,7 @@ public class EnemyFly extends AbstractEnemy {
 		reset();
 	}
 
-	public void move() {
+	public void update() {
 		if (state != EnemyState.GRABBED && state != EnemyState.ACTIVE) {
 			ySpeed -= Consts.Gravity;
 		}
@@ -86,11 +86,5 @@ public class EnemyFly extends AbstractEnemy {
 	public void reset() {
 		state = EnemyState.ACTIVE;
 		movingRight = MathUtils.randomBoolean();
-		if (movingRight) {
-			setX(1 - getWidth() + MathUtils.random(160));
-		} else {
-			setX(Consts.ScreenWidth - MathUtils.random(160) - 1);
-		}
-		setY(Consts.ScreenHeight);
 	}
 }
