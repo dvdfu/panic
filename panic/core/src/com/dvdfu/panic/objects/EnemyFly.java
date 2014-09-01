@@ -11,8 +11,7 @@ public class EnemyFly extends AbstractEnemy {
 
 	public EnemyFly() {
 		super();
-		setSize(28, 26);
-		xSprOffset = -2;
+		setSize(24, 22);
 		setSprite(Sprites.enemyWalk);
 		reset();
 	}
@@ -59,17 +58,17 @@ public class EnemyFly extends AbstractEnemy {
 		case STUNNED:
 			xSpeed = 0;
 			stunnedTimer = 600;
-			setSprite(Sprites.enemyWalk);
+			setSprite(Sprites.enemyRock);
 			break;
 		case GRABBED:
 			xSpeed = 0;
 			ySpeed = 0;
 		case THROWN:
 			stunnedTimer = 0;
-			setSprite(Sprites.enemyWalk);
+			setSprite(Sprites.enemyRock);
 			break;
 		case DEAD:
-			setSprite(Sprites.enemyWalk);
+			setSprite(Sprites.enemyRock);
 			break;
 		default:
 			setSprite(Sprites.enemyWalk);

@@ -93,7 +93,7 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	private void gameOver() {
-		// game.changeScreen(new GameOverScreen(game));
+		game.changeScreen(new GameOverScreen(game));
 	}
 
 	private void update() {

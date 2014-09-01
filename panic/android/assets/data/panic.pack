@@ -3,93 +3,65 @@ panic.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-player
-  rotate: false
-  xy: 1, 19
-  size: 320, 32
-  orig: 320, 32
-  offset: 0, 0
-  index: -1
-enemy_walk2
-  rotate: false
-  xy: 323, 19
-  size: 192, 32
-  orig: 192, 32
-  offset: 0, 0
-  index: -1
 enemy_walk
   rotate: false
-  xy: 517, 19
-  size: 192, 32
-  orig: 192, 32
-  offset: 0, 0
-  index: -1
-enemy_throw
-  rotate: false
-  xy: 1, 1
-  size: 174, 16
-  orig: 174, 16
-  offset: 0, 0
-  index: -1
-enemy_walk_small
-  rotate: false
-  xy: 711, 27
+  xy: 1, 35
   size: 144, 24
   orig: 144, 24
   offset: 0, 0
   index: -1
-enemy_jump
-  rotate: false
-  xy: 857, 19
-  size: 128, 32
-  orig: 128, 32
-  offset: 0, 0
-  index: -1
 plain
   rotate: false
-  xy: 987, 19
+  xy: 1, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 player_run_r
   rotate: false
-  xy: 177, 1
+  xy: 147, 43
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
 player_run_l
   rotate: false
-  xy: 211, 1
+  xy: 35, 17
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
+enemy_rock
+  rotate: false
+  xy: 181, 35
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
 player_idle_l
   rotate: false
-  xy: 245, 1
+  xy: 69, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_jump_l
   rotate: false
-  xy: 263, 1
+  xy: 207, 43
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_idle_r
   rotate: false
-  xy: 281, 1
+  xy: 87, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_jump_r
   rotate: false
-  xy: 299, 1
+  xy: 225, 43
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

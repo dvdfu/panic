@@ -13,6 +13,6 @@ public class Sprites {
 	public static final Animation playerJumpR = new Animation(atlas.createSprite("player_jump_r"), 16, 16);
 	public static final Animation playerJumpL = new Animation(atlas.createSprite("player_jump_l"), 16, 16);
 	public static final Animation plain = new Animation(atlas.createSprite("plain"), 32, 32);
-	public static final Animation enemyWalk = new Animation(atlas.createSprite("enemy_jump"), 32, 32);
-	public static final Animation enemyWalk2 = new Animation(atlas.createSprite("enemy_walk"), 32, 32);
+	public static final Animation enemyWalk = new Animation(atlas.createSprite("enemy_walk"), 24, 24);
+	public static final Animation enemyRock = new Animation(atlas.createSprite("enemy_rock"), 24, 24);
 }
