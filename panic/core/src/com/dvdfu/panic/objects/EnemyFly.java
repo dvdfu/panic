@@ -57,7 +57,7 @@ public class EnemyFly extends AbstractEnemy {
 			break;
 		case STUNNED:
 			xSpeed = 0;
-			stunnedTimer = 600;
+			stunnedTimer = 300;
 			setSprite(Sprites.enemyRock);
 			break;
 		case GRABBED:

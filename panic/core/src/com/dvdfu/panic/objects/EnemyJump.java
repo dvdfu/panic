@@ -65,7 +65,7 @@ public class EnemyJump extends AbstractEnemy {
 			break;
 		case STUNNED:
 			ySpeed = 0;
-			stunnedTimer = 120;
+			stunnedTimer = 180;
 			setSprite(Sprites.enemyRock);
 			break;
 		case GRABBED:

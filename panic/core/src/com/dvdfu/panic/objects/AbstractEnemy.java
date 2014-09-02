@@ -1,10 +1,11 @@
 package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Bound;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
-import com.dvdfu.panic.visuals.Label;
+import com.dvdfu.panic.visuals.Sprites;
 
 public abstract class AbstractEnemy extends GameObject {
 
@@ -15,11 +16,9 @@ public abstract class AbstractEnemy extends GameObject {
 	protected int stunnedTimer;
 	protected int damagedTimer;
 	protected float moveSpeed;
-	protected Label stunBar;
 
 	public AbstractEnemy() {
 		state = EnemyState.ACTIVE;
-		stunBar = new Label("" + stunnedTimer);
 	}
 
 	public void update() {
@@ -76,8 +75,13 @@ public abstract class AbstractEnemy extends GameObject {
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 		if (state == EnemyState.STUNNED) {
-			stunBar.setText("" + (stunnedTimer / 60 + 1));
-			stunBar.drawC(batch, getX() + getWidth() / 2, getY() + 40);
+			int numStars = stunnedTimer / 60 + 1;
+			for (int i = 0; i < numStars; i++) {
+				float theta = i * MathUtils.PI2 / numStars + stunnedTimer / 16f;
+				int frame = stunnedTimer / 12 + i;
+				batch.draw(Sprites.star.getFrame(frame), getCX() - 4 + 12 * MathUtils.cos(theta),
+					getCY() + 4 + 8 * MathUtils.sin(theta));
+			}
 		}
 	}
 

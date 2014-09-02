@@ -66,6 +66,14 @@ public abstract class GameObject extends Actor implements Poolable {
 		this.ySpeed = ySpeed;
 	}
 	
+	public float getCX() {
+		return getX() + getWidth() / 2;
+	}
+	
+	public float getCY() {
+		return getY() + getHeight() / 2;
+	}
+	
 	public float getXSpeed() {
 		return xSpeed;
 	}

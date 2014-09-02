@@ -5,64 +5,71 @@ filter: Nearest,Nearest
 repeat: none
 enemy_walk
   rotate: false
-  xy: 1, 35
+  xy: 1, 37
+  size: 144, 24
+  orig: 144, 24
+  offset: 0, 0
+  index: -1
+enemy_rock
+  rotate: false
+  xy: 1, 11
   size: 144, 24
   orig: 144, 24
   offset: 0, 0
   index: -1
 plain
   rotate: false
-  xy: 1, 1
+  xy: 147, 29
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 player_run_r
   rotate: false
-  xy: 147, 43
+  xy: 147, 11
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
 player_run_l
   rotate: false
-  xy: 35, 17
+  xy: 181, 45
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
-enemy_rock
-  rotate: false
-  xy: 181, 35
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
 player_idle_l
   rotate: false
-  xy: 69, 17
+  xy: 181, 27
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_jump_l
   rotate: false
-  xy: 207, 43
+  xy: 215, 45
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_idle_r
   rotate: false
-  xy: 87, 17
+  xy: 199, 27
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_jump_r
   rotate: false
-  xy: 225, 43
+  xy: 233, 45
   size: 16, 16
   orig: 16, 16
+  offset: 0, 0
+  index: -1
+star
+  rotate: false
+  xy: 1, 1
+  size: 16, 8
+  orig: 16, 8
   offset: 0, 0
   index: -1
