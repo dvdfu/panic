@@ -158,11 +158,11 @@ public abstract class AbstractEnemy extends GameObject {
 				}
 				if (getX() >= other.getRight()) {
 					setX(other.getRight());
-					xSpeed = -xSpeed / 2;
+					xSpeed = state == EnemyState.THROWN? -xSpeed / 2 : -xSpeed;
 					movingRight ^= true;
 				} else if (getRight() <= other.getX()) {
 					setX(other.getX() - getWidth());
-					xSpeed = -xSpeed / 2;
+					xSpeed = state == EnemyState.THROWN? -xSpeed / 2 : -xSpeed;
 					movingRight ^= true;
 				}
 			}

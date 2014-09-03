@@ -1,7 +1,5 @@
 package com.dvdfu.panic.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -14,11 +12,11 @@ import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
 import com.dvdfu.panic.objects.AbstractEnemy;
 import com.dvdfu.panic.objects.EnemyFly;
+import com.dvdfu.panic.objects.Floor;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Lava;
 import com.dvdfu.panic.objects.Particle;
 import com.dvdfu.panic.objects.Player;
-import com.dvdfu.panic.objects.Floor;
 import com.dvdfu.panic.visuals.UI;
 
 public class TestScreen extends AbstractScreen {
@@ -54,7 +52,7 @@ public class TestScreen extends AbstractScreen {
 		solids.addActor(floor2R);
 		Floor floor3 = new Floor(stage);
 		floor3.setSolid(true);
-		floor3.setPosition((Consts.ScreenWidth - Consts.F3Width) / 2, Consts.F3Y - Consts.F3Height);
+		floor3.setPosition((Consts.ScreenWidth - Consts.F3Width) / 2, Consts.F3Y);
 		floor3.setSize(Consts.F3Width, Consts.F3Height);
 		solids.addActor(floor3);
 		stage.addActor(solids);
@@ -73,8 +71,6 @@ public class TestScreen extends AbstractScreen {
 		stage.act(delta);
 		stage.setCamFocus(Consts.ScreenWidth / 2, player.getCY());
 		ui.setView(stage.getCamX(), stage.getCamY());
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
 		stage.draw();
 	}
 

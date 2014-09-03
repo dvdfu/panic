@@ -1,6 +1,5 @@
 package com.dvdfu.panic.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
@@ -10,7 +9,6 @@ import com.dvdfu.panic.visuals.Label;
 public class GameOverScreen extends AbstractScreen {
 	private SpriteBatch batch;
 	private Label message;
-	private boolean rendered;
 
 	public GameOverScreen(MainGame game) {
 		super(game);
@@ -22,14 +20,9 @@ public class GameOverScreen extends AbstractScreen {
 		if (Input.KeyPressed(Input.ANY_KEY)) {
 			game.changeScreen(new TestScreen(game));
 		}
-		// Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if (!rendered) {
-			Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
-			batch.begin();
-			message.drawC(batch, Consts.WindowWidth / 2, Consts.WindowHeight /  2);
-			batch.end();
-			rendered = true;
-		}
+		batch.begin();
+		message.drawC(batch, Consts.WindowWidth / 2, Consts.WindowHeight / 2);
+		batch.end();
 	}
 
 	public void resize(int width, int height) {}

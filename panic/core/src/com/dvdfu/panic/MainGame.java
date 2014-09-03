@@ -3,6 +3,7 @@ package com.dvdfu.panic;
 import java.util.Stack;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -68,6 +69,8 @@ public class MainGame extends Game {
 	public void render() {
 		fb.begin();
 		if (getScreen() != null) {
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			Gdx.gl.glClearColor(36f/255, 77f/255, 124f/255, 1);
 			super.render();
 		}
 		fb.end();

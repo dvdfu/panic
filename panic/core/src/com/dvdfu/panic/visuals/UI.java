@@ -47,8 +47,8 @@ public class UI extends Actor {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
-		scoreLabel.drawC(batch, (viewL + viewR) / 2, viewT - 16 + scoreTimer * 2);
-		timerLabel.drawC(batch, (viewL + viewR) / 2, viewT - 32);
+		scoreLabel.draw(batch, (viewL + viewR) / 2, viewT - 16 + scoreTimer * 2);
+		timerLabel.draw(batch, (viewL + viewR) / 2, viewT - 32);
 	}
 
 	public void setView(float x, float y) {

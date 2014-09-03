@@ -1,11 +1,16 @@
 package com.dvdfu.panic.handlers;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
 public class Consts {
 	public static final int Resolution = 2;
 	public static final int ScreenHeight = 240;
 	public static final int ScreenWidth = ScreenHeight * 8 / 5;
 	public static final int WindowWidth = ScreenWidth * Resolution;
 	public static final int WindowHeight = ScreenHeight * Resolution;
+	
+	public static final BitmapFont Test = new BitmapFont(Gdx.files.internal("data/test.fnt"));
 	
 	public static final int FY = 90;
 	public static final int F1Height = FY;

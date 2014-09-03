@@ -3,8 +3,9 @@ package com.dvdfu.panic.objects;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.GameStage;
+import com.dvdfu.panic.visuals.Sprites;
 
-public class Lava extends Floor {
+public class Lava extends GameObject {
 	private float heightGoal;
 
 	public Lava(GameStage stage) {
@@ -12,6 +13,8 @@ public class Lava extends Floor {
 		heightGoal = 16;
 		setPosition(0, -Consts.ScreenHeight / 2);
 		setSize(Consts.ScreenWidth, Consts.ScreenHeight / 2);
+		stretched = true;
+		setSprite(Sprites.plain);
 	}
 
 	public void raise() {
@@ -40,4 +43,8 @@ public class Lava extends Floor {
 		super.draw(batch, parentAlpha);
 		batch.setColor(1, 1, 1, 1);
 	}
+
+	public void reset() {}
+
+	public void update() {}
 }

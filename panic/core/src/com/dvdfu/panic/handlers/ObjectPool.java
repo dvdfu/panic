@@ -10,7 +10,6 @@ import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
 
 public class ObjectPool {
-	private GameStage stage;
 	private Pool<Floor> solid;
 	private Pool<EnemyWalker> enemyWalker;
 	private Pool<EnemyJump> enemyJump;
@@ -19,7 +18,6 @@ public class ObjectPool {
 	private Pool<Particle> particle;
 
 	public ObjectPool(final GameStage stage) {
-		this.stage = stage;
 		solid = new Pool<Floor>() {
 			protected Floor newObject() {
 				return new Floor(stage);
