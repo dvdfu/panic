@@ -40,6 +40,7 @@ public class TestScreen extends AbstractScreen {
 		stage.addActor(items = new Group());
 		solids = new Group();
 		Floor floor1 = new Floor(stage);
+		floor1.setSolid(true);
 		floor1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
 		floor1.setSize(Consts.F1Width, Consts.F1Height);
 		solids.addActor(floor1);
@@ -52,6 +53,7 @@ public class TestScreen extends AbstractScreen {
 		floor2R.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2R);
 		Floor floor3 = new Floor(stage);
+		floor3.setSolid(true);
 		floor3.setPosition((Consts.ScreenWidth - Consts.F3Width) / 2, Consts.F3Y - Consts.F3Height);
 		floor3.setSize(Consts.F3Width, Consts.F3Height);
 		solids.addActor(floor3);
@@ -65,10 +67,22 @@ public class TestScreen extends AbstractScreen {
 	}
 
 	public void render(float delta) {
+		spawnEnemies();
+		update();
+		collisions();
+		stage.act(delta);
+		stage.setCamFocus(Consts.ScreenWidth / 2, player.getCY());
+		ui.setView(stage.getCamX(), stage.getCamY());
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
+		stage.draw();
+	}
+
+	private void spawnEnemies() {
 		timer++;
 		if (timer == 120) {
 			AbstractEnemy newEnemy = null;
-			if (MathUtils.randomBoolean()) {
+			if (MathUtils.randomBoolean(1)) {
 				newEnemy = objects.getEnemyWalker();
 			} else {
 				if (MathUtils.randomBoolean()) {
@@ -82,14 +96,6 @@ public class TestScreen extends AbstractScreen {
 			enemies.addActor(newEnemy);
 			timer = 0;
 		}
-		update();
-		collisions();
-		stage.act(delta);
-		stage.setCamFocus(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
-		ui.setView(stage.getCamX(), stage.getCamY());
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1);
-		stage.draw();
 	}
 
 	private void gameOver() {

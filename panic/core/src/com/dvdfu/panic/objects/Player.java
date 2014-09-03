@@ -19,7 +19,7 @@ public class Player extends GameObject {
 	private float walkSpeed;
 	private float walkAcceleration;
 	private float jumpSpeed;
-	private int jumpTimer;
+	private int jumpTimer, jumpTimerMax;
 	private int jumps, jumpsMax;
 	private float throwSpeed;
 	private int throwTimer;
@@ -71,11 +71,11 @@ public class Player extends GameObject {
 		ySpeed -= Consts.Gravity;
 		if (Input.KeyPressed(Input.Z)) {
 			if (grounded) {
-				jumpTimer = 16;
+				jumpTimer = jumpTimerMax;
 				ySpeed = jumpSpeed;
 
 			} else if (jumps > 0) {
-				jumpTimer = 16;
+				jumpTimer = jumpTimerMax;
 				ySpeed = jumpSpeed;
 				jumps--;
 			}
@@ -145,69 +145,66 @@ public class Player extends GameObject {
 	}
 
 	public boolean collideSolid(Floor block) {
-		boolean collided = false;
-		bounds.setPosition(getX(), getY() + ySpeed);
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(block.bounds)) {
-			collided = true;
-			if (getTop() + ySpeed > block.getY() && bounds.y < block.getY()) {
-				setY(block.getY() - getHeight());
-			}
-			if (getTop() + ySpeed > block.getTop() && bounds.y < block.getTop()) {
+			if (getY() >= block.getTop()) {
 				setY(block.getTop());
 				grounded = true;
 				jumps = jumpsMax;
+				jumpTimer = 0;
+				ySpeed = 0;
 			}
-			ySpeed = 0;
-			jumpTimer = 0;
-		}
-		bounds.setPosition(getX() + xSpeed, getY());
-		if (bounds.overlaps(block.bounds)) {
-			collided = true;
-			if (getRight() + xSpeed > block.getX() && bounds.x < block.getX()) {
-				setX(block.getX() - getWidth());
+			if (block.getSolid()) {
+				if (getTop() <= block.getY()) {
+					setY(block.getY() - getHeight());
+					jumpTimer = 0;
+					ySpeed = 0;
+				}
+				if (getX() >= block.getRight()) {
+					setX(block.getRight());
+					xSpeed = 0;
+				} else if (getRight() <= block.getX()) {
+					setX(block.getX() - getWidth());
+					xSpeed = 0;
+				}
 			}
-			if (getRight() + xSpeed > block.getRight() && bounds.x < block.getRight()) {
-				setX(block.getRight());
-			}
-			xSpeed = 0;
+			setBounds();
+			return true;
 		}
 		setBounds();
-		return collided;
+		return false;
 	}
 
 	public boolean collideEnemy(AbstractEnemy enemy) {
 		if (hurtTimer > 0) { return false; }
-		bounds.setPosition(getX(), getY() + ySpeed);
-		if (ySpeed < 0 && bounds.overlaps(enemy.bounds)) {
-			if (getTop() + ySpeed > enemy.getTop()) {
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		if (bounds.overlaps(enemy.bounds)) {
+			if (getY() >= enemy.getTop()) {
+				setY(enemy.getTop());
 				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.STUNNED);
-					if (held != null || !Input.KeyDown(Input.CTRL)) {
-						ySpeed = jumpSpeed;
-						jumpTimer = 16;
-						return false;
-					}
+					ySpeed = jumpSpeed;
+					jumpTimer = jumpTimerMax;
+					return false;
 				} else if (enemy.state == EnemyState.STUNNED) {
 					if (!Input.KeyDown(Input.CTRL) || held != null) {
 						enemy.setState(EnemyState.DEAD);
 						enemy.setVelocity(xSpeed / 2, -ySpeed * 2 / 3);
 						ySpeed = jumpSpeed;
-						jumpTimer = 16;
+						jumpTimer = jumpTimerMax;
 						return false;
 					}
 				}
-			}
-		}
-		bounds.setPosition(getX(), getY());
-		if (bounds.overlaps(enemy.bounds)) {
-			if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
+			} else if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
 				&& Input.KeyDown(Input.CTRL) && held == null) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 				return false;
 			} else if (enemy.state == EnemyState.ACTIVE) { return true; }
 		}
+		setBounds();
 		return false;
+
 	}
 
 	public void getItem(ItemType item) {
@@ -253,16 +250,17 @@ public class Player extends GameObject {
 
 	public void reset() {
 		setX(Consts.ScreenWidth / 2 - getWidth() / 2);
-		setY(Consts.F1Height);
+		setY(Consts.F1Height + getHeight());
 		ySpeed = 0;
 		xSpeed = 0;
 		facingRight = true;
 
-		walkSpeed = 3;
+		walkSpeed = 2.5f;
 		walkAcceleration = 0.3f;
 		throwSpeed = 6;
 		jumpSpeed = 4;
 		jumpsMax = 0;
+		jumpTimerMax = 12;
 		healthMax = 3;
 		health = healthMax;
 	}

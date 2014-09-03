@@ -4,6 +4,7 @@ import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Floor extends GameObject {
+	private boolean solid;
 
 	public Floor(GameStage stage) {
 		super(stage);
@@ -18,5 +19,12 @@ public class Floor extends GameObject {
 	public void reset() {
 		return;
 	}
-
+	
+	public void setSolid(boolean solid) {
+		this.solid = solid;
+	}
+	
+	public boolean getSolid() {
+		return solid;
+	}
 }

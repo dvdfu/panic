@@ -9,9 +9,7 @@ import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public abstract class AbstractEnemy extends GameObject {
-
 	protected EnemyState state;
-	protected boolean collidesOthers;
 	protected boolean grounded;
 	protected boolean movingRight;
 	protected int stunnedTimer;
@@ -48,20 +46,28 @@ public abstract class AbstractEnemy extends GameObject {
 		}
 	}
 
-	protected void contain() {
+	final protected void contain() {
 		if (getRight() > Consts.BoundsR) {
 			setX(Consts.BoundsR - getWidth());
-			xSpeed = -xSpeed;
+			if (state == EnemyState.THROWN) {
+				xSpeed = -xSpeed / 2;
+			} else {
+				xSpeed = -xSpeed;
+			}
 			movingRight ^= true;
 		}
 		if (getX() < Consts.BoundsL) {
 			setX(Consts.BoundsL);
-			xSpeed = -xSpeed;
+			if (state == EnemyState.THROWN) {
+				xSpeed = -xSpeed / 2;
+			} else {
+				xSpeed = -xSpeed;
+			}
 			movingRight ^= true;
 		}
 	}
 
-	public void act(float delta) {
+	final public void act(float delta) {
 		facingRight = xSpeed >= 0;
 		switch (state) {
 		case STUNNED:
@@ -133,30 +139,33 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	public void collideSolid(Floor other) {
-		Bound otherBounds = other.bounds;
-		bounds.setPosition(getX(), getY() + ySpeed);
-		if (bounds.overlaps(otherBounds)) {
-			if (bounds.bottomOf(otherBounds)) {
-				setY(other.getY() - getHeight());
-			} else if (bounds.topOf(otherBounds)) {
+		if (state == EnemyState.GRABBED) { return; }
+		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
+		if (bounds.overlaps(other.bounds)) {
+			if (getY() >= other.getTop()) {
 				setY(other.getTop());
+				ySpeed = 0;
 				grounded = true;
 				justLanded();
 				if (state == EnemyState.DEAD) {
 					setState(EnemyState.REMOVE);
 				}
 			}
-			ySpeed = 0;
-		}
-		bounds.setPosition(getX() + xSpeed, getY());
-		if (bounds.overlaps(otherBounds)) {
-			if (bounds.leftOf(otherBounds)) {
-				setX(other.getX() - getWidth());
-			} else if (bounds.rightOf(otherBounds)) {
-				setX(other.getRight());
+			if (other.getSolid()) {
+				if (getTop() <= other.getY()) {
+					setY(other.getY() - getHeight());
+					ySpeed = 0;
+				}
+				if (getX() >= other.getRight()) {
+					setX(other.getRight());
+					xSpeed = -xSpeed / 2;
+					movingRight ^= true;
+				} else if (getRight() <= other.getX()) {
+					setX(other.getX() - getWidth());
+					xSpeed = -xSpeed / 2;
+					movingRight ^= true;
+				}
 			}
-			xSpeed = -xSpeed;
-			movingRight ^= true;
 		}
 		setBounds();
 	}
@@ -182,7 +191,7 @@ public abstract class AbstractEnemy extends GameObject {
 				}
 			}
 		}
-		if (state == EnemyState.ACTIVE && collidesOthers && (other.collidesOthers || other.state == EnemyState.STUNNED)) {
+		if (state == EnemyState.ACTIVE && (other.state == EnemyState.STUNNED || other.state == EnemyState.ACTIVE)) {
 			bounds.setPosition(getX(), getY() + ySpeed);
 			if (bounds.overlaps(otherBounds)) {
 				if (bounds.bottomOf(otherBounds) && !grounded) {

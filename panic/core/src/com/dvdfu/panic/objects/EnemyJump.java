@@ -13,11 +13,11 @@ public class EnemyJump extends AbstractEnemy {
 
 	public EnemyJump(GameStage stage) {
 		super(stage);
-		collidesOthers = true;
 		jumpTimerMax = 100;
-		jumpSpeed = 6;
+		jumpSpeed = 5;
 		moveSpeed = 2.5f;
-		setSize(24, 22);
+		setSize(18, 20);
+		this.xSprOffset = -3;
 		setSprite(Sprites.enemyWalk);
 		reset();
 	}

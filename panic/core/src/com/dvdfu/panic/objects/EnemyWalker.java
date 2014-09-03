@@ -9,9 +9,9 @@ public class EnemyWalker extends AbstractEnemy {
 
 	public EnemyWalker(GameStage stage) {
 		super(stage);
-		collidesOthers = true;
 		moveSpeed = 0.5f;
-		setSize(24, 22);
+		setSize(18, 20);
+		this.xSprOffset = -3;
 		setSprite(Sprites.enemyWalk);
 		reset();
 	}
