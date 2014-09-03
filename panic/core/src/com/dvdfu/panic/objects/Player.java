@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.visuals.Label;
 import com.dvdfu.panic.visuals.Sprites;
@@ -25,8 +26,8 @@ public class Player extends GameObject {
 	private int hurtTimer;
 	private int health, healthMax;
 
-	public Player() {
-		super();
+	public Player(GameStage stage) {
+		super(stage);
 		xSprOffset = -2;
 		setSize(12, 16);
 		setSprite(Sprites.player);
@@ -43,13 +44,27 @@ public class Player extends GameObject {
 	private void holdItem() {
 		if (held == null) { return; }
 		if (facingRight) {
-			held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
+			held.setX(getRight() - held.getWidth() / 2);
 			held.xSpeed = xSpeed;
 		} else {
-			held.setX(getX() + getWidth() / 2 - held.getWidth() / 2);
+			held.setX(getX() - held.getWidth() / 2);
 			held.xSpeed = xSpeed;
 		}
 		held.setY(getY() + getHeight() / 2);
+		if (held.getState() != EnemyState.GRABBED) {
+			held = null;
+		} else if (!Input.KeyDown(Input.CTRL)) {
+			float dyt = ySpeed;
+			float dxt = xSpeed;
+			if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
+			if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
+			if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
+			if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
+			held.setState(EnemyState.THROWN);
+			held.setVelocity(dxt, dyt);
+			held = null;
+			throwTimer = 10;
+		}
 	}
 
 	private void tryJump() {
@@ -125,30 +140,6 @@ public class Player extends GameObject {
 		if (hurtTimer > 0) {
 			hurtTimer--;
 		}
-		if (held != null) {
-			if (held.getState() != EnemyState.GRABBED) {
-				held = null;
-			} else if (!Input.KeyDown(Input.CTRL)) {
-				if (held instanceof Flower) {
-					if (grounded) {
-						held.setY(getY());
-						held = null;
-						throwTimer = 10;
-					}
-				} else {
-					float dyt = ySpeed + 2;
-					float dxt = xSpeed;
-					if (Input.KeyDown(Input.ARROW_DOWN)) dyt = -throwSpeed;
-					if (Input.KeyDown(Input.ARROW_UP)) dyt = throwSpeed;
-					if (Input.KeyDown(Input.ARROW_LEFT)) dxt = -throwSpeed;
-					if (Input.KeyDown(Input.ARROW_RIGHT)) dxt = throwSpeed;
-					held.setState(EnemyState.THROWN);
-					held.setVelocity(dxt, dyt);
-					held = null;
-					throwTimer = 10;
-				}
-			}
-		}
 		super.act(delta);
 		handleSprite();
 	}
@@ -214,20 +205,9 @@ public class Player extends GameObject {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 				return false;
-			} else if (enemy.state == EnemyState.ACTIVE) {
-				return true;
-			}
+			} else if (enemy.state == EnemyState.ACTIVE) { return true; }
 		}
 		return false;
-	}
-
-	public void collideFlower(Flower flower) {
-		if (bounds.overlaps(flower.bounds)) {
-			if (Input.KeyDown(Input.CTRL) && held == null) {
-				held = flower;
-				flower.setState(EnemyState.GRABBED);
-			}
-		}
 	}
 
 	public void getItem(ItemType item) {
@@ -273,7 +253,7 @@ public class Player extends GameObject {
 
 	public void reset() {
 		setX(Consts.ScreenWidth / 2 - getWidth() / 2);
-		setY(Consts.ScreenHeight);
+		setY(Consts.F1Height);
 		ySpeed = 0;
 		xSpeed = 0;
 		facingRight = true;

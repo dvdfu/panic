@@ -1,11 +1,12 @@
 package com.dvdfu.panic.objects;
 
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Floor extends GameObject {
 
-	public Floor() {
-		super();
+	public Floor(GameStage stage) {
+		super(stage);
 		stretched = true;
 		setSprite(Sprites.plain);
 	}

@@ -6,13 +6,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.ItemType;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Item extends GameObject {
 	private ItemType type;
 	private boolean grounded;
+	private boolean locked;
 
-	public Item() {
+	public Item(GameStage stage) {
+		super(stage);
 		reset();
 		setSize(12, 12);
 		stretched = true;
@@ -28,8 +31,8 @@ public class Item extends GameObject {
 	}
 
 	public void update() {
-		if (!grounded) {
-			ySpeed -= 0.2f;
+		if (!grounded && !locked) {
+			ySpeed -= Consts.Gravity;
 		}
 		contain();
 		grounded = false;
@@ -58,6 +61,7 @@ public class Item extends GameObject {
 	}
 
 	public void collideSolid(Floor block) {
+		if (locked) { return; }
 		Rectangle myRect = bounds.setPosition(getX(), getY() + ySpeed);
 		if (myRect.overlaps(block.bounds)) {
 			if (getTop() + ySpeed > block.getY() && myRect.y < block.getY()) {
@@ -66,17 +70,15 @@ public class Item extends GameObject {
 			}
 			if (getTop() + ySpeed > block.getTop() && myRect.y < block.getTop()) {
 				setY(block.getTop());
-				if (ySpeed < -0.1f) {
+				if (ySpeed < -1) {
 					ySpeed *= -0.6f;
-				} else {
-					ySpeed = 0;
-				}
-				grounded = true;
-				if (xSpeed > 0.1f) {
 					xSpeed *= 0.6f;
 				} else {
+					locked = true;
+					ySpeed = 0;
 					xSpeed = 0;
 				}
+				grounded = true;
 			}
 		}
 		myRect.setPosition(getX() + xSpeed, getY());
@@ -92,5 +94,6 @@ public class Item extends GameObject {
 
 	public void reset() {
 		type = ItemType.values()[MathUtils.random(ItemType.values().length - 1)];
+		locked = false;
 	}
 }

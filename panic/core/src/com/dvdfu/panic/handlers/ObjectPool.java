@@ -4,12 +4,13 @@ import com.badlogic.gdx.utils.Pool;
 import com.dvdfu.panic.objects.EnemyFly;
 import com.dvdfu.panic.objects.EnemyJump;
 import com.dvdfu.panic.objects.EnemyWalker;
+import com.dvdfu.panic.objects.Floor;
 import com.dvdfu.panic.objects.GameObject;
 import com.dvdfu.panic.objects.Item;
 import com.dvdfu.panic.objects.Particle;
-import com.dvdfu.panic.objects.Floor;
 
 public class ObjectPool {
+	private GameStage stage;
 	private Pool<Floor> solid;
 	private Pool<EnemyWalker> enemyWalker;
 	private Pool<EnemyJump> enemyJump;
@@ -17,35 +18,36 @@ public class ObjectPool {
 	private Pool<Item> item;
 	private Pool<Particle> particle;
 
-	public ObjectPool() {
+	public ObjectPool(final GameStage stage) {
+		this.stage = stage;
 		solid = new Pool<Floor>() {
 			protected Floor newObject() {
-				return new Floor();
+				return new Floor(stage);
 			}
 		};
 		enemyWalker = new Pool<EnemyWalker>() {
 			protected EnemyWalker newObject() {
-				return new EnemyWalker();
+				return new EnemyWalker(stage);
 			}
 		};
 		enemyJump = new Pool<EnemyJump>() {
 			protected EnemyJump newObject() {
-				return new EnemyJump();
+				return new EnemyJump(stage);
 			}
 		};
 		enemyFly = new Pool<EnemyFly>() {
 			protected EnemyFly newObject() {
-				return new EnemyFly();
+				return new EnemyFly(stage);
 			}
 		};
 		item = new Pool<Item>() {
 			protected Item newObject() {
-				return new Item();
+				return new Item(stage);
 			}
 		};
 		particle = new Pool<Particle>() {
 			protected Particle newObject() {
-				return new Particle();
+				return new Particle(stage);
 			}
 		};
 	}

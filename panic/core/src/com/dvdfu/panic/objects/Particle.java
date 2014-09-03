@@ -2,12 +2,14 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Enums.ParticleType;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Particle extends GameObject {
 	private ParticleType type;
 	private int timer;
-	public Particle() {
+	public Particle(GameStage stage) {
+		super(stage);
 		reset();
 		type = ParticleType.TRAIL;
 		stretched = true;

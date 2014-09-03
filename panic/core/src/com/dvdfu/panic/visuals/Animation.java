@@ -13,6 +13,9 @@ public class Animation {
 	}
 
 	public Sprite getFrame(int frame) {
+		while (frame < 0) {
+			frame += frames.length;
+		}
 		return frames[frame % frames.length];
 	}
 

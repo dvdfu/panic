@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Bound;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public abstract class AbstractEnemy extends GameObject {
@@ -17,7 +18,8 @@ public abstract class AbstractEnemy extends GameObject {
 	protected int damagedTimer;
 	protected float moveSpeed;
 
-	public AbstractEnemy() {
+	public AbstractEnemy(GameStage stage) {
+		super(stage);
 		state = EnemyState.ACTIVE;
 	}
 
@@ -61,12 +63,19 @@ public abstract class AbstractEnemy extends GameObject {
 
 	public void act(float delta) {
 		facingRight = xSpeed >= 0;
-		if (state == EnemyState.STUNNED) {
+		switch (state) {
+		case STUNNED:
 			if (stunnedTimer > 0) {
 				stunnedTimer--;
 			} else {
 				setState(EnemyState.ACTIVE);
 			}
+			break;
+		case THROWN:
+			setSpriteSpeed(Consts.SpriteSpeed * xSpeed / 2);
+			break;
+		default:
+			break;
 		}
 		contain();
 		super.act(delta);
@@ -79,8 +88,8 @@ public abstract class AbstractEnemy extends GameObject {
 			for (int i = 0; i < numStars; i++) {
 				float theta = i * MathUtils.PI2 / numStars + stunnedTimer / 16f;
 				int frame = stunnedTimer / 12 + i;
-				batch.draw(Sprites.star.getFrame(frame), getCX() - 4 + 12 * MathUtils.cos(theta),
-					getCY() + 4 + 8 * MathUtils.sin(theta));
+				batch.draw(Sprites.star.getFrame(frame), getCX() - 5 + 12 * MathUtils.cos(theta),
+					getCY() + 5 + 8 * MathUtils.sin(theta));
 			}
 		}
 	}
@@ -90,15 +99,40 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	public void setState(EnemyState state) {
+		// STATE EXIT
+		switch (this.state) {
+		default:
+			break;
+		}
+		// STATE ENTER
+		switch (state) {
+		case ACTIVE:
+			setSpriteSpeed(Consts.SpriteSpeed);
+			break;
+		case STUNNED:
+			ySpeed = 0;
+			setSpriteSpeed(0);
+			break;
+		case GRABBED:
+			xSpeed = 0;
+			ySpeed = 0;
+			stunnedTimer = 0;
+			setSpriteSpeed(0);
+			break;
+		case THROWN:
+			stunnedTimer = 0;
+			break;
+		default:
+			break;
+		}
 		this.state = state;
 	}
 
 	protected void justLanded() {
-
+		// stage.setCamShake(10);
 	}
 
 	public void collideSolid(Floor other) {
-		if (state == EnemyState.GRABBED) { return; }
 		Bound otherBounds = other.bounds;
 		bounds.setPosition(getX(), getY() + ySpeed);
 		if (bounds.overlaps(otherBounds)) {
@@ -134,17 +168,17 @@ public abstract class AbstractEnemy extends GameObject {
 		if (bounds.overlaps(otherBounds)) {
 			if (state == EnemyState.THROWN) {
 				other.setState(EnemyState.DEAD);
-				other.setVelocity(xSpeed / 2, 6);
+				other.setVelocity(xSpeed / 2, 3);
 			} else if (state == EnemyState.GRABBED) {
 				other.setState(EnemyState.STUNNED);
 				if (xSpeed == 0) {
 					if (getX() > other.getX()) {
-						other.setVelocity(-1, 6);
+						other.setVelocity(-1, 3);
 					} else {
-						other.setVelocity(1, 6);
+						other.setVelocity(1, 3);
 					}
 				} else {
-					other.setVelocity(xSpeed / 2, 6);
+					other.setVelocity(xSpeed / 2, 3);
 				}
 			}
 		}
@@ -158,7 +192,7 @@ public abstract class AbstractEnemy extends GameObject {
 					}
 				} else if (bounds.topOf(otherBounds)) {
 					setY(other.getTop());
-					ySpeed = 4;
+					ySpeed = 3;
 				}
 			}
 			bounds.setPosition(getX() + xSpeed, getY());

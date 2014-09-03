@@ -35,31 +35,31 @@ public class TestScreen extends AbstractScreen {
 
 	public TestScreen(MainGame game) {
 		super(game);
-		objects = new ObjectPool();
 		stage = new GameStage();
+		objects = new ObjectPool(stage);
 		stage.addActor(items = new Group());
 		solids = new Group();
-		Floor floor1 = new Floor();
+		Floor floor1 = new Floor(stage);
 		floor1.setPosition((Consts.ScreenWidth - Consts.F1Width) / 2, 0);
 		floor1.setSize(Consts.F1Width, Consts.F1Height);
 		solids.addActor(floor1);
-		Floor floor2L = new Floor();
+		Floor floor2L = new Floor(stage);
 		floor2L.setPosition(0, Consts.F2Y - Consts.F2Height);
 		floor2L.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2L);
-		Floor floor2R = new Floor();
+		Floor floor2R = new Floor(stage);
 		floor2R.setPosition(Consts.ScreenWidth - Consts.F2Width, Consts.F2Y - Consts.F2Height);
 		floor2R.setSize(Consts.F2Width, Consts.F2Height);
 		solids.addActor(floor2R);
-		Floor floor3 = new Floor();
+		Floor floor3 = new Floor(stage);
 		floor3.setPosition((Consts.ScreenWidth - Consts.F3Width) / 2, Consts.F3Y - Consts.F3Height);
 		floor3.setSize(Consts.F3Width, Consts.F3Height);
 		solids.addActor(floor3);
 		stage.addActor(solids);
 		stage.addActor(enemies = new Group());
-		stage.addActor(player = new Player());
+		stage.addActor(player = new Player(stage));
 		stage.addActor(particles = new Group());
-		stage.addActor(lava = new Lava());
+		stage.addActor(lava = new Lava(stage));
 		stage.addActor(ui = new UI());
 		stage.setCamPosition(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
 	}
@@ -78,7 +78,7 @@ public class TestScreen extends AbstractScreen {
 				}
 			}
 			newEnemy.setPosition(Consts.ScreenWidth / 2 - newEnemy.getWidth() / 2,
-				Math.max(Consts.ScreenHeight, stage.getCamY() + Consts.ScreenHeight / 2));
+				Math.max(Consts.F3Y + Consts.ScreenHeight / 2, stage.getCamY() + Consts.ScreenHeight / 2));
 			enemies.addActor(newEnemy);
 			timer = 0;
 		}
@@ -154,12 +154,12 @@ public class TestScreen extends AbstractScreen {
 			if (enemy.getState() == EnemyState.REMOVE) {
 				removeEnemy(enemy);
 			}
-			if (enemy.getState() == EnemyState.THROWN) {
-				Particle p = objects.getParticle();
-				p.setType(ParticleType.TRAIL);
-				p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2);
-				particles.addActor(p);
-			}
+			// if (enemy.getState() == EnemyState.THROWN) {
+			// Particle p = objects.getParticle();
+			// p.setType(ParticleType.TRAIL);
+			// p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2);
+			// particles.addActor(p);
+			// }
 		}
 		// ALL ITEMS
 		for (Actor actor : items.getChildren()) {
@@ -202,7 +202,7 @@ public class TestScreen extends AbstractScreen {
 			Item item = objects.getItem();
 			item.setPosition(enemy.getX() + enemy.getWidth() / 2 - item.getWidth() / 2,
 				enemy.getY() + enemy.getHeight() - item.getHeight() / 2);
-			item.setVelocity(enemy.getXSpeed(), 6);
+			item.setVelocity(enemy.getXSpeed(), 3);
 			items.addActor(item);
 		}
 	}

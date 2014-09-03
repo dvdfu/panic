@@ -2,11 +2,13 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
+import com.dvdfu.panic.handlers.GameStage;
 
 public class Lava extends Floor {
 	private float heightGoal;
 
-	public Lava() {
+	public Lava(GameStage stage) {
+		super(stage);
 		heightGoal = 16;
 		setPosition(0, -Consts.ScreenHeight / 2);
 		setSize(Consts.ScreenWidth, Consts.ScreenHeight / 2);

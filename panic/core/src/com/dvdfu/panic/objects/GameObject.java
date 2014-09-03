@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.dvdfu.panic.handlers.Bound;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Animation;
 
 public abstract class GameObject extends Actor implements Poolable {
+	protected GameStage stage;
 	protected Animation sprite;
 	private int spriteLength;
 	private float spriteTimer;
+	private float spriteSpeed;
 	protected Bound bounds;
 	protected boolean stretched;
 	protected boolean facingRight;
@@ -19,14 +22,16 @@ public abstract class GameObject extends Actor implements Poolable {
 	protected float xSpeed;
 	protected float ySpeed;
 
-	public GameObject() {
+	public GameObject(GameStage stage) {
 		super();
+		this.stage = stage;
 		bounds = new Bound();
+		spriteSpeed = 6;
 	}
 
 	public void act(float delta) {
-		spriteTimer += delta * 6;
-		while (spriteTimer > spriteLength) {
+		spriteTimer += delta * spriteSpeed;
+		while (spriteTimer >= spriteLength) {
 			spriteTimer -= spriteLength;
 		}
 		super.setPosition(getX() + xSpeed, getY() + ySpeed);
@@ -59,6 +64,10 @@ public abstract class GameObject extends Actor implements Poolable {
 		this.sprite = sprite;
 		spriteLength = sprite.getLength();
 		spriteTimer = 0;
+	}
+	
+	public void setSpriteSpeed(float speed) {
+		spriteSpeed = speed;
 	}
 	
 	public void setVelocity(float xSpeed, float ySpeed) {

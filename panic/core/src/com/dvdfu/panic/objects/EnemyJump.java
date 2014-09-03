@@ -3,18 +3,20 @@ package com.dvdfu.panic.objects;
 import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class EnemyJump extends AbstractEnemy {
 	private boolean jumping;
-	private int jumpTimer;
+	private int jumpTimer, jumpTimerMax;
 	private int jumpSpeed;
 
-	public EnemyJump() {
-		super();
+	public EnemyJump(GameStage stage) {
+		super(stage);
 		collidesOthers = true;
-		jumpSpeed = 7;
-		moveSpeed = 2;
+		jumpTimerMax = 100;
+		jumpSpeed = 6;
+		moveSpeed = 2.5f;
 		setSize(24, 22);
 		setSprite(Sprites.enemyWalk);
 		reset();
@@ -47,34 +49,18 @@ public class EnemyJump extends AbstractEnemy {
 
 	protected void justLanded() {
 		if (jumping) {
-			jumpTimer = 60;
+			jumpTimer = jumpTimerMax;
 			jumping = false;
 		}
 	}
 
 	public void setState(EnemyState state) {
-		// STATE EXIT
-		switch (this.state) {
-		default:
-			break;
-		}
 		// STATE ENTER
 		switch (state) {
-		case ACTIVE:
-			setSprite(Sprites.enemyWalk);
-			break;
 		case STUNNED:
-			ySpeed = 0;
 			stunnedTimer = 180;
-			setSprite(Sprites.enemyRock);
-			break;
 		case GRABBED:
-			xSpeed = 0;
-			ySpeed = 0;
 		case THROWN:
-			stunnedTimer = 0;
-			setSprite(Sprites.enemyRock);
-			break;
 		case DEAD:
 			setSprite(Sprites.enemyRock);
 			break;
@@ -84,10 +70,11 @@ public class EnemyJump extends AbstractEnemy {
 		}
 		super.setState(state);
 	}
-	
+
 	public void reset() {
 		jumping = true;
-		state = EnemyState.ACTIVE;
+		jumpTimer = 0;
+		setState(EnemyState.ACTIVE);
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
 			xSpeed = moveSpeed;

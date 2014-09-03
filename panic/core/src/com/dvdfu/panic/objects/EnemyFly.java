@@ -1,16 +1,18 @@
 package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.dvdfu.panic.handlers.Bound;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
+import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class EnemyFly extends AbstractEnemy {
 	private float xGoal;
 	private float yGoal;
 
-	public EnemyFly() {
-		super();
+	public EnemyFly(GameStage stage) {
+		super(stage);
 		setSize(24, 22);
 		setSprite(Sprites.enemyWalk);
 		reset();
@@ -37,8 +39,30 @@ public class EnemyFly extends AbstractEnemy {
 	}
 
 	public void collideSolid(Floor other) {
-		if (state == EnemyState.ACTIVE) { return; }
-		super.collideSolid(other);
+		Bound otherBounds = other.bounds;
+		bounds.setPosition(getX(), getY() + ySpeed);
+		if (bounds.overlaps(otherBounds)) {
+			if (bounds.bottomOf(otherBounds)) {
+				setY(other.getY() - getHeight());
+			} else if (bounds.topOf(otherBounds)) {
+				setY(other.getTop());
+				grounded = true;
+				justLanded();
+				if (state == EnemyState.DEAD) {
+					setState(EnemyState.REMOVE);
+				}
+			}
+			ySpeed = 0;
+		}
+		bounds.setPosition(getX() + xSpeed, getY());
+		if (bounds.overlaps(otherBounds)) {
+			if (bounds.leftOf(otherBounds)) {
+				setX(other.getX() - getWidth());
+			} else if (bounds.rightOf(otherBounds)) {
+				setX(other.getRight());
+			}
+		}
+		setBounds();
 	}
 
 	public void setState(EnemyState state) {
@@ -52,21 +76,10 @@ public class EnemyFly extends AbstractEnemy {
 		}
 		// STATE ENTER
 		switch (state) {
-		case ACTIVE:
-			setSprite(Sprites.enemyWalk);
-			break;
 		case STUNNED:
-			xSpeed = 0;
 			stunnedTimer = 300;
-			setSprite(Sprites.enemyRock);
-			break;
 		case GRABBED:
-			xSpeed = 0;
-			ySpeed = 0;
 		case THROWN:
-			stunnedTimer = 0;
-			setSprite(Sprites.enemyRock);
-			break;
 		case DEAD:
 			setSprite(Sprites.enemyRock);
 			break;
@@ -76,14 +89,13 @@ public class EnemyFly extends AbstractEnemy {
 		}
 		super.setState(state);
 	}
-	
+
 	public void setGoal(float x, float y) {
 		xGoal = x;
 		yGoal = y;
 	}
 
 	public void reset() {
-		state = EnemyState.ACTIVE;
-		movingRight = MathUtils.randomBoolean();
+		setState(EnemyState.ACTIVE);
 	}
 }
