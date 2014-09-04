@@ -17,7 +17,7 @@ public class Consts {
 	public static final int F1Width = ScreenWidth * 2 / 3;
 	public static final int F2Y = FY * 2;
 	public static final int F2Width = ScreenWidth / 3;
-	public static final int F2Height = 1;
+	public static final int F2Height = 3;
 	public static final int F3Y = FY * 3;
 	public static final int F3Width = ScreenWidth / 3;
 	public static final int F3Height = 16;

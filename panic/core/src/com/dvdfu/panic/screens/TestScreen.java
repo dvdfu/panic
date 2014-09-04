@@ -78,10 +78,10 @@ public class TestScreen extends AbstractScreen {
 		timer++;
 		if (timer == 120) {
 			AbstractEnemy newEnemy = null;
-			if (MathUtils.randomBoolean(1)) {
+			if (MathUtils.randomBoolean()) {
 				newEnemy = objects.getEnemyWalker();
 			} else {
-				if (MathUtils.randomBoolean()) {
+				if (MathUtils.randomBoolean(1)) {
 					newEnemy = objects.getEnemyJump();
 				} else {
 					newEnemy = objects.getEnemyFly();
@@ -157,10 +157,14 @@ public class TestScreen extends AbstractScreen {
 				removeEnemy(enemy);
 			}
 			// if (enemy.getState() == EnemyState.THROWN) {
+			// float speed = (float) Math.sqrt(enemy.getXSpeed() * enemy.getXSpeed() + enemy.getYSpeed() * enemy.getYSpeed());
+			// for (int k = 0; k < speed; k++) {
 			// Particle p = objects.getParticle();
 			// p.setType(ParticleType.TRAIL);
-			// p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY() + enemy.getHeight() / 2);
+			// p.setPosition(enemy.getCX() - 1 + k * enemy.getXSpeed() / speed, enemy.getCY() - 1 + k * enemy.getYSpeed()
+			// / speed);
 			// particles.addActor(p);
+			// }
 			// }
 		}
 		// ALL ITEMS

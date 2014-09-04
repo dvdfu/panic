@@ -9,7 +9,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.resizable = false;
-		config.vSyncEnabled = false;
+		config.vSyncEnabled = true;
+		// config.useGL30 = true;
 		config.width = Consts.WindowWidth;
 		config.height = Consts.WindowHeight;
 		new LwjglApplication(new MainGame(), config);

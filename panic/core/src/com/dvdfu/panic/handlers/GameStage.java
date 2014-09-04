@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 public class GameStage extends Stage {
 	private Vector3 camPosition;
 	private float camSmoothing;
-	private int camShake;
+	private float camShake;
 
 	public GameStage() {
 		super();
@@ -19,8 +19,8 @@ public class GameStage extends Stage {
 		float camX = getCamera().position.x + (camPosition.x - getCamera().position.x) * camSmoothing;
 		float camY = getCamera().position.y + (camPosition.y - getCamera().position.y) * camSmoothing;
 		if (camShake > 0) {
-			camX += MathUtils.random(-camShake, camShake);
-			camY += MathUtils.random(-camShake, camShake);
+			camX += MathUtils.random(-1f, 1f) * camShake;
+			camY += MathUtils.random(-1f, 1f) * camShake;
 			camShake--;
 		}
 		setCamPosition(camX, camY);
@@ -44,7 +44,7 @@ public class GameStage extends Stage {
 		camSmoothing = smooth;
 	}
 
-	public void setCamShake(int shake) {
+	public void setCamShake(float shake) {
 		camShake = shake;
 	}
 

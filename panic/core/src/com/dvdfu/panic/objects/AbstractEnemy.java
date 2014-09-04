@@ -10,7 +10,7 @@ import com.dvdfu.panic.visuals.Sprites;
 
 public abstract class AbstractEnemy extends GameObject {
 	protected EnemyState state;
-	protected boolean grounded;
+	protected boolean grounded, groundedBuffer;
 	protected boolean movingRight;
 	protected int stunnedTimer;
 	protected int damagedTimer;
@@ -31,7 +31,7 @@ public abstract class AbstractEnemy extends GameObject {
 				setState(EnemyState.STUNNED);
 			}
 		}
-		grounded = false;
+		groundedBuffer = false;
 	}
 
 	protected void brake(float vf, float a) {
@@ -68,6 +68,7 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	final public void act(float delta) {
+		grounded = groundedBuffer;
 		facingRight = xSpeed >= 0;
 		switch (state) {
 		case STUNNED:
@@ -135,7 +136,9 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	protected void justLanded() {
-		// stage.setCamShake(10);
+		if (state == EnemyState.THROWN) {
+			stage.setCamShake(8);
+		}
 	}
 
 	public void collideSolid(Floor other) {
@@ -145,8 +148,10 @@ public abstract class AbstractEnemy extends GameObject {
 			if (getY() >= other.getTop()) {
 				setY(other.getTop());
 				ySpeed = 0;
-				grounded = true;
-				justLanded();
+				groundedBuffer = true;
+				if (!grounded) {
+					justLanded();
+				}
 				if (state == EnemyState.DEAD) {
 					setState(EnemyState.REMOVE);
 				}
@@ -158,11 +163,11 @@ public abstract class AbstractEnemy extends GameObject {
 				}
 				if (getX() >= other.getRight()) {
 					setX(other.getRight());
-					xSpeed = state == EnemyState.THROWN? -xSpeed / 2 : -xSpeed;
+					xSpeed = state == EnemyState.THROWN ? -xSpeed / 2 : -xSpeed;
 					movingRight ^= true;
 				} else if (getRight() <= other.getX()) {
 					setX(other.getX() - getWidth());
-					xSpeed = state == EnemyState.THROWN? -xSpeed / 2 : -xSpeed;
+					xSpeed = state == EnemyState.THROWN ? -xSpeed / 2 : -xSpeed;
 					movingRight ^= true;
 				}
 			}

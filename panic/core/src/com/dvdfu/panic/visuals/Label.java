@@ -27,14 +27,14 @@ public class Label {
 	}
 
 	public void draw(Batch batch, float x, float y) {
-		font.setColor(0, 0, 0, 1);
+		font.setColor(0, 0, 0, 0.75f);
 		font.draw(batch, text, x + 1, y - 1);
 		font.setColor(1, 1, 1, 1);
 		font.draw(batch, text, x, y);
 	}
 
 	public void drawC(Batch batch, float x, float y) {
-		draw(batch, x - getWidth() / 2, y - getHeight() / 2);
+		draw(batch, x - getWidth() / 2, y + getHeight() / 2);
 	}
 
 	public void setText(String text) {

@@ -32,11 +32,17 @@ public class MainGame extends Game {
 		fbMatrix = new Matrix4();
 		fbMatrix.setToOrtho2D(Consts.ScreenWidth * (Consts.Resolution - 1) / 2, Consts.ScreenHeight * (Consts.Resolution - 1)
 			/ 2, Consts.ScreenWidth, Consts.ScreenHeight);
-		fbShader = new ShaderProgram(Gdx.files.internal("data/shader.vert"), Gdx.files.internal("data/shader.frag"));
-		// fbShader.pedantic = false;
+		fbShader = new ShaderProgram(Gdx.files.internal("shaders/passthrough.vsh"), Gdx.files.internal("shaders/vignette.fsh"));
+		ShaderProgram.pedantic = false;
+		fbShader.begin();
+		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
+		fbShader.end();
 		fbBatch = new SpriteBatch();
 		fbBatch.setProjectionMatrix(fbMatrix);
 		fbBatch.setShader(fbShader);
+		// dermetfan: openGL shader tutorial
+		// angelcode: BMfont
+		// aseprite
 	}
 
 	public void enterScreen(AbstractScreen screen) {

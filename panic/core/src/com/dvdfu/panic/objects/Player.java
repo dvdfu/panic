@@ -13,7 +13,7 @@ public class Player extends GameObject {
 	private AbstractEnemy held;
 	private ItemType[] items = { null, null, null };
 	private Label[] itemLabels = { new Label(), new Label(), new Label() };
-	private boolean grounded;
+	private boolean grounded, groundedBuffer;
 	private boolean facingRight;
 
 	private float walkSpeed;
@@ -87,7 +87,7 @@ public class Player extends GameObject {
 				jumpTimer = 0;
 			}
 		}
-		grounded = false;
+		groundedBuffer = false;
 	}
 
 	private void tryWalk() {
@@ -134,6 +134,7 @@ public class Player extends GameObject {
 	}
 
 	public void act(float delta) {
+		grounded = groundedBuffer;
 		if (throwTimer > 0) {
 			throwTimer--;
 		}
@@ -149,7 +150,7 @@ public class Player extends GameObject {
 		if (bounds.overlaps(block.bounds)) {
 			if (getY() >= block.getTop()) {
 				setY(block.getTop());
-				grounded = true;
+				groundedBuffer = true;
 				jumps = jumpsMax;
 				jumpTimer = 0;
 				ySpeed = 0;
