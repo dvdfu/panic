@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.InputController;
@@ -19,7 +18,6 @@ import com.dvdfu.panic.screens.TestScreen;
 public class MainGame extends Game {
 	private Stack<AbstractScreen> screens;
 	private FrameBuffer fb;
-	private Matrix4 fbMatrix;
 	private ShaderProgram fbShader;
 	private SpriteBatch fbBatch;
 
@@ -29,17 +27,15 @@ public class MainGame extends Game {
 		enterScreen(new TestScreen(this));
 		fb = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
 		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		fbMatrix = new Matrix4();
-		fbMatrix.setToOrtho2D(Consts.ScreenWidth * (Consts.Resolution - 1) / 2, Consts.ScreenHeight * (Consts.Resolution - 1)
-			/ 2, Consts.ScreenWidth, Consts.ScreenHeight);
-		fbShader = new ShaderProgram(Gdx.files.internal("shaders/passthrough.vsh"), Gdx.files.internal("shaders/vignette.fsh"));
+		fbShader = new ShaderProgram(Gdx.files.internal("shaders/scale.vsh"), Gdx.files.internal("shaders/vignette.fsh"));
 		ShaderProgram.pedantic = false;
-		fbShader.begin();
-		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
-		fbShader.end();
 		fbBatch = new SpriteBatch();
-		fbBatch.setProjectionMatrix(fbMatrix);
 		fbBatch.setShader(fbShader);
+
+		fbBatch.begin();
+		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
+		fbShader.setUniformf("u_scale", Consts.ScreenScale);
+		fbBatch.end();
 		// dermetfan: openGL shader tutorial
 		// angelcode: BMfont
 		// aseprite

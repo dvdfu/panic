@@ -4,11 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class Consts {
-	public static final int Resolution = 2;
+	public static final int ScreenScale = 2;
 	public static final int ScreenHeight = 240;
 	public static final int ScreenWidth = ScreenHeight * 8 / 5;
-	public static final int WindowWidth = ScreenWidth * Resolution;
-	public static final int WindowHeight = ScreenHeight * Resolution;
+	public static final int WindowWidth = ScreenWidth * ScreenScale;
+	public static final int WindowHeight = ScreenHeight * ScreenScale;
 	
 	public static final BitmapFont Test = new BitmapFont(Gdx.files.internal("data/test.fnt"));
 	

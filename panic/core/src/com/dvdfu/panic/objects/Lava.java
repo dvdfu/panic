@@ -1,12 +1,15 @@
 package com.dvdfu.panic.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Lava extends GameObject {
 	private float heightGoal;
+	private ShaderProgram fbShader;
 
 	public Lava(GameStage stage) {
 		super(stage);
@@ -15,6 +18,12 @@ public class Lava extends GameObject {
 		setSize(Consts.ScreenWidth, Consts.ScreenHeight / 2);
 		stretched = true;
 		setSprite(Sprites.plain);
+		
+		fbShader = new ShaderProgram(Gdx.files.internal("shaders/wavy.vsh"), Gdx.files.internal("shaders/passthrough.fsh"));
+		ShaderProgram.pedantic = false;
+		fbShader.begin();
+		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
+		fbShader.end();
 	}
 
 	public void raise() {
@@ -39,6 +48,7 @@ public class Lava extends GameObject {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
+		batch.setShader(fbShader);
 		batch.setColor(1, 0, 0, 1);
 		super.draw(batch, parentAlpha);
 		batch.setColor(1, 1, 1, 1);
