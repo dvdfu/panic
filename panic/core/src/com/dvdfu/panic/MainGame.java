@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.dvdfu.panic.handlers.Consts;
+import com.dvdfu.panic.handlers.GameShader;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.InputController;
 import com.dvdfu.panic.screens.AbstractScreen;
@@ -18,7 +18,7 @@ import com.dvdfu.panic.screens.TestScreen;
 public class MainGame extends Game {
 	private Stack<AbstractScreen> screens;
 	private FrameBuffer fb;
-	private ShaderProgram fbShader;
+	private GameShader fbShader;
 	private SpriteBatch fbBatch;
 
 	public void create() {
@@ -27,11 +27,9 @@ public class MainGame extends Game {
 		enterScreen(new TestScreen(this));
 		fb = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
 		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		fbShader = new ShaderProgram(Gdx.files.internal("shaders/scale.vsh"), Gdx.files.internal("shaders/vignette.fsh"));
-		ShaderProgram.pedantic = false;
+		fbShader = new GameShader("shaders/scale.vsh", "shaders/vignette.fsh");
 		fbBatch = new SpriteBatch();
 		fbBatch.setShader(fbShader);
-
 		fbBatch.begin();
 		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
 		fbShader.setUniformf("u_scale", Consts.ScreenScale);
@@ -70,9 +68,9 @@ public class MainGame extends Game {
 
 	public void render() {
 		fb.begin();
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(36f/255, 77f/255, 124f/255, 1);
 		if (getScreen() != null) {
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			Gdx.gl.glClearColor(36f/255, 77f/255, 124f/255, 1);
 			super.render();
 		}
 		fb.end();

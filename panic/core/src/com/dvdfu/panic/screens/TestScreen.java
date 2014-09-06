@@ -7,6 +7,7 @@ import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ParticleType;
+import com.dvdfu.panic.handlers.GameShader;
 import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.ObjectPool;
@@ -30,6 +31,7 @@ public class TestScreen extends AbstractScreen {
 	private Player player;
 	private Lava lava;
 	private int timer;
+	private GameShader fbShader;
 
 	public TestScreen(MainGame game) {
 		super(game);
@@ -62,6 +64,7 @@ public class TestScreen extends AbstractScreen {
 		stage.addActor(lava = new Lava(stage));
 		stage.addActor(ui = new UI());
 		stage.setCamPosition(Consts.ScreenWidth / 2, player.getY() + player.getHeight() / 2);
+		fbShader = new GameShader("shaders/passthrough.vsh", "shaders/passthrough.fsh");
 	}
 
 	public void render(float delta) {
@@ -71,6 +74,7 @@ public class TestScreen extends AbstractScreen {
 		stage.act(delta);
 		stage.setCamFocus(Consts.ScreenWidth / 2, player.getCY());
 		ui.setView(stage.getCamX(), stage.getCamY());
+		stage.getBatch().setShader(fbShader);
 		stage.draw();
 	}
 

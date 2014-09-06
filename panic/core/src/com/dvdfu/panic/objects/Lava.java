@@ -2,25 +2,30 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
 import com.dvdfu.panic.handlers.Consts;
+import com.dvdfu.panic.handlers.GameShader;
 import com.dvdfu.panic.handlers.GameStage;
 import com.dvdfu.panic.visuals.Sprites;
 
 public class Lava extends GameObject {
 	private float heightGoal;
-	private ShaderProgram fbShader;
+	private GameShader fbShader;
+	private GameShader defShader;
+	private float waveAngle;
+	private float waveAmplitude;
 
 	public Lava(GameStage stage) {
 		super(stage);
 		heightGoal = 16;
-		setPosition(0, -Consts.ScreenHeight / 2);
-		setSize(Consts.ScreenWidth, Consts.ScreenHeight / 2);
+		setPosition(-16, -Consts.ScreenHeight / 2);
+		setSize(Consts.ScreenWidth + 32, Consts.ScreenHeight / 2);
 		stretched = true;
 		setSprite(Sprites.plain);
-		
-		fbShader = new ShaderProgram(Gdx.files.internal("shaders/wavy.vsh"), Gdx.files.internal("shaders/passthrough.fsh"));
-		ShaderProgram.pedantic = false;
+
+		fbShader = new GameShader("shaders/wavy.vsh", "shaders/wavy.fsh");
+		defShader = new GameShader("shaders/passthrough.vsh", "shaders/passthrough.fsh");
+		waveAmplitude = 5;
 		fbShader.begin();
 		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
 		fbShader.end();
@@ -48,10 +53,20 @@ public class Lava extends GameObject {
 	}
 
 	public void draw(Batch batch, float parentAlpha) {
+		final float dt = Gdx.graphics.getRawDeltaTime();
+		waveAngle += dt * 4;
+		while (waveAngle > MathUtils.PI2) {
+			waveAngle -= MathUtils.PI2;
+		}
+		fbShader.begin();
+		fbShader.setUniformf("waveData", waveAngle, waveAmplitude);
+		fbShader.end();
+
 		batch.setShader(fbShader);
 		batch.setColor(1, 0, 0, 1);
 		super.draw(batch, parentAlpha);
 		batch.setColor(1, 1, 1, 1);
+		batch.setShader(defShader);
 	}
 
 	public void reset() {}

@@ -180,10 +180,10 @@ public class Player extends GameObject {
 		if (hurtTimer > 0) { return false; }
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(enemy.bounds)) {
-			if (getY() >= enemy.getTop()) {
-				setY(enemy.getTop());
+			if (getY() > enemy.getY()) {
 				if (enemy.state == EnemyState.ACTIVE) {
 					enemy.setState(EnemyState.STUNNED);
+					setY(enemy.getTop());
 					ySpeed = jumpSpeed;
 					jumpTimer = jumpTimerMax;
 					return false;
@@ -191,13 +191,13 @@ public class Player extends GameObject {
 					if (!Input.KeyDown(Input.CTRL) || held != null) {
 						enemy.setState(EnemyState.DEAD);
 						enemy.setVelocity(xSpeed / 2, -ySpeed * 2 / 3);
+						setY(enemy.getTop());
 						ySpeed = jumpSpeed;
 						jumpTimer = jumpTimerMax;
 						return false;
 					}
 				}
-			} else if ((enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))
-				&& Input.KeyDown(Input.CTRL) && held == null) {
+			} else if (Input.KeyDown(Input.CTRL) && held == null && (enemy.state == EnemyState.STUNNED || (enemy.state == EnemyState.THROWN && throwTimer == 0))) {
 				held = enemy;
 				enemy.setState(EnemyState.GRABBED);
 				return false;

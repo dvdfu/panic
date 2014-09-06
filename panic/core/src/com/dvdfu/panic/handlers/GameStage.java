@@ -3,6 +3,7 @@ package com.dvdfu.panic.handlers;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dvdfu.panic.visuals.Sprites;
 
 public class GameStage extends Stage {
 	private Vector3 camPosition;
@@ -54,5 +55,14 @@ public class GameStage extends Stage {
 
 	public float getCamY() {
 		return getCamera().position.y;
+	}
+
+	public void draw() {
+		getBatch().begin();
+		getBatch().setColor(36f / 255, 77f / 255, 124f / 255, 1);
+		getBatch().draw(Sprites.plain.getFrame(0), getCamX() - Consts.ScreenWidth / 2,
+			getCamY() - Consts.ScreenHeight / 2, Consts.ScreenWidth, Consts.ScreenHeight);
+		getBatch().end();
+		super.draw();
 	}
 }
