@@ -1,6 +1,7 @@
 package com.dvdfu.panic;
 
 import java.util.Stack;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -13,7 +14,7 @@ import com.dvdfu.panic.handlers.GameShader;
 import com.dvdfu.panic.handlers.Input;
 import com.dvdfu.panic.handlers.InputController;
 import com.dvdfu.panic.screens.AbstractScreen;
-import com.dvdfu.panic.screens.TestScreen;
+import com.dvdfu.panic.screens.MainMenuScreen;
 
 public class MainGame extends Game {
 	private Stack<AbstractScreen> screens;
@@ -24,10 +25,10 @@ public class MainGame extends Game {
 	public void create() {
 		Gdx.input.setInputProcessor(new InputController());
 		screens = new Stack<AbstractScreen>();
-		enterScreen(new TestScreen(this));
+		enterScreen(new MainMenuScreen(this));
 		fb = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
 		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		fbShader = new GameShader("shaders/scale.vsh", "shaders/vignette.fsh");
+		fbShader = new GameShader("shaders/passthrough.vsh", "shaders/vignette.fsh");
 		fbBatch = new SpriteBatch();
 		fbBatch.setShader(fbShader);
 		fbBatch.begin();

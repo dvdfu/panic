@@ -25,7 +25,7 @@ public class Consts {
 	public static final int BoundsR = ScreenWidth - BoundsL;
 	
 	public static final float Gravity = 0.2f;
-	public static final float SpriteSpeed = 6;
+	public static final float SpriteSpeed = 10;
 
 	public static boolean F1;
 }

@@ -2,6 +2,7 @@ package com.dvdfu.panic.objects;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.dvdfu.panic.handlers.Consts;
+import com.dvdfu.panic.handlers.Enums;
 import com.dvdfu.panic.handlers.Enums.EnemyState;
 import com.dvdfu.panic.handlers.Enums.ItemType;
 import com.dvdfu.panic.handlers.GameStage;
@@ -35,10 +36,10 @@ public class Player extends GameObject {
 	}
 
 	private void applyPowerups() {
-		// walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 4.5f : 3;
-		// walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 1 : 0.3f;
-		// throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 9 : 6;
-		// jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 6 : 4;
+		walkSpeed = hasItem(Enums.ItemType.DASH) >= 0 ? 4.5f : 3;
+		walkAcceleration = hasItem(Enums.ItemType.DASH) >= 0 ? 1 : 0.3f;
+		throwSpeed = hasItem(Enums.ItemType.THROW) >= 0 ? 9 : 6;
+		jumpSpeed = hasItem(Enums.ItemType.HIGH_JUMP) >= 0 ? 6 : 4;
 	}
 
 	private void holdItem() {

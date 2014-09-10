@@ -18,10 +18,10 @@ public class GameOverScreen extends AbstractScreen {
 
 	public void render(float delta) {
 		if (Input.KeyPressed(Input.ANY_KEY)) {
-			game.changeScreen(new TestScreen(game));
+			game.changeScreen(new MainMenuScreen(game));
 		}
 		batch.begin();
-		message.drawC(batch, Consts.WindowWidth / 2, Consts.WindowHeight / 2);
+		message.drawC(batch, Consts.ScreenWidth / 2, Consts.ScreenHeight / 2);
 		batch.end();
 	}
 

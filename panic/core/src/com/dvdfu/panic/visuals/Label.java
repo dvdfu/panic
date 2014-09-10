@@ -1,5 +1,6 @@
 package com.dvdfu.panic.visuals;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.dvdfu.panic.handlers.Consts;
@@ -7,6 +8,7 @@ import com.dvdfu.panic.handlers.Consts;
 public class Label {
 	private String text;
 	private BitmapFont font;
+	private Color color;
 
 	public Label() {
 		this("");
@@ -15,7 +17,8 @@ public class Label {
 	public Label(String text) {
 		this.text = text;
 		font = Consts.Test;
-		font.setColor(1, 1, 1, 1);
+		color = new Color(1, 1, 1, 1);
+		font.setColor(color);
 	}
 
 	public int getWidth() {
@@ -29,7 +32,7 @@ public class Label {
 	public void draw(Batch batch, float x, float y) {
 		font.setColor(0, 0, 0, 0.75f);
 		font.draw(batch, text, x + 1, y - 1);
-		font.setColor(1, 1, 1, 1);
+		font.setColor(color);
 		font.draw(batch, text, x, y);
 	}
 
@@ -43,5 +46,9 @@ public class Label {
 
 	public String getText() {
 		return text;
+	}
+	
+	public void setColor(float r, float g, float b, float a) {
+		color.set(r, g, b, a);
 	}
 }

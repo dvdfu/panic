@@ -26,11 +26,13 @@ public abstract class GameObject extends Actor implements Poolable {
 		super();
 		this.stage = stage;
 		bounds = new Bound();
-		spriteSpeed = 6;
+		spriteSpeed = 10;
 	}
 
 	public void act(float delta) {
-		spriteTimer += delta * spriteSpeed;
+		if (spriteSpeed != 0) {
+			spriteTimer += 1f / spriteSpeed;
+		}
 		while (spriteTimer >= spriteLength) {
 			spriteTimer -= spriteLength;
 		}
@@ -63,7 +65,7 @@ public abstract class GameObject extends Actor implements Poolable {
 		if (this.sprite == sprite) { return; }
 		this.sprite = sprite;
 		spriteLength = sprite.getLength();
-		spriteTimer = 0;
+		resetSprite();
 	}
 	
 	public void setSpriteSpeed(float speed) {
@@ -81,6 +83,10 @@ public abstract class GameObject extends Actor implements Poolable {
 	
 	public float getCY() {
 		return getY() + getHeight() / 2;
+	}
+	
+	public void resetSprite() {
+		spriteTimer = 0;
 	}
 	
 	public float getXSpeed() {

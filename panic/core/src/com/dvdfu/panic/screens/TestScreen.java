@@ -197,7 +197,7 @@ public class TestScreen extends AbstractScreen {
 	private void removeEnemy(AbstractEnemy enemy) {
 		for (int j = 0; j < 16; j++) {
 			Particle p = objects.getParticle();
-			p.setType(ParticleType.EXPLOSION);
+			p.setType(ParticleType.FIRE);
 			p.setPosition(enemy.getX() + enemy.getWidth() / 2, enemy.getY());
 			particles.addActor(p);
 		}

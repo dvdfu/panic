@@ -25,7 +25,8 @@ public abstract class AbstractEnemy extends GameObject {
 		if (state != EnemyState.GRABBED) {
 			ySpeed -= Consts.Gravity;
 		}
-		if ((state == EnemyState.THROWN || state == EnemyState.STUNNED) && grounded) {
+		if ((state == EnemyState.THROWN || state == EnemyState.STUNNED)
+				&& grounded) {
 			brake(0, 0.25f);
 			if (state == EnemyState.THROWN && xSpeed == 0) {
 				setState(EnemyState.STUNNED);
@@ -79,7 +80,7 @@ public abstract class AbstractEnemy extends GameObject {
 			}
 			break;
 		case THROWN:
-			setSpriteSpeed(Consts.SpriteSpeed * xSpeed / 2);
+			setSpriteSpeed(5);
 			break;
 		default:
 			break;
@@ -95,8 +96,9 @@ public abstract class AbstractEnemy extends GameObject {
 			for (int i = 0; i < numStars; i++) {
 				float theta = i * MathUtils.PI2 / numStars + stunnedTimer / 16f;
 				int frame = stunnedTimer / 12 + i;
-				batch.draw(Sprites.star.getFrame(frame), getCX() - 5 + 12 * MathUtils.cos(theta),
-					getCY() + 5 + 8 * MathUtils.sin(theta));
+				batch.draw(Sprites.star.getFrame(frame), getCX() - 5 + 12
+						* MathUtils.cos(theta),
+						getCY() + 5 + 8 * MathUtils.sin(theta));
 			}
 		}
 	}
@@ -142,7 +144,9 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	public void collideSolid(Floor other) {
-		if (state == EnemyState.GRABBED) { return; }
+		if (state == EnemyState.GRABBED) {
+			return;
+		}
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(other.bounds)) {
 			if (getY() >= other.getTop()) {
@@ -176,7 +180,10 @@ public abstract class AbstractEnemy extends GameObject {
 	}
 
 	public void collideEnemy(AbstractEnemy other) {
-		if (other.state == EnemyState.DEAD || other.state == EnemyState.REMOVE || state == EnemyState.REMOVE) { return; }
+		if (other.state == EnemyState.DEAD || other.state == EnemyState.REMOVE
+				|| state == EnemyState.REMOVE) {
+			return;
+		}
 		Bound otherBounds = other.bounds;
 		bounds.setPosition(getX() + xSpeed, getY() + ySpeed);
 		if (bounds.overlaps(otherBounds)) {
@@ -196,7 +203,8 @@ public abstract class AbstractEnemy extends GameObject {
 				}
 			}
 		}
-		if (state == EnemyState.ACTIVE && (other.state == EnemyState.STUNNED || other.state == EnemyState.ACTIVE)) {
+		if (state == EnemyState.ACTIVE
+				&& (other.state == EnemyState.STUNNED || other.state == EnemyState.ACTIVE)) {
 			bounds.setPosition(getX(), getY() + ySpeed);
 			if (bounds.overlaps(otherBounds)) {
 				if (bounds.bottomOf(otherBounds) && !grounded) {

@@ -24,44 +24,65 @@ star
   orig: 40, 10
   offset: 0, 0
   index: -1
+fire_big
+  rotate: false
+  xy: 147, 55
+  size: 64, 8
+  orig: 64, 8
+  offset: 0, 0
+  index: -1
 plain
   rotate: false
-  xy: 147, 31
+  xy: 147, 21
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 player_run_r
   rotate: false
-  xy: 147, 13
+  xy: 181, 37
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
 player_run_l
   rotate: false
-  xy: 181, 47
+  xy: 181, 19
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
+fire_small
+  rotate: false
+  xy: 147, 15
+  size: 32, 4
+  orig: 32, 4
+  offset: 0, 0
+  index: -1
 player_idle_l
   rotate: false
-  xy: 181, 29
+  xy: 181, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player_jump_l
   rotate: false
-  xy: 215, 47
+  xy: 199, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
+pop
+  rotate: false
+  xy: 213, 57
+  size: 18, 6
+  orig: 18, 6
+  offset: 0, 0
+  index: -1
 player_idle_r
   rotate: false
-  xy: 199, 29
+  xy: 215, 39
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -71,12 +92,5 @@ player_jump_r
   xy: 233, 47
   size: 16, 16
   orig: 16, 16
-  offset: 0, 0
-  index: -1
-pop
-  rotate: false
-  xy: 43, 5
-  size: 18, 6
-  orig: 18, 6
   offset: 0, 0
   index: -1

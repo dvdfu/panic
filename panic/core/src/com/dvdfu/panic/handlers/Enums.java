@@ -10,6 +10,6 @@ public class Enums {
 	}
 	
 	public enum ParticleType {
-		TRAIL, EXPLOSION
+		TRAIL, EXPLOSION, FIRE
 	}
 }

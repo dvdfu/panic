@@ -17,4 +17,6 @@ public class Sprites {
 	public static final Animation pop = new Animation(atlas.createSprite("pop"), 6, 6);
 	public static final Animation enemyWalk = new Animation(atlas.createSprite("enemy_walk"), 24, 24);
 	public static final Animation enemyRock = new Animation(atlas.createSprite("enemy_rock"), 24, 24);
+	public static final Animation fireB = new Animation(atlas.createSprite("fire_big"), 8, 8);
+	public static final Animation fireS = new Animation(atlas.createSprite("fire_small"), 4, 4);
 }
