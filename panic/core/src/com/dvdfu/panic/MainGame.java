@@ -21,20 +21,20 @@ public class MainGame extends Game {
 	private FrameBuffer fb;
 	private GameShader fbShader;
 	private SpriteBatch fbBatch;
+	public int screenScale;
 
 	public void create() {
 		Gdx.input.setInputProcessor(new InputController());
 		screens = new Stack<AbstractScreen>();
 		enterScreen(new MainMenuScreen(this));
-		fb = new FrameBuffer(Format.RGBA8888, Consts.WindowWidth, Consts.WindowHeight, false);
-		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		fbShader = new GameShader("shaders/passthrough.vsh", "shaders/vignette.fsh");
+		fb = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight(), false);
+		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest,
+				TextureFilter.Nearest);
+		fbShader = new GameShader("shaders/scale.vsh", "shaders/vignette.fsh");
 		fbBatch = new SpriteBatch();
 		fbBatch.setShader(fbShader);
-		fbBatch.begin();
-		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
-		fbShader.setUniformf("u_scale", Consts.ScreenScale);
-		fbBatch.end();
+		screenScale = Consts.DefaultScreenScale;
 		// dermetfan: openGL shader tutorial
 		// angelcode: BMfont
 		// aseprite
@@ -49,14 +49,18 @@ public class MainGame extends Game {
 	}
 
 	public void changeScreen(AbstractScreen screen) {
-		if (screens.isEmpty()) { return; }
+		if (screens.isEmpty()) {
+			return;
+		}
 		screens.pop();
 		screens.push(screen);
 		setScreen(screens.peek());
 	}
 
 	public void exitScreen() {
-		if (screens.isEmpty()) { return; }
+		if (screens.isEmpty()) {
+			Gdx.app.exit();
+		}
 		screens.pop();
 		screens.peek().resume();
 		setScreen(screens.peek());
@@ -70,22 +74,33 @@ public class MainGame extends Game {
 	public void render() {
 		fb.begin();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(36f/255, 77f/255, 124f/255, 1);
+		Gdx.gl.glClearColor(36f / 255, 77f / 255, 124f / 255, 1);
 		if (getScreen() != null) {
 			super.render();
 		}
 		fb.end();
 		fbBatch.begin();
-		fbBatch.draw(fb.getColorBufferTexture(), 0, 0, Consts.WindowWidth, Consts.WindowHeight, 0, 0, 1, 1);
+		fbBatch.draw(fb.getColorBufferTexture(), 0, 0, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight(), 0, 0, 1, 1);
 		fbBatch.end();
 		Input.update();
 	}
 
 	public void resize(int width, int height) {
 		super.resize(width, height);
+		fb.dispose();
+		fb = new FrameBuffer(Format.RGBA8888, width, height, false);
+		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest,
+				TextureFilter.Nearest);
+		fbBatch.begin();
+		fbShader.setUniformf("u_resolution", width, height);
+		fbShader.setUniformf("u_scale", screenScale);
+		fbBatch.end();
 	}
 
-	public void pause() {}
+	public void pause() {
+	}
 
-	public void resume() {}
+	public void resume() {
+	}
 }

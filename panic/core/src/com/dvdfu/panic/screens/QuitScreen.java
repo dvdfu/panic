@@ -5,17 +5,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.GameStage;
-import com.dvdfu.panic.visuals.menus.MainMenu;
+import com.dvdfu.panic.visuals.Label;
+import com.dvdfu.panic.visuals.menus.QuitMenu;
 
-public class MainMenuScreen extends AbstractScreen {
+public class QuitScreen extends AbstractScreen {
 	private GameStage stage;
-	private MainMenu menu;
+	private QuitMenu menu;
+	private Label text;
 
-	public MainMenuScreen(MainGame game) {
+	public QuitScreen(MainGame game) {
 		super(game);
-		menu = new MainMenu(game);
+		menu = new QuitMenu(game);
+		text = new Label("Do you really want to quit?");
+		text.setDrawCentered(true);
+		text.setPosition(Consts.ScreenWidth / 2, Consts.ScreenHeight / 2 + 16);
 		stage = new GameStage();
 		stage.addActor(menu);
+		stage.addActor(text);
 		stage.setCamPosition(Consts.ScreenWidth / 2, Consts.ScreenHeight / 2);
 	}
 

@@ -238,7 +238,7 @@ public class Player extends GameObject {
 		for (int i = 0; i < 3; i++) {
 			if (items[i] != null) {
 				itemLabels[i].setText(items[i].toString());
-				itemLabels[i].drawC(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
+				itemLabels[i].draw(batch, getX() + getWidth() / 2, getY() + 80 - i * 16);
 			}
 		}
 		if (hurtTimer > 0) {

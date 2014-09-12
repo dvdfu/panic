@@ -9,7 +9,6 @@ public class EnemyWalker extends AbstractEnemy {
 
 	public EnemyWalker(GameStage stage) {
 		super(stage);
-		moveSpeed = 0.5f;
 		setSize(18, 20);
 		this.xSprOffset = -3;
 		setSprite(Sprites.enemyWalk);
@@ -42,6 +41,7 @@ public class EnemyWalker extends AbstractEnemy {
 
 	public void reset() {
 		setState(EnemyState.ACTIVE);
+		moveSpeed = 0.5f;
 		movingRight = MathUtils.randomBoolean();
 		if (movingRight) {
 			xSpeed = moveSpeed;

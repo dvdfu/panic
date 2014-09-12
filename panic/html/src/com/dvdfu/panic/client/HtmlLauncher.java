@@ -8,13 +8,15 @@ import com.dvdfu.panic.handlers.Consts;
 
 public class HtmlLauncher extends GwtApplication {
 
-        @Override
-        public GwtApplicationConfiguration getConfig () {
-                return new GwtApplicationConfiguration(Consts.WindowWidth, Consts.WindowHeight);
-        }
+	@Override
+	public GwtApplicationConfiguration getConfig() {
+		return new GwtApplicationConfiguration(Consts.ScreenWidth
+				* Consts.DefaultScreenScale, Consts.ScreenHeight
+				* Consts.DefaultScreenScale);
+	}
 
-        @Override
-        public ApplicationListener getApplicationListener () {
-                return new MainGame();
-        }
+	@Override
+	public ApplicationListener getApplicationListener() {
+		return new MainGame();
+	}
 }

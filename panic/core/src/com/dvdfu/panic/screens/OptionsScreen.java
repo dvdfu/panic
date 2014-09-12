@@ -5,18 +5,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
 import com.dvdfu.panic.handlers.GameStage;
-import com.dvdfu.panic.visuals.menus.MainMenu;
+import com.dvdfu.panic.visuals.Label;
+import com.dvdfu.panic.visuals.menus.OptionsMenu;
 
-public class MainMenuScreen extends AbstractScreen {
+public class OptionsScreen extends AbstractScreen {
 	private GameStage stage;
-	private MainMenu menu;
+	private OptionsMenu menu;
+	private Label labelResolution;
 
-	public MainMenuScreen(MainGame game) {
+	public OptionsScreen(MainGame game) {
 		super(game);
-		menu = new MainMenu(game);
+		menu = new OptionsMenu(game);
 		stage = new GameStage();
 		stage.addActor(menu);
 		stage.setCamPosition(Consts.ScreenWidth / 2, Consts.ScreenHeight / 2);
+		labelResolution = new Label("Resolution: ");
+		labelResolution.setPosition(60, 160);
+		stage.addActor(labelResolution);
 	}
 
 	public void render(float delta) {

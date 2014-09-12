@@ -26,9 +26,6 @@ public class Lava extends GameObject {
 		fbShader = new GameShader("shaders/wavy.vsh", "shaders/wavy.fsh");
 		defShader = new GameShader("shaders/passthrough.vsh", "shaders/passthrough.fsh");
 		waveAmplitude = 5;
-		fbShader.begin();
-		fbShader.setUniformf("u_resolution", Consts.WindowWidth, Consts.WindowHeight);
-		fbShader.end();
 	}
 
 	public void raise() {
@@ -59,6 +56,7 @@ public class Lava extends GameObject {
 			waveAngle -= MathUtils.PI2;
 		}
 		fbShader.begin();
+		fbShader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		fbShader.setUniformf("waveData", waveAngle, waveAmplitude);
 		fbShader.end();
 

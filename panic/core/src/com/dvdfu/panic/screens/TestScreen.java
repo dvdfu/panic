@@ -80,7 +80,7 @@ public class TestScreen extends AbstractScreen {
 
 	private void spawnEnemies() {
 		timer++;
-		if (timer == 120) {
+		if (timer == 120 - 36 * Consts.Difficulty) {
 			AbstractEnemy newEnemy = null;
 			if (MathUtils.randomBoolean()) {
 				newEnemy = objects.getEnemyWalker();

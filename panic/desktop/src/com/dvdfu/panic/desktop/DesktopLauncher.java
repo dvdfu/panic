@@ -11,8 +11,8 @@ public class DesktopLauncher {
 		config.resizable = false;
 		config.vSyncEnabled = true;
 		// config.useGL30 = true;
-		config.width = Consts.WindowWidth;
-		config.height = Consts.WindowHeight;
+		config.width = Consts.ScreenWidth * Consts.DefaultScreenScale;
+		config.height = Consts.ScreenHeight * Consts.DefaultScreenScale;
 		new LwjglApplication(new MainGame(), config);
 	}
 }

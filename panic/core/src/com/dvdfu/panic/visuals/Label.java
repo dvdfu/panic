@@ -3,12 +3,14 @@ package com.dvdfu.panic.visuals;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.dvdfu.panic.handlers.Consts;
 
-public class Label {
+public class Label extends Actor {
 	private String text;
 	private BitmapFont font;
 	private Color color;
+	private boolean centered;
 
 	public Label() {
 		this("");
@@ -21,12 +23,22 @@ public class Label {
 		font.setColor(color);
 	}
 
-	public int getWidth() {
-		return (int) font.getBounds(text).width;
+	public float getWidth() {
+		return font.getBounds(text).width;
 	}
 
-	public int getHeight() {
-		return (int) font.getBounds(text).height;
+	public float getHeight() {
+		return font.getBounds(text).height;
+	}
+
+	public void draw(Batch batch, float parentAlpha) {
+		float x = getX();
+		float y = getY();
+		if (centered) {
+			x -= getWidth() / 2;
+			y += getHeight() / 2;
+		}
+		draw(batch, x, y);
 	}
 
 	public void draw(Batch batch, float x, float y) {
@@ -35,9 +47,9 @@ public class Label {
 		font.setColor(color);
 		font.draw(batch, text, x, y);
 	}
-
-	public void drawC(Batch batch, float x, float y) {
-		draw(batch, x - getWidth() / 2, y + getHeight() / 2);
+	
+	public void setDrawCentered(boolean centered) {
+		this.centered = centered;
 	}
 
 	public void setText(String text) {
@@ -47,7 +59,7 @@ public class Label {
 	public String getText() {
 		return text;
 	}
-	
+
 	public void setColor(float r, float g, float b, float a) {
 		color.set(r, g, b, a);
 	}
