@@ -43,9 +43,9 @@ public class MainMenu extends AbstractMenu {
 			game.changeScreen(new TestScreen(game));
 			Consts.Difficulty = buttonDifficulty.getIndex() + 1;
 		} else if (button.equals(buttonOptions)) {
-			game.enterScreen(new OptionsScreen(game));
+			game.changeScreen(new OptionsScreen(game));
 		} else if (button.equals(buttonQuit)) {
-			game.enterScreen(new QuitScreen(game));
+			game.changeScreen(new QuitScreen(game));
 		}
 	}
 

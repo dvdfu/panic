@@ -21,7 +21,7 @@ public class MainGame extends Game {
 	private FrameBuffer fb;
 	private GameShader fbShader;
 	private SpriteBatch fbBatch;
-	public int screenScale;
+	private int screenScale;
 
 	public void create() {
 		Gdx.input.setInputProcessor(new InputController());
@@ -31,10 +31,10 @@ public class MainGame extends Game {
 				Gdx.graphics.getHeight(), false);
 		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest,
 				TextureFilter.Nearest);
-		fbShader = new GameShader("shaders/scale.vsh", "shaders/vignette.fsh");
+		fbShader = new GameShader("shaders/scale.vsh",
+				"shaders/vignette.fsh");
 		fbBatch = new SpriteBatch();
 		fbBatch.setShader(fbShader);
-		screenScale = Consts.DefaultScreenScale;
 		// dermetfan: openGL shader tutorial
 		// angelcode: BMfont
 		// aseprite
@@ -80,14 +80,15 @@ public class MainGame extends Game {
 		}
 		fb.end();
 		fbBatch.begin();
-		fbBatch.draw(fb.getColorBufferTexture(), 0, 0, Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight(), 0, 0, 1, 1);
+		fbBatch.draw(fb.getColorBufferTexture(), 0, 0, Consts.ScreenWidth,
+				Consts.ScreenHeight, 0, 0, 1, 1);
 		fbBatch.end();
 		Input.update();
 	}
 
 	public void resize(int width, int height) {
 		super.resize(width, height);
+		screenScale = width / Consts.ScreenWidth;
 		fb.dispose();
 		fb = new FrameBuffer(Format.RGBA8888, width, height, false);
 		fb.getColorBufferTexture().setFilter(TextureFilter.Nearest,

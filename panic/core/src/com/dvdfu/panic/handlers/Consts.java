@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class Consts {
-	public static final int DefaultScreenScale = 1;
 	public static final int ScreenHeight = 240;
 	public static final int ScreenWidth = 400;
 	public static final BitmapFont Test = new BitmapFont(

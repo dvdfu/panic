@@ -29,6 +29,11 @@ public class Scroller extends Button {
 		setText(values[index]);
 	}
 	
+	public void setIndex(int index) {
+		this.index = index;
+		setText(values[index]);
+	}
+	
 	public int getIndex() {
 		return index;
 	}

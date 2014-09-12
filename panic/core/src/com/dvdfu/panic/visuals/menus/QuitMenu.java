@@ -3,6 +3,7 @@ package com.dvdfu.panic.visuals.menus;
 import com.badlogic.gdx.Gdx;
 import com.dvdfu.panic.MainGame;
 import com.dvdfu.panic.handlers.Consts;
+import com.dvdfu.panic.screens.MainMenuScreen;
 
 public class QuitMenu extends AbstractMenu {
 
@@ -30,13 +31,13 @@ public class QuitMenu extends AbstractMenu {
 
 	public void pressButton(Button button) {
 		if (button.equals(buttonNo)) {
-			game.exitScreen();
+			game.changeScreen(new MainMenuScreen(game));
 		} else if (button.equals(buttonYes)) {
 			Gdx.app.exit();
 		}
 	}
 
 	public void pressCancel() {
-		game.exitScreen();
+		game.changeScreen(new MainMenuScreen(game));
 	}
 }
